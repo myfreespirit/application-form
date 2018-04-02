@@ -1,0 +1,10 @@
+<div class="container">
+    <form>
+        <input type="text" name="wallet" placeholder="Copy your wallet address here" [(ngModel)]="userAddress">
+        <input type="submit" class="button" value="Check" (click)="checkWallet()">
+    </form>
+    
+    <p>Your wallet: {{ userAddress }}</p>
+    <p>Total EXRN: {{ userTotalTokens }}</p>
+    <p>Contributed EXRN: {{ userContributedTokens }}</p>
+</div>
