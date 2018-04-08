@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
 
 @NgModule({
+  bootstrap: [AppComponent],
   declarations: [
     AppComponent,
     FormComponent
@@ -22,7 +23,6 @@ import { FormComponent } from './form/form.component';
     HttpClientModule,
     NgbModule.forRoot()
   ],
-  providers: [DataService],
-  bootstrap: [AppComponent]
+  providers: [DataService]
 })
 export class AppModule { }
