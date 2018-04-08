@@ -11,7 +11,7 @@ import { BigNumber } from 'bignumber.js';
 })
 
 export class FormComponent implements OnInit {
-  
+
   userAddress: string;
   userTotalTokens: number;
   contributions: any;
@@ -36,41 +36,43 @@ export class FormComponent implements OnInit {
 
     // TODO: sanity check on wallet
 
-    this._dataService.getTotalTokens(this.userAddress).subscribe(
-      data => { this.userTotalTokens = data['result']; },
-      err => console.error(err)
+    this._dataService.getTotalTokens(this.userAddress)
+        .subscribe(data => {
+            this.userTotalTokens = data['result'];
+        },
+        err => console.error(err)
     );
 
-    this._dataService.getReceivedFunds().subscribe(data => {
-        this.contributions = data['result'].filter((tx) => {
-            return tx['from'] == this.userAddress;
-          })
-          .map(tx => {
-            var eth = new BigNumber(tx.value).div(1e18).toString();
-            this.totalEthContributed = this.totalEthContributed.plus(eth);
-            return {
-                date: tx.timeStamp*1000,
-                hash: tx.hash,
-                value: eth
-            };
-          });
-      },
-      err => console.error(err)
+    this._dataService.getReceivedFunds()
+        .subscribe(data => {
+            this.contributions = data['result'].filter(tx => {
+                return tx.from === this.userAddress;
+            }).map(tx => {
+                const eth = new BigNumber(tx.value).div(1e18).toString();
+                this.totalEthContributed = this.totalEthContributed.plus(eth);
+                return {
+                    date: tx.timeStamp * 1000,
+                    hash: tx.hash,
+                    value: eth
+                };
+            });
+        },
+         err => console.error(err)
     );
 
-    this._dataService.getDistributedTokens(this.userAddress).subscribe(data => {
+    this._dataService.getDistributedTokens(this.userAddress)
+        .subscribe(data => {
             this.distributions = data['result'].filter(tx => {
-                    return this._dataService.tokenDistributorTopics.includes(tx.topics[1]);
-                })
-                .map(tx => {
-                    var tokens = parseInt(tx.data);
-                    this.totalExrnDistributed = this.totalExrnDistributed + tokens;
-                    return {
-                        date: tx.timeStamp*1000,
-                        hash: tx.transactionHash,
-                        value: tokens
-                    };
-                });
+                return this._dataService.tokenDistributorTopics.includes(tx.topics[1]);
+            }).map(tx => {
+                const tokens = parseInt(tx.data, 16);
+                this.totalExrnDistributed = this.totalExrnDistributed + tokens;
+                return {
+                    date: tx.timeStamp * 1000,
+                    hash: tx.transactionHash,
+                    value: tokens
+                };
+            });
         },
         err => console.error(err)
     );
