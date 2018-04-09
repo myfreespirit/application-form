@@ -12,12 +12,13 @@ import { BigNumber } from 'bignumber.js';
 
 export class FormComponent implements OnInit {
 
-  userAddress: string;
+  userAddress = "";
   userTotalTokens: number;
-  contributions: any;
+  contributions = [];
   totalEthContributed: BigNumber;
-  distributions: any;
+  distributions = [];
   totalExrnDistributed: number;
+  displayContributions: boolean;
 
   constructor(private _dataService: DataService) { }
 
@@ -26,15 +27,29 @@ export class FormComponent implements OnInit {
   }
 
   private resetState() {
+    this.userAddress = this.userAddress.toLowerCase();
+
     this.userTotalTokens = 0;
     this.totalEthContributed = new BigNumber(0);
+    this.contributions.length = 0;
     this.totalExrnDistributed = 0;
+    this.distributions.length = 0;
+    this.displayContributions = false;
+  }
+
+  // Ethereum wallet is basically a 40 characters long hexadecimal prepended with "0x"
+  private isHexWallet() {
+    return /^0x[a-fA-F0-9]{40}$/.test(this.userAddress);
   }
 
   checkWallet() {
     this.resetState();
 
-    // TODO: sanity check on wallet
+    if (!this.isHexWallet()) {
+      return;
+    }
+
+    this.displayContributions = true;
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {

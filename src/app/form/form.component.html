@@ -3,7 +3,9 @@
         <input type="text" name="wallet" placeholder="Your wallet address" [(ngModel)]="userAddress">
         <input type="submit" class="button" value="Check" (click)="checkWallet()">
     </form>
-    
+</div>
+
+<div *ngIf="displayContributions">
     <p>Your wallet: {{ userAddress }}</p>
     <p>EXRN total: {{ userTotalTokens }}</p>
     <p>EXRN from devs: {{ totalExrnDistributed }}</p>
