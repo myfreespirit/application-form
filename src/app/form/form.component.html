@@ -8,6 +8,7 @@
 <div *ngIf="displayContributions">
     <p>Your wallet: {{ userAddress }}</p>
     <p>EXRN total: {{ userTotalTokens }}</p>
+    <p>EXRN airdrop: {{ airdrop }}</p>
     <p>EXRN from devs: {{ totalExrnDistributed }}</p>
 
     <div class="container">
@@ -19,45 +20,61 @@
                         ETH sent
                         <hr>
                         <div class="row">
-                            <div class="col-6">Date</div>
-                            <div class="col-3">Hash</div>
+                            <div class="col-5">Date</div>
+                            <div class="col-2">Block</div>
+                            <div class="col-2">Hash</div>
                             <div class="col-3">Amount</div>
                         </div>
-                        <hr>
-                        <div class="row" *ngFor="let contr of contributions">
-                            <div class="col-6">{{ contr['date'] | date:'medium' }}</div>
-                            <div class="col-3"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
-                            <div class="col-3">{{ contr['value'] }}</div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-6"></div>
-                            <div class="col-3">Total</div>
-                            <div class="col-3">{{ totalEthContributed }}</div>
-                        </div>
                     </div>
-
                     <div class="col-6">
                         EXRN received
                         <hr>
                         <div class="row">
-                            <div class="col-6">Date</div>
+                            <div class="col-4">Date</div>
+                            <div class="col-2">Block</div>
                             <div class="col-2">Hash</div>
                             <div class="col-4">Amount</div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngFor="let corr of correlations">
+                    <div class="col-6">
                         <hr>
-                        <div class="row" *ngFor="let distr of distributions">
-                            <div class="col-6">{{ distr['date'] | date:'medium' }}</div>
+                        <div class="row" *ngFor="let contr of corr[0]">
+                            <div class="col-5">{{ contr['date'] | date:'short' }}</div>
+                            <div class="col-2">{{ contr['block'] }}</div>
+                            <div class="col-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
+                            <div class="col-3">{{ contr['value'] }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <hr>
+                        <div class="row" *ngFor="let distr of corr[1]">
+                            <div class="col-4">{{ distr['date'] | date:'short' }}</div>
+                            <div class="col-2">{{ distr['block'] }}</div>
                             <div class="col-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
                             <div class="col-4">{{ distr['value'] }}</div>
                         </div>
-                        <hr>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-7"></div>
+                            <div class="col-2">Total</div>
+                            <div class="col-3">{{ totalEthContributed }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
                         <div class="row">
                             <div class="col-6"></div>
                             <div class="col-2">Total</div>
                             <div class="col-4">{{ totalExrnDistributed }}</div>
                         </div>
-
                     </div>
                 </div>
             </div>

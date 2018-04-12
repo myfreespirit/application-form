@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
+import 'rxjs/add/observable/forkJoin';
+
 import { keccak256 } from 'js-sha3';
 
 
@@ -14,14 +16,28 @@ export class DataService {
     '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
     '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
   ];
+  glitchAddress = this.tokenDistributorTopics[1];
+  airdropAmount = Math.pow(10, 7);
+  distributionRates = [
+    { block: 4866696, value: this.airdropAmount / 2 },
+    { block: 0, value: this.airdropAmount }
+  ];
 
   constructor(private http: HttpClient) {
-    // prepare the Topics in correct format
+    // prepare the variables in correct format
     this.eventTransferTopic = '0x' + keccak256(this.eventTransferTopic);
 
     this.tokenDistributorTopics = this.tokenDistributorTopics.map(x => {
         return '0x' + x.substring(2).padStart(64, '0');
     });
+  }
+
+  findDistributionRate(currentBlock: number) {
+    const match = this.distributionRates.find(function(rate) {
+      return currentBlock >= rate.block;
+    });
+
+    return match.value;
   }
 
   getTotalTokens(wallet) {
@@ -36,22 +52,19 @@ export class DataService {
     return this.http.get(url);
   }
 
-  getReceivedFunds() {
-    // TODO take into account that results are returned in groups of max 10k transactions
-    const url = `https://api.etherscan.io/api` +
+  getDistributedTokens(wallet) {
+    // Retrieves transactions from ALL users that sent ETH to the team
+    const urlAllETH = `https://api.etherscan.io/api` +
                     `?module=account` +
                     `&action=txlist` +
                     `&address=${ this.EXRNchainTokenSaleAddress }` +
                     `&startblock=0` +
                     `&endblock=latest` +
                     `&apikey=YourApiKeyToken`;
+    // TODO take into account that results are returned in groups of max 10k transactions (current cap ~1k)
 
-    return this.http.get(url);
-  }
-
-  getDistributedTokens(wallet) {
-     // TODO take into account that results are returned in groups of max 10k transactions
-     const url = `https://api.etherscan.io/api` +
+    // Retrieves transactions where team distributed EXRN to the user's wallet (including airdrop)
+    const urlWalletEXRN = `https://api.etherscan.io/api` +
                     `?module=logs` +
                     `&action=getLogs` +
                     `&fromBlock=0` +
@@ -61,7 +74,12 @@ export class DataService {
                     `&topic0_2_opr=and` +
                     `&topic2=${ '0x' + wallet.substring(2).padStart(64, '0') }` +
                     `&apikey=YourApiKeyToken`;
+    // TODO take into account that results are returned in groups of max 1k transactions
 
-    return this.http.get(url);
+    // Run multiple concurrent HTTP requests. The entire operation errors if any request fails.
+    return Observable.forkJoin(
+        this.http.get(urlAllETH),
+        this.http.get(urlWalletEXRN)
+    );
   }
 }
