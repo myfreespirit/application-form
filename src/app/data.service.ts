@@ -22,6 +22,11 @@ export class DataService {
     { block: 4866696, value: this.airdropAmount / 2 },
     { block: 0, value: this.airdropAmount }
   ];
+  bonusExrnDistribution = [
+    { minEXRN: Math.pow(10, 9), bonus: Math.pow(10, 8) },
+    { minEXRN: 0, bonus: 0}
+  ];
+
 
   constructor(private http: HttpClient) {
     // prepare the variables in correct format
@@ -32,6 +37,16 @@ export class DataService {
     });
   }
 
+
+  applicableBonus(owedEXRN: number) {
+    const match = this.bonusExrnDistribution.find(entry => {
+        return owedEXRN >= entry.minEXRN;
+    });
+
+    return match.bonus;
+  }
+
+
   findDistributionRate(currentBlock: number) {
     const match = this.distributionRates.find(function(rate) {
       return currentBlock >= rate.block;
@@ -39,6 +54,7 @@ export class DataService {
 
     return match.value;
   }
+
 
   getTotalTokens(wallet) {
     const url = `https://api.etherscan.io/api` +
@@ -51,6 +67,7 @@ export class DataService {
 
     return this.http.get(url);
   }
+
 
   getDistributedTokens(wallet) {
     // Retrieves transactions from ALL users that sent ETH to the team

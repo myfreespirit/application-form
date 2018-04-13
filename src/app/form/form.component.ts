@@ -4,47 +4,54 @@ import { DataService } from '../data.service';
 
 import { BigNumber } from 'bignumber.js';
 
+
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss']
 })
 
+
 export class FormComponent implements OnInit {
 
   userAddress = '';
   userTotalTokens: number;
-  airdrop: boolean;
   contributions = [];
   totalEthContributed: BigNumber;
   distributions = [];
   totalExrnDistributed: number;
   displayContributions: boolean;
   correlations = [];
+  totalRewards: number;
+
 
   constructor(private _dataService: DataService) { }
+
 
   ngOnInit() {
     this.resetState();
   }
 
+
   private resetState() {
     this.userAddress = this.userAddress.toLowerCase();
 
     this.userTotalTokens = 0;
-    this.airdrop = false;
     this.totalEthContributed = new BigNumber(0);
     this.contributions.length = 0;
     this.totalExrnDistributed = 0;
     this.distributions.length = 0;
     this.displayContributions = false;
     this.correlations = [];
+    this.totalRewards = 0;
   }
+
 
   // Ethereum wallet is basically a 40 characters long hexadecimal prepended with "0x"
   private isHexWallet() {
     return /^0x[a-fA-F0-9]{40}$/.test(this.userAddress);
   }
+
 
   private transformContributions() {
     this.contributions = this.contributions.filter(tx => {
@@ -62,6 +69,7 @@ export class FormComponent implements OnInit {
             });
   }
 
+
   private transformDistributions() {
     this.distributions = this.distributions.filter(tx => {
                 return this._dataService.tokenDistributorTopics.includes(tx.topics[1]);
@@ -78,140 +86,99 @@ export class FormComponent implements OnInit {
             });
   }
 
-  // TODO would be more fail-safe to refactor it using backtracking
-  private correlateTransactions() {
-    let foundAirdrop = false;
-    let distrIndex = 0;
 
-    // User made no contributions, but an airdrop is still possible
-    if (this.contributions.length === 0) {
-        if (distrIndex >= this.distributions.length) {
-            return;
-        }
-        const distr = this.distributions[distrIndex];
-
-        if (!foundAirdrop && distr.value === this._dataService.airdropAmount) {
-            console.log('Airdrop (hidden from list)');
-            foundAirdrop = true;
-            this.airdrop = true;
-            this.totalExrnDistributed = 0;  // reset since no contributions were made
-        }
-
-        return;
+  private findCombination(given, owed, active, candidates) {
+    console.log(given, owed, active, candidates);
+    if (Math.abs(given - owed) < 1) {
+        return active;
     }
 
-    // Match contributions to distributions, filter airdrops / rewards / glitches
-    this.contributions.forEach((contr, i) => {
-        if (distrIndex >= this.distributions.length) {
-            // Awaiting distributions
-            this.correlations.push([[contr], []]);
-            return;
-        }
-        const rate = this._dataService.findDistributionRate(contr.block);
-        let owed = Math.round(contr.value * rate);
-        let distr = this.distributions[distrIndex];
+    if (given > owed || candidates.length === 0) {
+        return [];
+    }
 
-        // Filter possible glitch (double distribution)
-        if (distr.from === this._dataService.glitchAddress && distr.value !== owed) {
-            console.log('Glitch (hidden from list)');
-            this.totalExrnDistributed -= distr.value;  // glitch counts as normal reward
+    const active1 = active.slice();
+    active1.push(candidates[0]);
+    const res1 = this.findCombination(given + candidates[0].value, owed, active1, candidates.slice(1));
+    if (res1.length !== 0) {
+        return res1;
+    }
 
-            // if there are no other distributions left, then consider the contribution to be in awaiting state
-            if (distrIndex + 1 >= this.distributions.length) {
-                this.correlations.push([[contr], []]);
-                return;
-            }
-            distr = this.distributions[++distrIndex];
-        }
+    const res2 = this.findCombination(given, owed, active, candidates.slice(1));
+    if (res2.length !== 0) {
+        return res2;
+    }
 
-        // check for airdrop
-        if (!foundAirdrop && distr.block <= contr.block && distr.value === this._dataService.airdropAmount) {
-            console.log('Airdrop (hidden from list)');
-            foundAirdrop = true;
-            this.airdrop = true;
-            this.totalExrnDistributed -= this._dataService.airdropAmount;  // airdrop counts as normal reward
-
-            // in case of no other distributions, the resting contributions are in awaiting state
-            if (distrIndex + 1 >= this.distributions.length) {
-                this.correlations.push([[contr], []]);
-                return;
-            }
-            distr = this.distributions[++distrIndex];
-        }
-
-        let given = distr.value;
-        const match = [[contr], [distr]];
-
-        // Allow 1 EXRN as margin for rounding errors
-        if (Math.round(Math.abs(given - owed)) <= 1) {
-            console.log('Match');
-            distrIndex++;
-            this.correlations.push(match);
-            return;
-        } else {
-            // Awaiting combo distribution
-            if (given < owed) {
-                if (distrIndex + 1 >= this.distributions.length) {
-                    // Awaiting state for current contribution
-                    this.correlations.push(match);
-                    return;
-                }
-
-                // Try to find a distribution combo that happened before the following contribution
-                const nextContrBlock = i + 1 >= this.contributions.length ? Number.MAX_VALUE : this.contributions[i + 1].block;
-                distr = this.distributions[++distrIndex];
-
-                while (given < owed && distr.block < nextContrBlock) {
-                    given += distr.value;
-                    match[1].push(distr);
-                    if (distrIndex + 1 >= this.distributions.length) {
-                        // Partial match + awaiting state for current contribution
-                        this.correlations.push(match);
-                        return;
-                    }
-                    distr = this.distributions[++distrIndex];
-                }
-
-                // Allow 1 EXRN as margin for rounding errors
-                if (Math.round(Math.abs(given - owed)) <= 1) {
-                    console.log('Matched distr combo');
-                    this.correlations.push(match);
-                }
-            } else {
-                // Try to find a contribution combo for current distribution
-                if (i + 1 >= this.contributions.length) {
-                    // Candidate for a bonus distribution (for instance large ETH contribution)
-                    console.log('Matched distr bonus');
-                    this.correlations.push(match);
-                    return;
-                }
-
-                contr = this.contributions[++i];
-
-                while (given > owed && contr.block < distr.block) {
-                    owed += contr.value;
-                    match[0].push(contr);
-                    this.contributions.shift();  // make sure forEach doesn't process next contribution twice
-
-                    if (i + 1 >= this.contributions.length) {
-                        // In case there are no more contributions, then we assume we received a bonus (for large ETH contribution)
-                        console.log('Matched distr bonus');
-                        this.correlations.push(match);
-                        return;
-                    }
-
-                    contr = this.contributions[++i];
-                }
-
-                // Allow 1 EXRN as margin for rounding errors
-                if (Math.round(Math.abs(given - owed)) <= 1) {
-                    console.log('Matched contr combo');
-                    this.correlations.push(match);
-                }
-            }
-        }
-    });
+    return [];
   }
+
+
+  private correlateTransactions() {
+    let contrCandidates = [];
+
+    while (this.contributions.length) {
+        const contr = this.contributions.shift();
+        contrCandidates.push(contr);
+        console.log(JSON.stringify(contrCandidates));  // TODO remove
+
+        // retrieve the total owed amount of EXRN so far for current contribution candidates
+        let owed = contrCandidates.reduce((total, ctr) => {
+            const rate = this._dataService.findDistributionRate(ctr.block);
+            return total + ctr.value * rate;
+        }, 0);
+        owed += this._dataService.applicableBonus(owed);
+        console.log(owed);
+
+        // Retrieve a list of possible distribution candidates for current contribution candidates
+        const nextContrBlock = this.contributions.length === 0 ? Number.MAX_VALUE : this.contributions[0].block;
+        console.log(nextContrBlock);
+        const distrCandidates = this.distributions.filter(distr => {
+            return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;
+        });
+        console.log(JSON.stringify(distrCandidates));  // TODO remove
+        console.log('\n');
+
+        // Find a correlating match from permutations of distribution candidates for current contribution candidates
+        const combination = this.findCombination(0, owed, [], distrCandidates);
+        console.log('combo', JSON.stringify(combination));
+
+        if (combination.length) {
+            this.correlations.push([contrCandidates, combination]);
+            console.log(this.correlations);
+            contrCandidates = [];
+
+            // remove the combination from distributions
+            combination.forEach(combo => {
+                const index = this.distributions.findIndex(distr => {
+                    return distr.block === combo.block &&
+                            distr.hash === combo.hash &&
+                            distr.value === combo.value;
+                });
+                this.distributions.splice(index, 1);
+                console.log('index', index);
+            });
+        }
+        console.log('==================================================');
+    }
+
+    if (contrCandidates.length) {
+        this.correlations.push([contrCandidates, []]);
+    }
+
+    // Recalculate amount of EXRN purchased based on correlated data
+    this.totalExrnDistributed = this.correlations.reduce((total, corr) => {
+        return total +
+            corr[1].reduce((totalCorr, distr) => {
+                return totalCorr + distr.value;
+        }, 0);
+    }, 0);
+
+    // Calculate other EXRN received (airdrop, reward, doubles)
+    this.totalRewards = this.distributions.reduce((total, reward) => {
+        return total + reward.value;
+    }, 0);
+  }
+
 
   checkWallet() {
     this.resetState();
