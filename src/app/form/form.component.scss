@@ -1,3 +1,16 @@
 .col {
     background-color: #ccc;
 }
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948;
+}
+
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442;
+}
+
+input[type=text] {
+    width: 100%;
+    text-align: center;
+}

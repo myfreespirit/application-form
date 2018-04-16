@@ -14,15 +14,20 @@ import { BigNumber } from 'bignumber.js';
 
 export class FormComponent implements OnInit {
 
+  disableCheckWallet: boolean;
+  displayContributions: boolean;
+  displayRewards: boolean;
+  firstSignupHappened: boolean;
+
   userAddress = '';
   userTotalTokens: number;
-  contributions = [];
   totalEthContributed: BigNumber;
-  distributions = [];
   totalExrnDistributed: number;
-  displayContributions: boolean;
-  correlations = [];
   totalRewards: number;
+
+  contributions = [];
+  distributions = [];
+  correlations = [];
 
 
   constructor(private _dataService: DataService) { }
@@ -30,20 +35,26 @@ export class FormComponent implements OnInit {
 
   ngOnInit() {
     this.resetState();
+
+    this.disableCheckWallet = false;
+    this.firstSignupHappened = false;
   }
 
 
   private resetState() {
-    this.userAddress = this.userAddress.toLowerCase();
+    this.disableCheckWallet = true;
+    this.displayContributions = false;
+    this.displayRewards = false;
 
+    this.userAddress = this.userAddress.toLowerCase();
     this.userTotalTokens = 0;
     this.totalEthContributed = new BigNumber(0);
-    this.contributions.length = 0;
     this.totalExrnDistributed = 0;
-    this.distributions.length = 0;
-    this.displayContributions = false;
-    this.correlations = [];
     this.totalRewards = 0;
+
+    this.contributions = [];
+    this.distributions = [];
+    this.correlations = [];
   }
 
 
@@ -75,7 +86,7 @@ export class FormComponent implements OnInit {
                 return this._dataService.tokenDistributorTopics.includes(tx.topics[1]);
             }).map(tx => {
                 const tokens = parseInt(tx.data, 16);
-                this.totalExrnDistributed = this.totalExrnDistributed + tokens;
+                this.totalExrnDistributed += tokens;
                 return {
                     date: tx.timeStamp * 1000,
                     from: '0x' + tx.topics[1].substring(26),
@@ -88,8 +99,10 @@ export class FormComponent implements OnInit {
 
 
   private findCombination(given, owed, active, candidates) {
-    console.log(given, owed, active, candidates);
-    if (Math.abs(given - owed) < 1) {
+    // TODO: determine plausible margin for rounding errors and possible bonus on large contributions
+    const margin = 1;
+
+    if (Math.abs(given - owed) < margin) {
         return active;
     }
 
@@ -119,7 +132,6 @@ export class FormComponent implements OnInit {
     while (this.contributions.length) {
         const contr = this.contributions.shift();
         contrCandidates.push(contr);
-        console.log(JSON.stringify(contrCandidates));  // TODO remove
 
         // retrieve the total owed amount of EXRN so far for current contribution candidates
         let owed = contrCandidates.reduce((total, ctr) => {
@@ -127,24 +139,18 @@ export class FormComponent implements OnInit {
             return total + ctr.value * rate;
         }, 0);
         owed += this._dataService.applicableBonus(owed);
-        console.log(owed);
 
         // Retrieve a list of possible distribution candidates for current contribution candidates
         const nextContrBlock = this.contributions.length === 0 ? Number.MAX_VALUE : this.contributions[0].block;
-        console.log(nextContrBlock);
         const distrCandidates = this.distributions.filter(distr => {
             return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;
         });
-        console.log(JSON.stringify(distrCandidates));  // TODO remove
-        console.log('\n');
 
-        // Find a correlating match from permutations of distribution candidates for current contribution candidates
+        // Find a correlating match from combinations of distribution candidates for current contribution candidates
         const combination = this.findCombination(0, owed, [], distrCandidates);
-        console.log('combo', JSON.stringify(combination));
 
         if (combination.length) {
             this.correlations.push([contrCandidates, combination]);
-            console.log(this.correlations);
             contrCandidates = [];
 
             // remove the combination from distributions
@@ -155,12 +161,11 @@ export class FormComponent implements OnInit {
                             distr.value === combo.value;
                 });
                 this.distributions.splice(index, 1);
-                console.log('index', index);
             });
         }
-        console.log('==================================================');
     }
 
+    // rest of contributions are still in the AWAITING state
     if (contrCandidates.length) {
         this.correlations.push([contrCandidates, []]);
     }
@@ -181,13 +186,19 @@ export class FormComponent implements OnInit {
 
 
   checkWallet() {
+    // TODO: determine whether first signup happened
+    // TODO: hide previous signups + contributions + rewards in expandable blocks
+    // TODO: paginate large quantities of results
+
     this.resetState();
 
     if (!this.isHexWallet()) {
+      this.disableCheckWallet = false;
       return;
     }
 
     this.displayContributions = true;
+    this.displayRewards = true;
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {
@@ -205,6 +216,8 @@ export class FormComponent implements OnInit {
             this.transformDistributions();
 
             this.correlateTransactions();
+
+            this.disableCheckWallet = false;
           },
           err => console.error(err)
         );

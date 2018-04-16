@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
 })
 
 export class AppComponent {
-  version = 'v0.1.0';
+  version = 'v0.1.1';
   title = 'Application form';
 }
