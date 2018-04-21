@@ -4,7 +4,6 @@ import { DataService } from '../data.service';
 
 import { BigNumber } from 'bignumber.js';
 
-
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -13,6 +12,11 @@ import { BigNumber } from 'bignumber.js';
 
 
 export class FormComponent implements OnInit {
+
+  showSpinnerSignups: boolean;
+  showSpinnerContributions: boolean;
+  showSpinnerOtherRewards: boolean;
+  showAPIerror: boolean;  // TODO: implement notification
 
   disableCheckWallet: boolean;
   displayContributions: boolean;
@@ -42,6 +46,11 @@ export class FormComponent implements OnInit {
 
 
   private resetState() {
+    this.showSpinnerSignups = true;
+    this.showSpinnerContributions = true;
+    this.showSpinnerOtherRewards = true;
+    this.showAPIerror = false;
+
     this.disableCheckWallet = true;
     this.displayContributions = false;
     this.displayRewards = false;
@@ -55,12 +64,6 @@ export class FormComponent implements OnInit {
     this.contributions = [];
     this.distributions = [];
     this.correlations = [];
-  }
-
-
-  // Ethereum wallet is basically a 40 characters long hexadecimal prepended with "0x"
-  private isHexWallet() {
-    return /^0x[a-fA-F0-9]{40}$/.test(this.userAddress);
   }
 
 
@@ -186,16 +189,12 @@ export class FormComponent implements OnInit {
 
 
   checkWallet() {
-    // TODO: determine whether first signup happened
-    // TODO: hide previous signups + contributions + rewards in expandable blocks
     // TODO: paginate large quantities of results
 
     this.resetState();
 
-    if (!this.isHexWallet()) {
-      this.disableCheckWallet = false;
-      return;
-    }
+    // TODO: determine whether first signup happened
+    this.showSpinnerSignups = false;
 
     this.displayContributions = true;
     this.displayRewards = true;
@@ -204,8 +203,11 @@ export class FormComponent implements OnInit {
         .subscribe(data => {
             this.userTotalTokens = data['result'];
         },
-        err => console.error(err)
-    );
+        err => {
+          console.error(err);  // TODO remove
+          this.showAPIerror = true;
+        }
+      );
 
     this._dataService.getDistributedTokens(this.userAddress)
         .subscribe(data => {
@@ -216,10 +218,17 @@ export class FormComponent implements OnInit {
             this.transformDistributions();
 
             this.correlateTransactions();
+          },
+          err => {
+            console.error(err);  // TODO remove
+            this.showAPIerror = true;
+          },
+          () => {
+            this.showSpinnerContributions = false;
+            this.showSpinnerOtherRewards = false;
 
             this.disableCheckWallet = false;
-          },
-          err => console.error(err)
+          }
         );
   }
 }

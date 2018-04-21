@@ -1,155 +1,171 @@
-<div class="main-container">
-    <div class="row">
-        <div class="col-12">
-            <form>
-                <div class="row">
-                    <div class="col-4 offset-4">
-                        <input type="text" name="wallet" placeholder="Your wallet address" [(ngModel)]="userAddress" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
-                    </div>
-                    <div class="col-4 text-left">
-                        <input type="submit" class="button" value="Check" (click)="checkWallet();" [disabled]="disableCheckWallet || inputWallet.invalid">
-                    </div>
-                    <div class="col-4 offset-4">
-                        <div [hidden]="inputWallet.valid || inputWallet.pristine" class="alert alert-danger">
-                            Please provide a valid Ethereum wallet address.
-                        </div>
-                    </div>
-                </div>
-            </form>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <form>
+        <div class="row">
+          <div class="col-4 offset-4">
+            <input type="text" name="wallet" placeholder="Your wallet address" [(ngModel)]="userAddress" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
+          </div>
+          <div class="col-4 text-left">
+            <button mat-raised-button (click)="checkWallet();" [disabled]="disableCheckWallet || inputWallet.invalid">Check</button>
+          </div>
+          <div class="col-4 offset-4">
+            <div [hidden]="inputWallet.valid || inputWallet.pristine" class="alert alert-danger">
+              Please provide a valid Ethereum wallet address.
+            </div>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 
-    <div class="row" *ngIf="displayContributions">
-        <div class="col-2 offset-4">
-            EXRN Total
-        </div>
-        <div class="col-2">
-            EXRN from team
-        </div>
+  <div class="row" *ngIf="displayContributions">
+    <div class="col-2 offset-4">
+      EXRN Total
     </div>
-    <div class="row" *ngIf="displayContributions">
-        <div class="col">
-            <form>
-                <div class="row">
-                    <div class="col-2 offset-4">
-                        <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
-                    </div>
-                    <div class="col-2">
-                        <input type="text" name="totalExrnDistributed" [(ngModel)]="totalExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
-                    </div>
-                    <div class="col-4 text-left">
-                        <input type="submit" class="button" value="Signup" disabled>
-                    </div>
-                </div>
-            </form>
-        </div>
+    <div class="col-2">
+      EXRN from team
     </div>
-
-    <hr>
-
-    <div class="row" *ngIf="displayContributions">
-        <div class="col">
-            Your contributions
-            <div class="row">
-                <div class="col-6">
-                    ETH sent
-                    <hr>
-                    <div class="row">
-                        <div class="col-5">Date</div>
-                        <div class="col-2">Block</div>
-                        <div class="col-2">Hash</div>
-                        <div class="col-3">Amount</div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    EXRN received
-                    <hr>
-                    <div class="row">
-                        <div class="col-4">Date</div>
-                        <div class="col-2">Block</div>
-                        <div class="col-2">Hash</div>
-                        <div class="col-4">Amount</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row" *ngFor="let corr of correlations">
-                <div class="col-6">
-                    <hr>
-                    <div class="row" *ngFor="let contr of corr[0]">
-                        <div class="col-5">{{ contr['date'] | date:'short' }}</div>
-                        <div class="col-2">{{ contr['block'] }}</div>
-                        <div class="col-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
-                        <div class="col-3">{{ contr['value'] }}</div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <hr>
-                    <div class="row" *ngFor="let distr of corr[1]">
-                        <div class="col-4">{{ distr['date'] | date:'short' }}</div>
-                        <div class="col-2">{{ distr['block'] }}</div>
-                        <div class="col-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
-                        <div class="col-4">{{ distr['value'] }}</div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col-7"></div>
-                        <div class="col-2">Total</div>
-                        <div class="col-3">{{ totalEthContributed }}</div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col-6"></div>
-                        <div class="col-2">Total</div>
-                        <div class="col-4">{{ totalExrnDistributed }}</div>
-                    </div>
-                </div>
-            </div>
+  </div>
+  <div class="row" *ngIf="displayContributions">
+    <div class="col">
+      <form>
+        <div class="row">
+          <div class="col-2 offset-4">
+            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
+          </div>
+          <div class="col-2">
+            <input type="text" name="totalExrnDistributed" [(ngModel)]="totalExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
+          </div>
+          <div class="col-4 text-left">
+            <button mat-raised-button disabled>Signup</button>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 
-    <hr>
+  <hr />
+  
+  <mat-accordion>
+    <mat-expansion-panel *ngIf="displayContributions || displayRewards">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerSignups ? 'block' : 'none'"></mat-spinner>
+        </mat-panel-title>
+        <mat-panel-description>
+          Your previous signups (Under construction)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="row">
+        <div class="col-4">Date</div>
+        <div class="col-4">EXRN Total</div>
+        <div class="col-4">EXRN from team</div>
+      </div>
+      <hr />
+    </mat-expansion-panel>
 
-    <div class="row" *ngIf="displayRewards">
-        <div class="col">
-            <div class="row">
-                <div class="col-12">
-                    Other EXRN received (airdrop, rewards, doubles)
-                    <hr>
-                    <div class="row">
-                        <div class="col-3">Date</div>
-                        <div class="col-3">Block</div>
-                        <div class="col-3">Hash</div>
-                        <div class="col-3">Amount</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <hr>
-                    <div class="row" *ngFor="let distr of distributions">
-                        <div class="col-3">{{ distr['date'] | date:'short' }}</div>
-                        <div class="col-3">{{ distr['block'] }}</div>
-                        <div class="col-3"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 12) }}...</a></div>
-                        <div class="col-3">{{ distr['value'] }}</div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-6"></div>
-                        <div class="col-3">Total</div>
-                        <div class="col-3">{{ totalRewards }}</div>
-                    </div>
-                </div>
-            </div>
+    <mat-expansion-panel *ngIf="displayContributions">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerContributions ? 'block' : 'none'"></mat-spinner>
+        </mat-panel-title>
+        <mat-panel-description>
+          Your contributions
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="row">
+        <div class="col-6">
+          ETH sent
+          <hr>
+          <div class="row">
+            <div class="col-5">Date</div>
+            <div class="col-2">Block</div>
+            <div class="col-2">Hash</div>
+            <div class="col-3">Amount</div>
+          </div>
         </div>
-    </div>
+        <div class="col-6">
+          EXRN received
+          <hr>
+          <div class="row">
+            <div class="col-4">Date</div>
+            <div class="col-2">Block</div>
+            <div class="col-2">Hash</div>
+            <div class="col-4">Amount</div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngFor="let corr of correlations">
+        <div class="col-6">
+          <hr>
+          <div class="row" *ngFor="let contr of corr[0]">
+            <div class="col-5">{{ contr['date'] | date:'short' }}</div>
+            <div class="col-2">{{ contr['block'] }}</div>
+            <div class="col-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
+            <div class="col-3">{{ contr['value'] }}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <hr>
+          <div class="row" *ngFor="let distr of corr[1]">
+            <div class="col-4">{{ distr['date'] | date:'short' }}</div>
+            <div class="col-2">{{ distr['block'] }}</div>
+            <div class="col-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
+            <div class="col-4">{{ distr['value'] }}</div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-6">
+          <div class="row">
+            <div class="col-7"></div>
+            <div class="col-2">Total</div>
+            <div class="col-3">{{ totalEthContributed }}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="row">
+            <div class="col-6"></div>
+            <div class="col-2">Total</div>
+            <div class="col-4">{{ totalExrnDistributed }}</div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel *ngIf="displayRewards">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerOtherRewards ? 'block' : 'none'"></mat-spinner>
+        </mat-panel-title>
+        <mat-panel-description>
+          Your other rewards
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="row">
+        <div class="col-3">Date</div>
+        <div class="col-3">Block</div>
+        <div class="col-3">Hash</div>
+        <div class="col-3">Amount</div>
+      </div>
+      <hr />
+      <div class="row" *ngFor="let distr of distributions">
+        <div class="col-3">{{ distr['date'] | date:'short' }}</div>
+        <div class="col-3">{{ distr['block'] }}</div>
+        <div class="col-3"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 12) }}...</a></div>
+        <div class="col-3">{{ distr['value'] }}</div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-6"></div>
+        <div class="col-3">Total</div>
+        <div class="col-3">{{ totalRewards }}</div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 
 </div>
