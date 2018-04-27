@@ -16,7 +16,6 @@ export class DataService {
     '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
     '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
   ];
-  glitchAddress = this.tokenDistributorTopics[1];
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
     { block: 4866696, value: this.airdropAmount / 2 },

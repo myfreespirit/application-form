@@ -146,7 +146,8 @@ export class FormComponent implements OnInit {
         // Retrieve a list of possible distribution candidates for current contribution candidates
         const nextContrBlock = this.contributions.length === 0 ? Number.MAX_VALUE : this.contributions[0].block;
         const distrCandidates = this.distributions.filter(distr => {
-            return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;
+            return distr.block < nextContrBlock;  // Relaxed filter mode to allow for recuperation of the glitch (advance payment)
+            // return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;  // Strict filter mode
         });
 
         // Find a correlating match from combinations of distribution candidates for current contribution candidates
@@ -156,7 +157,7 @@ export class FormComponent implements OnInit {
             this.correlations.push([contrCandidates, combination]);
             contrCandidates = [];
 
-            // remove the combination from distributions
+            // remove the correlated combination from distributions to ease up the complexity of next iteration
             combination.forEach(combo => {
                 const index = this.distributions.findIndex(distr => {
                     return distr.block === combo.block &&
@@ -181,7 +182,7 @@ export class FormComponent implements OnInit {
         }, 0);
     }, 0);
 
-    // Calculate other EXRN received (airdrop, reward, doubles)
+    // Calculate other EXRN received (airdrop, reward, advance payment)
     this.totalRewards = this.distributions.reduce((total, reward) => {
         return total + reward.value;
     }, 0);
