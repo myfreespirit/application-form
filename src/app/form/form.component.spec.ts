@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { MaterialModule } from '../material.module';
 
 import { DataService } from '../data.service';
 
@@ -15,7 +16,8 @@ describe('FormComponent', () => {
       declarations: [ FormComponent ],
       imports: [
         FormsModule,
-        HttpClientModule
+        HttpClientModule,
+        MaterialModule
       ],
       providers: [DataService]
     })
