@@ -98,4 +98,18 @@ export class DataService {
         this.http.get(urlWalletEXRN)
     );
   }
+
+
+  getSignups(wallet) {
+    return this.http.get('/signups/' + wallet);
+  }
+
+  setSignups(wallet, total, team) {
+    const req = {};
+    req['wallet'] = wallet;
+    req['totalEXRN'] = total;
+    req['teamEXRN'] = team;
+
+    return this.http.put('/signups/' + wallet + '/' + total + '/' + team, req);
+  }
 }

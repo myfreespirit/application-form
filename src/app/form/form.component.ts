@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 
 import { BigNumber } from 'bignumber.js';
-import { waitForMap } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-form',
@@ -190,15 +189,25 @@ export class FormComponent implements OnInit {
   }
 
 
+  signup() {
+    this.showSpinnerSignups = true;
+    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.totalExrnDistributed).subscribe(data => {
+      this.signups = data;
+      this.showSpinnerSignups = false;
+      this.firstSignupHappened = this.signups !== undefined;
+    });
+  }
+
+
   checkWallet() {
     this.resetState();
     this.displayHistory = true;
 
-    //this._dataService.getSignups(this.userAddress).subscribe(data => {
-    //  this.signups = data[0];
+    this._dataService.getSignups(this.userAddress).subscribe(data => {
+      this.signups = data[0];
       this.showSpinnerSignups = false;
       this.firstSignupHappened = this.signups !== undefined;
-    //});
+    });
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {
