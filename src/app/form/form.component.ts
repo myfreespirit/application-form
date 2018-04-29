@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 
 import { BigNumber } from 'bignumber.js';
+import { waitForMap } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-form',
@@ -19,8 +20,7 @@ export class FormComponent implements OnInit {
   showAPIerror: boolean;  // TODO: implement notification
 
   disableCheckWallet: boolean;
-  displayContributions: boolean;
-  displayRewards: boolean;
+  displayHistory: boolean;
   firstSignupHappened: boolean;
 
   userAddress = '';
@@ -29,6 +29,7 @@ export class FormComponent implements OnInit {
   totalExrnDistributed: number;
   totalRewards: number;
 
+  signups: any;
   contributions = [];
   distributions = [];
   correlations = [];
@@ -52,8 +53,7 @@ export class FormComponent implements OnInit {
     this.showAPIerror = false;
 
     this.disableCheckWallet = true;
-    this.displayContributions = false;
-    this.displayRewards = false;
+    this.displayHistory = false;
 
     this.userAddress = this.userAddress.toLowerCase();
     this.userTotalTokens = 0;
@@ -61,6 +61,7 @@ export class FormComponent implements OnInit {
     this.totalExrnDistributed = 0;
     this.totalRewards = 0;
 
+    this.signups = undefined;
     this.contributions = [];
     this.distributions = [];
     this.correlations = [];
@@ -190,15 +191,14 @@ export class FormComponent implements OnInit {
 
 
   checkWallet() {
-    // TODO: paginate large quantities of results
-
     this.resetState();
+    this.displayHistory = true;
 
-    // TODO: determine whether first signup happened
-    this.showSpinnerSignups = false;
-
-    this.displayContributions = true;
-    this.displayRewards = true;
+    //this._dataService.getSignups(this.userAddress).subscribe(data => {
+    //  this.signups = data[0];
+      this.showSpinnerSignups = false;
+      this.firstSignupHappened = this.signups !== undefined;
+    //});
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {

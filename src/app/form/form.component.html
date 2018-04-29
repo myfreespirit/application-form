@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <div class="row" *ngIf="displayContributions">
+  <div class="row" *ngIf="displayHistory">
     <div class="col-2 offset-4">
       EXRN Total
     </div>
@@ -27,18 +27,18 @@
       EXRN from team
     </div>
   </div>
-  <div class="row" *ngIf="displayContributions">
+  <div class="row" *ngIf="displayHistory">
     <div class="col">
       <form>
         <div class="row">
           <div class="col-2 offset-4">
-            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
+            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTotalTokens="ngModel">
           </div>
           <div class="col-2">
-            <input type="text" name="totalExrnDistributed" [(ngModel)]="totalExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened">
+            <input type="text" name="totalExrnDistributed" [(ngModel)]="totalExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
           </div>
           <div class="col-4 text-left">
-            <button mat-raised-button disabled>Signup</button>
+            <button mat-raised-button [disabled]="disableCheckWallet || inputTotalTokens.invalid || inputTeamTokens.invalid || totalExrnDistributed > userTotalTokens">Signup</button>
           </div>
         </div>
       </form>
@@ -48,13 +48,14 @@
   <hr />
   
   <mat-accordion>
-    <mat-expansion-panel *ngIf="displayContributions || displayRewards">
+  <!-- TODO: paginate large quantities of results -->
+    <mat-expansion-panel *ngIf="signups">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerSignups ? 'block' : 'none'"></mat-spinner>
         </mat-panel-title>
         <mat-panel-description>
-          Your previous signups (Under construction)
+          Your previous signups ({{ signups['signups'].length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="row">
@@ -62,16 +63,21 @@
         <div class="col-4">EXRN Total</div>
         <div class="col-4">EXRN from team</div>
       </div>
-      <hr />
+      <div class="row" *ngFor="let signup of signups['signups']">
+        <hr />
+        <div class="col-4">{{ signup['date'] | date:'short' }}</div>
+        <div class="col-4">{{ signup['totalEXRN'] }}</div>
+        <div class="col-4">{{ signup['teamEXRN'] }}</div>
+      </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="displayContributions">
+    <mat-expansion-panel *ngIf="displayHistory">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerContributions ? 'block' : 'none'"></mat-spinner>
         </mat-panel-title>
         <mat-panel-description>
-          Your contributions
+          Your contributions ({{ correlations.length + contributions.length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
 
@@ -136,13 +142,13 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="displayRewards">
+    <mat-expansion-panel *ngIf="displayHistory">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerOtherRewards ? 'block' : 'none'"></mat-spinner>
         </mat-panel-title>
         <mat-panel-description>
-          Your other rewards
+          Your other rewards ({{ distributions.length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
 
