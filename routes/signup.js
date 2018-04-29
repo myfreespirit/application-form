@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const Signup = require('../models/Signup.js');
+const Signup = require('../models/signup.js');
 
 /* GET ALL SIGNUPS FOR A SINGLE WALLET */
 router.get('/:wallet', function (req, res, next) {
