@@ -1,17 +1,20 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
-      <form>
+      <form #walletForm="ngForm">
         <div class="row">
           <div class="col-4 offset-4">
             <input type="text" name="wallet" placeholder="Your wallet address" [(ngModel)]="userAddress" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
           </div>
           <div class="col-4 text-left">
-            <button mat-raised-button (click)="checkWallet()" [disabled]="disableCheckWallet || inputWallet.invalid">Check</button>
+            <button mat-raised-button (click)="checkWallet(); walletForm.form.markAsPristine();" [disabled]="disableCheckWallet || inputWallet.invalid">Check</button>
           </div>
           <div class="col-4 offset-4">
-            <div [hidden]="inputWallet.valid || inputWallet.pristine" class="alert alert-danger">
+            <div *ngIf="inputWallet.invalid && inputWallet.dirty" class="alert alert-danger">
               Please provide a valid Ethereum wallet address.
+            </div>
+            <div *ngIf="displayHistory && inputWallet.dirty" class="alert alert-warning">
+              Please re-Check your Ethereum wallet address before Signup.
             </div>
           </div>
         </div>
@@ -38,7 +41,7 @@
             <input type="text" name="totalExrnDistributed" [(ngModel)]="totalExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
           </div>
           <div class="col-4 text-left">
-            <button mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputTotalTokens.invalid || inputTeamTokens.invalid || +totalExrnDistributed > +userTotalTokens">Signup</button>
+            <button mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +totalExrnDistributed > +userTotalTokens">Signup</button>
           </div>
         </div>
       </form>
