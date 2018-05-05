@@ -4,8 +4,11 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "node ./bin/www",
-    "build": "ng build --prod",
+    "start": "npm run serve-api",
+    "start-dev": "npm run build & concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
+    "build": "ng build --prod --output-path=dist",
+    "serve": "ng serve --proxy-config proxy.conf.json",
+    "serve-api": "node ./bin/www",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
