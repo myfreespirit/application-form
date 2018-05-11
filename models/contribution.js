@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const ContributionSchema = new mongoose.Schema({
   hash: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   blockNumber: {
     type: Number,
