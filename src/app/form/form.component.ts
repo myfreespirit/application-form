@@ -68,14 +68,11 @@ export class FormComponent implements OnInit {
 
 
   private transformContributions() {
-    this.contributions = this.contributions.filter(tx => {
-                return tx.isError === '0' &&
-                        tx.from === this.userAddress;
-            }).map(tx => {
+    this.contributions = this.contributions.map(tx => {
                 const eth = new BigNumber(tx.value).div(1e18).toString();
                 this.totalEthContributed = this.totalEthContributed.plus(eth);
                 return {
-                    date: tx.timeStamp * 1000,
+                    date: tx.date * 1000,
                     block: parseInt(tx.blockNumber, 10),
                     hash: tx.hash,
                     value: eth
@@ -85,16 +82,14 @@ export class FormComponent implements OnInit {
 
 
   private transformDistributions() {
-    this.distributions = this.distributions.filter(tx => {
-                return this._dataService.tokenDistributorTopics.includes(tx.topics[1]);
-            }).map(tx => {
-                const tokens = parseInt(tx.data, 16);
+    this.distributions = this.distributions.map(tx => {
+                const tokens = parseInt(tx.value, 16);
                 this.totalExrnDistributed += tokens;
                 return {
-                    date: tx.timeStamp * 1000,
-                    from: '0x' + tx.topics[1].substring(26),
-                    block: parseInt(tx.blockNumber, 16),
-                    hash: tx.transactionHash,
+                    date: tx.date * 1000,
+                    from: tx.from,
+                    block: tx.blockNumber,
+                    hash: tx.hash,
                     value: tokens
                 };
             });
@@ -219,15 +214,15 @@ export class FormComponent implements OnInit {
         }
       );
 
-    this._dataService.getDistributedTokens(this.userAddress)
-        .subscribe(data => {
-            this.contributions = data[0]['result'];
-            this.distributions = data[1]['result'];
+      this._dataService.getDistributedTokens(this.userAddress)
+        .subscribe((data: any[]) => {
+            this.contributions = data[0];
+	    this.distributions = data[1];
 
             this.transformContributions();
-            this.transformDistributions();
+	    this.transformDistributions();
 
-            this.correlateTransactions();
+	    this.correlateTransactions();
           },
           err => {
             console.error(err);  // TODO remove
@@ -239,6 +234,6 @@ export class FormComponent implements OnInit {
 
             this.disableCheckWallet = false;
           }
-        );
+  	);
   }
 }

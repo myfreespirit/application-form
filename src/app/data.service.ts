@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
 
 import { keccak256 } from 'js-sha3';
 
@@ -69,34 +71,93 @@ export class DataService {
 
 
   getDistributedTokens(wallet) {
-    // Retrieves transactions from ALL users that sent ETH to the team
-    const urlAllETH = `https://api.etherscan.io/api` +
-                    `?module=account` +
-                    `&action=txlist` +
-                    `&address=${ this.EXRNchainTokenSaleAddress }` +
-                    `&startblock=0` +
-                    `&endblock=latest` +
-                    `&apikey=YourApiKeyToken`;
-    // TODO take into account that results are returned in groups of max 10k transactions (current cap ~1k)
+    return Observable.forkJoin([
+	this.http.get('/contributions/lastblock'),
+	this.http.get('/distributions/lastblock/' + wallet)
+    ])
+    .mergeMap((blocks: any[]) => {
+	const lastKnownContributionBlock = blocks[0];
+	const lastKnownDistributionBlock = blocks[1];
 
-    // Retrieves transactions where team distributed EXRN to the user's wallet (including airdrop)
-    const urlWalletEXRN = `https://api.etherscan.io/api` +
-                    `?module=logs` +
-                    `&action=getLogs` +
-                    `&fromBlock=0` +
-                    `&toBlock=latest` +
-                    `&address=${ this.contractAddress }` +
-                    `&topic0=${ this.eventTransferTopic }` +
-                    `&topic0_2_opr=and` +
-                    `&topic2=${ '0x' + wallet.substring(2).padStart(64, '0') }` +
-                    `&apikey=YourApiKeyToken`;
-    // TODO take into account that results are returned in groups of max 1k transactions
+	// Retrieves transactions from ALL users that sent ETH to the team
+	const urlAllETH = `https://api.etherscan.io/api` +
+		    `?module=account` +
+		    `&action=txlist` +
+		    `&address=${ this.EXRNchainTokenSaleAddress }` +
+		    `&startblock=` + (lastKnownContributionBlock + 1) +
+		    `&endblock=latest` +
+		    `&apikey=YourApiKeyToken`;
+	// TODO take into account that results are returned in groups of max 10k transactions (current cap ~1k)
+	// NOTE this can handle more relaxed constraints since we're only retrieving most recent contributions
+	//      starting from the last one that was saved in the database.
 
-    // Run multiple concurrent HTTP requests. The entire operation errors if any request fails.
-    return Observable.forkJoin(
-        this.http.get(urlAllETH),
-        this.http.get(urlWalletEXRN)
-    );
+	// Retrieves transactions where team distributed EXRN to the user's wallet (including airdrop)
+	const urlWalletEXRN = `https://api.etherscan.io/api` +
+		    `?module=logs` +
+		    `&action=getLogs` +
+		    `&fromBlock=` + (lastKnownDistributionBlock + 1) +
+		    `&toBlock=latest` +
+		    `&address=${ this.contractAddress }` +
+		    `&topic0=${ this.eventTransferTopic }` +
+		    `&topic0_2_opr=and` +
+		    `&topic2=${ '0x' + wallet.substring(2).padStart(64, '0') }` +
+		    `&apikey=YourApiKeyToken`;
+	// TODO take into account that results are returned in groups of max 1k transactions
+	// NOTE this can handle more relaxed constraints as we are saving previously retrieved
+	//      distributions in the database and hence can utilize the `fromBlock` tag in API request
+
+	// Run multiple concurrent HTTP requests. The entire operation errors if any request fails.
+	return Observable.forkJoin(
+		this.http.get(urlAllETH),
+		this.http.get(urlWalletEXRN)
+	)
+	.map(results => {
+		// keep only necessary key-value pairs of recent contributions and rename them consistently
+		const recentContributions = results[0]['result'].filter(contr => {
+			return contr['isError'] === '0';
+		})
+		.map(contr => {
+			return {
+				hash: contr['hash'],
+				blockNumber: parseInt(contr['blockNumber'], 10),
+				from: contr['from'],
+				date: contr['timeStamp'],
+				value: contr['value']
+			};
+		});
+
+		// keep only necessary key-value pairs of recent distributions and rename them consistently
+		const recentDistributions = results[1]['result'].filter(distr => {
+			return this.tokenDistributorTopics.includes(distr['topics'][1]);
+		})
+		.map(distr => {
+			return {
+				hash: distr['transactionHash'],
+				blockNumber: parseInt(distr['blockNumber'], 16),
+				from: '0x' + distr['topics'][1].substring(26),
+				date: distr['timeStamp'],
+				value: distr['data']
+			};
+		});
+
+		return [recentContributions, recentDistributions];
+	})
+	.mergeMap(results => {
+		// save new contributions and distributions to the database
+		return Observable.forkJoin([
+			this.http.put('/contributions/save/' + wallet, results[0]),
+			this.http.put('/distributions/save/' + wallet, results[1])
+		])
+		.mergeMap(empty => {
+			// get all contributions and distributions from the database
+			return Observable.forkJoin([
+				this.http.get('/contributions/' + wallet),
+				this.http.get('/distributions/' + wallet)
+			]);
+
+		});
+	});
+    });
   }
 
 
@@ -110,6 +171,6 @@ export class DataService {
     req['totalEXRN'] = total;
     req['teamEXRN'] = team;
 
-    return this.http.put('/signups/' + wallet + '/' + total + '/' + team, req);
+    return this.http.put('/signups/save/' + wallet + '/' + total + '/' + team, req);
   }
 }

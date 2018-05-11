@@ -1,6 +1,6 @@
 {
   "name": "exrt-application-form",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -29,6 +29,7 @@
     "@angular/router": "^5.2.10",
     "@ng-bootstrap/ng-bootstrap": "^1.1.1",
     "bignumber.js": "^6.0.0",
+    "body-parser": "^1.18.2",
     "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
     "express": "^4.16.3",
