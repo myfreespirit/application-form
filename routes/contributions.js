@@ -19,10 +19,21 @@ router.get('/lastblock', (req, res, next) => {
 
 /* save contributions to a given wallet */
 router.put('/save/:wallet', (req, res, next) => {
-  Contribution.insertMany(req.body, (err, docs) => {
-    if (err) return next(err);
-    res.json("OK contr");  // TODO
-  });
+	if (req.body.length === 0) {
+		res.json("OK contr empty");
+		return;
+	}
+
+	let bulk = Contribution.collection.initializeOrderedBulkOp();
+
+	req.body.forEach(contr => {
+		bulk.find(contr).upsert().updateOne(contr);
+	});
+
+	bulk.execute(err => {
+		if (err) return next(err);
+		res.json("OK contr bulk");
+	});
 });
 
 
