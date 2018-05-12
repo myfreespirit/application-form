@@ -121,6 +121,7 @@ export class DataService {
 				hash: contr['hash'],
 				blockNumber: parseInt(contr['blockNumber'], 10),
 				from: contr['from'],
+				to: contr['to'],
 				date: contr['timeStamp'],
 				value: contr['value']
 			};
@@ -152,6 +153,7 @@ export class DataService {
 			// get all contributions and distributions from the database
 			return Observable.forkJoin([
 				this.http.get('/contributions/' + wallet),
+				this.http.get('/contributions/refunds/' + this.EXRNchainTokenSaleAddress + '/' + wallet),
 				this.http.get('/distributions/' + wallet)
 			]);
 

@@ -22,6 +22,7 @@
     </div>
   </div>
 
+
   <div class="row" *ngIf="displayHistory">
     <div class="col-6 col-md-4 offset-md-1 col-lg-3 offset-lg-3">
       EXRN Total
@@ -50,6 +51,7 @@
 
   <hr />
 
+
   <mat-accordion>
   <!-- TODO: paginate large quantities of results -->
     <mat-expansion-panel *ngIf="signups">
@@ -73,6 +75,7 @@
         <div class="col-6 col-md-4">{{ signup['teamEXRN'] }}</div>
       </div>
     </mat-expansion-panel>
+
 
     <mat-expansion-panel *ngIf="displayHistory">
       <mat-expansion-panel-header>
@@ -143,6 +146,7 @@
       </div>
     </mat-expansion-panel>
 
+
     <mat-expansion-panel *ngIf="displayHistory">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -172,6 +176,62 @@
         <div class="col-6 col-md-3">{{ totalRewards }}</div>
       </div>
     </mat-expansion-panel>
+
+
+    <mat-expansion-panel *ngIf="showRefunds()">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerContributions ? 'block' : 'none'"></mat-spinner>
+        </mat-panel-title>
+        <mat-panel-description>
+          Your refunds ({{ refunds.length }})
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="row">
+        <div class="col-6">
+          ETH sent
+          <hr />
+          <div class="row">
+            <div class="d-none d-md-block col-md-8 col-lg-5">Date</div>
+            <div class="d-none d-lg-block col-lg-2">Block</div>
+            <div class="d-none d-lg-block col-lg-2">Hash</div>
+            <div class="col-md-4 col-lg-3">Amount</div>
+          </div>
+        </div>
+        <div class="col-6">
+          ETH refunded
+          <hr />
+          <div class="row">
+            <div class="d-none d-md-block col-md-6 col-lg-4">Date</div>
+            <div class="d-none d-lg-block col-lg-2">Block</div>
+            <div class="d-none d-lg-block col-lg-2">Hash</div>
+            <div class="col-md-6 col-lg-4">Amount</div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngFor="let match of refunds">
+        <div class="col-6">
+          <hr />
+          <div class="row" *ngFor="let contr of match[0]">
+            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'short' }}</div>
+            <div class="d-none d-lg-block col-lg-2">{{ contr['block'] }}</div>
+            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
+            <div class="col-md-4 col-lg-3">{{ contr['value'] }}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <hr />
+          <div class="row" *ngFor="let distr of match[1]">
+            <div class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'short' }}</div>
+            <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
+            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
+            <div class="col-md-6 col-lg-4">{{ distr['value'] }}</div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
   </mat-accordion>
 
 </div>

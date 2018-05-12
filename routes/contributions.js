@@ -45,4 +45,11 @@ router.get('/:wallet', (req, res, next) => {
 });
 
 
+/* retrieve all refunds to provided wallet */
+router.get('/refunds/:from/:to', (req, res, next) => {
+  Contribution.find({ 'from': req.params['from'], 'to': req.params['to'] })
+	.then(documents => res.json(documents))
+	.catch(err => next(err));
+});
+
 module.exports = router;

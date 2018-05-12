@@ -30,6 +30,7 @@ export class FormComponent implements OnInit {
 
   signups: any;
   contributions = [];
+  refunds = [];
   distributions = [];
   correlations = [];
 
@@ -62,6 +63,7 @@ export class FormComponent implements OnInit {
 
     this.signups = undefined;
     this.contributions = [];
+    this.refunds = [];
     this.distributions = [];
     this.correlations = [];
   }
@@ -71,6 +73,20 @@ export class FormComponent implements OnInit {
     this.contributions = this.contributions.map(tx => {
                 const eth = new BigNumber(tx.value).div(1e18).toString();
                 this.totalEthContributed = this.totalEthContributed.plus(eth);
+                return {
+                    date: tx.date * 1000,
+                    block: parseInt(tx.blockNumber, 10),
+                    hash: tx.hash,
+                    value: eth
+                };
+            });
+  }
+
+
+  private transformRefunds() {
+    this.refunds = this.refunds.map(tx => {
+                const eth = new BigNumber(tx.value).div(1e18).toString();
+                this.totalEthContributed = this.totalEthContributed.minus(eth);
                 return {
                     date: tx.date * 1000,
                     block: parseInt(tx.blockNumber, 10),
@@ -124,7 +140,33 @@ export class FormComponent implements OnInit {
   }
 
 
+  // TODO needs improvement in case more than one contribution is refunded in one transaction
+  private correlateRefunds() {
+    let correlations = [];
+
+    this.refunds.forEach(refund => {
+	const contribution = this.contributions.filter(contr => {
+		return contr.value === refund.value && contr.block < refund.block;
+	}).pop();
+
+	if (contribution) {
+		correlations.push([[contribution], [refund]]);
+		const index = this.contributions.indexOf(contribution);
+		if (index !== -1) {
+			this.contributions.splice(index, 1);
+		} else {
+			console.error("ERROR: wrong index when removing refund from contributions.")
+		}
+	}
+    });
+
+    this.refunds = correlations;
+  }
+
+
   private correlateTransactions() {
+    this.correlateRefunds();
+
     let contrCandidates = [];
 
     while (this.contributions.length) {
@@ -217,9 +259,11 @@ export class FormComponent implements OnInit {
       this._dataService.getDistributedTokens(this.userAddress)
         .subscribe((data: any[]) => {
             this.contributions = data[0];
-	    this.distributions = data[1];
+	    this.refunds = data[1],
+	    this.distributions = data[2];
 
             this.transformContributions();
+	    this.transformRefunds();
 	    this.transformDistributions();
 
 	    this.correlateTransactions();
@@ -235,5 +279,10 @@ export class FormComponent implements OnInit {
             this.disableCheckWallet = false;
           }
   	);
+  }
+
+
+  public showRefunds() : boolean {
+	return this.refunds.length > 0;
   }
 }
