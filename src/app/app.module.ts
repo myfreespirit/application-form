@@ -11,12 +11,14 @@ import { DataService } from './data.service';
 
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
+import { StaffComponent } from './staff/staff.component';
 
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
     AppComponent,
-    FormComponent
+    FormComponent,
+    StaffComponent
   ],
   imports: [
     AppRoutingModule,

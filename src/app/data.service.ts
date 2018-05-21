@@ -168,6 +168,7 @@ export class DataService {
     return this.http.get('/signups/' + wallet);
   }
 
+
   setSignups(wallet, total, team) {
     const req = {};
     req['wallet'] = wallet;
@@ -175,5 +176,10 @@ export class DataService {
     req['teamEXRN'] = team;
 
     return this.http.put('/signups/save/' + wallet + '/' + total + '/' + team, req);
+  }
+
+
+  getLastSignups() {
+	return this.http.get('/signups/all');
   }
 }

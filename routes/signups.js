@@ -4,6 +4,26 @@ const mongoose = require('mongoose');
 const Signup = require('../models/signup.js');
 
 
+// retrieve most recent signup for each wallet
+router.get('/all', (req, res, next) => {
+	console.log("all");
+  Signup.find({}, { 'signups': { '$slice': -1 } })
+	.then(documents => {
+		documents = documents.map(entry => {
+			let obj = {};
+			obj.wallet = entry.wallet;
+			obj.date = entry.signups[0].date;
+			obj.total = entry.signups[0].totalEXRN;
+			obj.team = entry.signups[0].teamEXRN;
+
+			return obj;
+		});
+		res.json(documents);
+	})
+	.catch(err => next(err));
+});
+
+
 // retrieve all signups for a given wallet
 router.get('/:wallet', (req, res, next) => {
   Signup.find({ wallet: req.params['wallet'] }, (err, document) => {
