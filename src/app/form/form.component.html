@@ -122,9 +122,12 @@
         <div class="col-6">
           <hr />
           <div class="row" *ngFor="let distr of corr[1]">
-            <div class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'short' }}</div>
+            <div *ngIf="distr.date" class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'short' }}</div>
+            <div *ngIf="!distr.date" class="d-none d-md-block col-md-6 col-lg-4">AWAITING</div>
             <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
-            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
+	    <div *ngIf="!distr.hash" class="d-none d-lg-block col-lg-2">{{ distr.hash }}</div>
+            <div *ngIf="distr.hash" class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
+
             <div class="col-md-6 col-lg-4">{{ distr['value'] }}</div>
           </div>
         </div>

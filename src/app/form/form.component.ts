@@ -210,8 +210,17 @@ export class FormComponent implements OnInit {
 
     // rest of contributions are still in the AWAITING state
     if (contrCandidates.length) {
-        this.correlations.push([contrCandidates, []]);
+	contrCandidates.forEach(contr => {
+		let distr = {
+			'block': 'AWAITING',
+			'value': Math.floor(this._dataService.findDistributionRate(contr.block) * contr.value)
+		};
+
+		this.correlations.push([[contr], [distr]]);
+		this.userTotalTokens += distr.value;
+	});
     }
+
 
     // Recalculate amount of EXRN purchased based on correlated data
     this.totalExrnDistributed = this.correlations.reduce((total, corr) => {
@@ -259,7 +268,7 @@ export class FormComponent implements OnInit {
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {
-            this.userTotalTokens = data['result'];
+            this.userTotalTokens = parseInt(data['result'], 10);
 
 	      this._dataService.getDistributedTokens(this.userAddress)
 		.subscribe((data: any[]) => {
