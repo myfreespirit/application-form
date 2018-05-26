@@ -26,6 +26,7 @@ export class FormComponent implements OnInit {
   userTotalTokens: number;
   totalEthContributed: BigNumber;
   totalExrnDistributed: number;
+  availableExrnDistributed: number;
   totalRewards: number;
 
   signups: any;
@@ -59,6 +60,7 @@ export class FormComponent implements OnInit {
     this.userTotalTokens = 0;
     this.totalEthContributed = new BigNumber(0);
     this.totalExrnDistributed = 0;
+    this.availableExrnDistributed = 0;
     this.totalRewards = 0;
 
     this.signups = undefined;
@@ -219,6 +221,15 @@ export class FormComponent implements OnInit {
         }, 0);
     }, 0);
 
+    // Check whether user sold EXRN purchased from the team
+    if (this.userTotalTokens < this.totalExrnDistributed) {
+	    // TODO display notification
+	    this.availableExrnDistributed = this.userTotalTokens;
+    } else {
+	this.availableExrnDistributed = this.totalExrnDistributed;
+    }
+
+
     // Calculate other EXRN received (airdrop, reward, advance payment)
     this.totalRewards = this.distributions.reduce((total, reward) => {
         return total + reward.value;
@@ -228,7 +239,7 @@ export class FormComponent implements OnInit {
 
   signup() {
     this.showSpinnerSignups = true;
-    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.totalExrnDistributed).subscribe(data => {
+    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe(data => {
       this.signups = data;
       this.showSpinnerSignups = false;
       this.firstSignupHappened = this.signups !== undefined;
@@ -249,36 +260,36 @@ export class FormComponent implements OnInit {
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {
             this.userTotalTokens = data['result'];
+
+	      this._dataService.getDistributedTokens(this.userAddress)
+		.subscribe((data: any[]) => {
+		    this.contributions = data[0];
+		    this.refunds = data[1],
+		    this.distributions = data[2];
+
+		    this.transformContributions();
+		    this.transformRefunds();
+		    this.transformDistributions();
+
+		    this.correlateTransactions();
+		  },
+		  err => {
+		    console.error(err);  // TODO remove
+		    this.showAPIerror = true;
+		  },
+		  () => {
+		    this.showSpinnerContributions = false;
+		    this.showSpinnerOtherRewards = false;
+
+		    this.disableCheckWallet = false;
+		  }
+		);
         },
         err => {
           console.error(err);  // TODO remove
           this.showAPIerror = true;
         }
       );
-
-      this._dataService.getDistributedTokens(this.userAddress)
-        .subscribe((data: any[]) => {
-            this.contributions = data[0];
-	    this.refunds = data[1],
-	    this.distributions = data[2];
-
-            this.transformContributions();
-	    this.transformRefunds();
-	    this.transformDistributions();
-
-	    this.correlateTransactions();
-          },
-          err => {
-            console.error(err);  // TODO remove
-            this.showAPIerror = true;
-          },
-          () => {
-            this.showSpinnerContributions = false;
-            this.showSpinnerOtherRewards = false;
-
-            this.disableCheckWallet = false;
-          }
-  	);
   }
 
 
