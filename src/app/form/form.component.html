@@ -16,6 +16,9 @@
             <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
               Please CHECK your Ethereum wallet address before SIGNUP.
             </div>
+            <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
+		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed }} EXRN to this wallet for higher rewards!
+            </div>
           </div>
         </div>
       </form>

@@ -16,6 +16,7 @@ export class FormComponent implements OnInit {
   showSpinnerSignups: boolean;
   showSpinnerContributions: boolean;
   showSpinnerOtherRewards: boolean;
+  showTransferReminder: boolean;
   showAPIerror: boolean;  // TODO: implement notification
 
   disableCheckWallet: boolean;
@@ -51,6 +52,7 @@ export class FormComponent implements OnInit {
     this.showSpinnerSignups = true;
     this.showSpinnerContributions = true;
     this.showSpinnerOtherRewards = true;
+    this.showTransferReminder = false;
     this.showAPIerror = false;
 
     this.disableCheckWallet = true;
@@ -234,6 +236,7 @@ export class FormComponent implements OnInit {
     if (this.userTotalTokens < this.totalExrnDistributed) {
 	    // TODO display notification
 	    this.availableExrnDistributed = this.userTotalTokens;
+	    this.showTransferReminder = true;
     } else {
 	this.availableExrnDistributed = this.totalExrnDistributed;
     }
