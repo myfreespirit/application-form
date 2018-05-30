@@ -16,8 +16,17 @@
             <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
               Please CHECK your Ethereum wallet address before SIGNUP.
             </div>
+            <div *ngIf="showContributorEligibility && !inputWallet.dirty" class="alert alert-success">
+		    Congratulations, you're allowed to receive 10x EXRT rewards on your {{ this.availableExrnDistributed | number: fractionSize }} EXRN!
+            </div>
             <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
-		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed }} EXRN to this wallet for higher rewards!
+		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x rewards on it!
+            </div>
+            <div *ngIf="showNormalEligibility && !inputWallet.dirty" class="alert alert-success">
+		    Congratulations, you're allowed to receive regular EXRT rewards on your {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN!
+            </div>
+            <div *ngIf="showCallToAction && !inputWallet.dirty" class="alert alert-warning">
+		    You need {{ this.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
             </div>
           </div>
         </div>
@@ -73,9 +82,9 @@
       </div>
       <hr />
       <div class="row" *ngFor="let signup of signups['signups']">
-        <div class="d-none d-md-block col-md-4">{{ signup['date'] | date:'short' }}</div>
-        <div class="col-6 col-md-4">{{ signup['totalEXRN'] }}</div>
-        <div class="col-6 col-md-4">{{ signup['teamEXRN'] }}</div>
+        <div class="d-none d-md-block col-md-4">{{ signup['date'] | date:'MMM d, y, h:mm a' }}</div>
+        <div class="col-6 col-md-4">{{ signup['totalEXRN'] | number: fractionSize }}</div>
+        <div class="col-6 col-md-4">{{ signup['teamEXRN'] | number: fractionSize }}</div>
       </div>
     </mat-expansion-panel>
 
@@ -116,7 +125,7 @@
         <div class="col-6">
           <hr />
           <div class="row" *ngFor="let contr of corr[0]">
-            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'short' }}</div>
+            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'MMM d, y, h:mm a' }}</div>
             <div class="d-none d-lg-block col-lg-2">{{ contr['block'] }}</div>
             <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
             <div class="col-md-4 col-lg-3">{{ contr['value'] }}</div>
@@ -125,13 +134,13 @@
         <div class="col-6">
           <hr />
           <div class="row" *ngFor="let distr of corr[1]">
-            <div *ngIf="distr.date" class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'short' }}</div>
+            <div *ngIf="distr.date" class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
             <div *ngIf="!distr.date" class="d-none d-md-block col-md-6 col-lg-4">AWAITING</div>
             <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
 	    <div *ngIf="!distr.hash" class="d-none d-lg-block col-lg-2">{{ distr.hash }}</div>
             <div *ngIf="distr.hash" class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
 
-            <div class="col-md-6 col-lg-4">{{ distr['value'] }}</div>
+            <div class="col-md-6 col-lg-4">{{ distr['value'] | number: fractionSize }}</div>
           </div>
         </div>
       </div>
@@ -146,7 +155,7 @@
         <div class="col-6">
           <div class="row">
             <div class="col-md-6 col-lg-2 offset-lg-6">Total</div>
-            <div class="col-md-6 col-lg-4">{{ totalExrnDistributed }}</div>
+            <div class="col-md-6 col-lg-4">{{ totalExrnDistributed | number: fractionSize }}</div>
           </div>
         </div>
       </div>
@@ -171,15 +180,15 @@
       </div>
       <hr />
       <div class="row" *ngFor="let distr of distributions">
-        <div class="col-6 col-md-3">{{ distr['date'] | date:'short' }}</div>
+        <div class="col-6 col-md-3">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
         <div class="d-none d-md-block col-md-3">{{ distr['block'] }}</div>
         <div class="d-none d-md-block col-md-3"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 12) }}...</a></div>
-        <div class="col-6 col-md-3">{{ distr['value'] }}</div>
+        <div class="col-6 col-md-3">{{ distr['value'] | number: fractionSize }}</div>
       </div>
       <hr />
       <div class="row">
         <div class="col-6 col-md-3 offset-md-6">Total</div>
-        <div class="col-6 col-md-3">{{ totalRewards }}</div>
+        <div class="col-6 col-md-3">{{ totalRewards | number: fractionSize }}</div>
       </div>
     </mat-expansion-panel>
 
@@ -220,7 +229,7 @@
         <div class="col-6">
           <hr />
           <div class="row" *ngFor="let contr of match[0]">
-            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'short' }}</div>
+            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'MMM d, y, h:mm a' }}</div>
             <div class="d-none d-lg-block col-lg-2">{{ contr['block'] }}</div>
             <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}">{{ contr['hash'].substring(0, 8) }}...</a></div>
             <div class="col-md-4 col-lg-3">{{ contr['value'] }}</div>
@@ -229,7 +238,7 @@
         <div class="col-6">
           <hr />
           <div class="row" *ngFor="let distr of match[1]">
-            <div class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'short' }}</div>
+            <div class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
             <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
             <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}">{{ distr['hash'].substring(0, 8) }}...</a></div>
             <div class="col-md-6 col-lg-4">{{ distr['value'] }}</div>

@@ -17,6 +17,9 @@ export class FormComponent implements OnInit {
   showSpinnerContributions: boolean;
   showSpinnerOtherRewards: boolean;
   showTransferReminder: boolean;
+  showNormalEligibility: boolean;
+  showContributorEligibility: boolean;
+  showCallToAction: boolean;
   showAPIerror: boolean;  // TODO: implement notification
 
   disableCheckWallet: boolean;
@@ -36,6 +39,8 @@ export class FormComponent implements OnInit {
   distributions = [];
   correlations = [];
 
+  minimumExrnRequired = Math.pow(10, 7);
+
 
   constructor(private _dataService: DataService) { }
 
@@ -53,6 +58,10 @@ export class FormComponent implements OnInit {
     this.showSpinnerContributions = true;
     this.showSpinnerOtherRewards = true;
     this.showTransferReminder = false;
+    this.showNormalEligibility = false;
+    this.showContributorEligibility = false;
+    this.showCallToAction = false;
+
     this.showAPIerror = false;
 
     this.disableCheckWallet = true;
@@ -234,7 +243,6 @@ export class FormComponent implements OnInit {
 
     // Check whether user sold EXRN purchased from the team
     if (this.userTotalTokens < this.totalExrnDistributed) {
-	    // TODO display notification
 	    this.availableExrnDistributed = this.userTotalTokens;
 	    this.showTransferReminder = true;
     } else {
@@ -246,6 +254,17 @@ export class FormComponent implements OnInit {
     this.totalRewards = this.distributions.reduce((total, reward) => {
         return total + reward.value;
     }, 0);
+
+
+    // Determine which extra notifications a user need to see
+    if (this.userTotalTokens >= this.minimumExrnRequired) {
+	this.showNormalEligibility = true;
+    }
+    if (this.availableExrnDistributed) {
+	this.showContributorEligibility = true;
+    }
+    this.showCallToAction = !this.showNormalEligibility && !this.showTransferReminder;
+
   }
 
 
