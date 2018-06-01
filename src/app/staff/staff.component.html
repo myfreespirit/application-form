@@ -1,7 +1,5 @@
 <hr />
 
-<button class="btn-block" mat-raised-button (click)="getLastSignups();">VERIFY SIGNUPS</button>
-
 <div class="row" *ngFor="let signup of signups">
 	{{ signup.wallet }} - {{ signup.date }} - {{ signup.total }} - {{ signup.team }}
 </div>
