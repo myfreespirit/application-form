@@ -257,13 +257,13 @@ export class FormComponent implements OnInit {
 
 
     // Determine which extra notifications a user need to see
-    if (this.userTotalTokens >= this.minimumExrnRequired) {
+    if (this.userTotalTokens >= this.minimumExrnRequired && this.userTotalTokens > this.totalExrnDistributed) {
 	this.showNormalEligibility = true;
     }
     if (this.availableExrnDistributed) {
 	this.showContributorEligibility = true;
     }
-    this.showCallToAction = !this.showNormalEligibility && !this.showTransferReminder;
+    this.showCallToAction = this.userTotalTokens < this.minimumExrnRequired && !this.showTransferReminder;
 
   }
 
