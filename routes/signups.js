@@ -6,7 +6,6 @@ const Signup = require('../models/signup.js');
 
 // retrieve most recent signup for each wallet
 router.get('/all', (req, res, next) => {
-	console.log("all");
   Signup.find({}, { 'signups': { '$slice': -1 } })
 	.then(documents => {
 		documents = documents.map(entry => {
