@@ -17,6 +17,7 @@ export class DataService {
   ];
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
+    { block: 5721051, value: this.airdropAmount / 8 },
     { block: 5539570, value: this.airdropAmount / 4 },
     { block: 4866696, value: this.airdropAmount / 2 },
     { block: 0, value: this.airdropAmount }
