@@ -29,6 +29,8 @@ app.use('/signups', signups);
 app.use('/contributions', contributions);
 app.use('/distributions', distributions);
 
+app.use((req, res) => res.sendfile(__dirname + '/dist/index.html'));
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
