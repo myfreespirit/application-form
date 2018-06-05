@@ -1,3 +1,4 @@
+import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 
 import { DataService } from '../data.service';
@@ -42,7 +43,7 @@ export class FormComponent implements OnInit {
   minimumExrnRequired = Math.pow(10, 7);
 
 
-  constructor(private _dataService: DataService) { }
+  constructor(@Inject(DataService) private _dataService: DataService) { }
 
 
   ngOnInit() {

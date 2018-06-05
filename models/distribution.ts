@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-const Contribution = require('../models/contribution.js');
+import * as mongoose from 'mongoose';
+import { Contribution } from '../models/contribution';
+
 
 const DistributionSchema = new mongoose.Schema({
   wallet: {
@@ -13,4 +14,5 @@ const DistributionSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Distribution', DistributionSchema);
+
+export const Distribution = mongoose.model('Distribution', DistributionSchema);

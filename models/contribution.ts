@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
+
 
 const ContributionSchema = new mongoose.Schema({
   hash: {
@@ -24,4 +25,5 @@ const ContributionSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Contribution', ContributionSchema);
+
+export const Contribution = mongoose.model('Contribution', ContributionSchema);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin } from 'rxjs';
 import { map, mergeMap } from "rxjs/operators";
@@ -28,7 +28,7 @@ export class DataService {
   ];
 
 
-  constructor(private http: HttpClient) {
+  constructor(@Inject(HttpClient) private http: HttpClient) {
     // prepare the variables in correct format
     this.eventTransferTopic = '0x' + keccak256(this.eventTransferTopic);
 
@@ -185,5 +185,10 @@ export class DataService {
 
   getLastSignups() {
 	return this.http.get('/signups/all');
+  }
+
+
+  saveTokenTransfersOfSignups() {
+	return this.http.get('/signups/transfers');
   }
 }

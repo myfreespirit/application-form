@@ -1,3 +1,4 @@
+import { Inject } from '@angular/core';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 
@@ -21,7 +22,7 @@ export class StaffComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   
-  constructor(private _dataService: DataService) {
+  constructor(@Inject(DataService) private _dataService: DataService) {
   this.dataSource = new MatTableDataSource([]);
     this.getLastSignups();
   }
@@ -64,6 +65,11 @@ export class StaffComponent implements OnInit {
 	    this.dataSource.paginator = this.paginator;
 	    this.dataSource.sort = this.sort;
     })
+  }
+
+
+  checkSignups() {
+
   }
 }
 
