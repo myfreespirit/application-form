@@ -1,6 +1,7 @@
-import app from "./app";
-const port = process.env.PORT || 8080;
+import app from './app';
 import { DB } from './mongodb/DB';
+
+const port = process.env.PORT || 8080;
 
 
 new DB().connect().then(db => {

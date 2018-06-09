@@ -20,23 +20,6 @@ const SignupEntry = new mongoose.Schema({
   }
 });
 
-const TokenTransfer = new mongoose.Schema({
-  blockNumber: {
-    type: Number
-  },
-  timeStamp: {
-    type: Date
-  },
-  from: {
-    type: String
-  },
-  to: {
-    type: String
-  },
-  value: {
-    type: Number
-  }
-});
 
 const SignupSchema = new mongoose.Schema({
   wallet: {
@@ -48,9 +31,6 @@ const SignupSchema = new mongoose.Schema({
   },
   signups: {
     type: [ SignupEntry ]
-  },
-  moves: {
-    type: [ TokenTransfer ]
   }
 });
 

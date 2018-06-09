@@ -23,7 +23,7 @@ export class StaffComponent implements OnInit {
 
   
   constructor(@Inject(DataService) private _dataService: DataService) {
-  this.dataSource = new MatTableDataSource([]);
+    this.dataSource = new MatTableDataSource([]);
     this.getLastSignups();
   }
 
@@ -64,12 +64,97 @@ export class StaffComponent implements OnInit {
 	    this.dataSource = new MatTableDataSource(data);
 	    this.dataSource.paginator = this.paginator;
 	    this.dataSource.sort = this.sort;
-    })
+    });
+  }
+
+
+  updateTokenTransfers() {
+	this._dataService.getLastSavedTransferBlock()
+		.subscribe(lastBlock => {
+			console.log("last block", lastBlock);
+			this._dataService.getNewTransfers(lastBlock + 1)
+				.subscribe(newTransfers => {
+					console.log("new transfers length", newTransfers['result'].length);
+					this._dataService.saveNewTransfers(newTransfers)
+						.subscribe(response => {
+							if (newTransfers['result'].length === this._dataService.getMaxTokenTransfersApiLimit()) {
+								this.updateTokenTransfers();
+							}
+						});
+				});
+		});
   }
 
 
   checkSignups() {
+	this.updateTokenTransfers();
+		/*
+			results.forEach(result => {
+				console.log("staff comp", JSON.stringify(result));
+				let wallet = result.wallet;
+				let total = result.signups[0].totalEXRN;
+				let team = result.signups[0].teamEXRN;
+				this._dataService.retrieveNewTransfers(wallet, result.blockNumber)
+					.subscribe(newTransfers => {
+						console.log("new transfers", JSON.stringify(newTransfers));
+						this._dataService.updateTransfers(wallet, newTransfers)
+							.subscribe(info => {
+								console.log("Saved transfers");
+								this._dataService.retrieveLatestTransfers(wallet)
+									.subscribe(allTransfers => {
+										//console.log("all transfers", JSON.stringify(allTransfers[0].moves));
+										this.validateSignup(5721283, 9999999, wallet, total, team, allTransfers[0].moves);
+									});
+							});
+					});
+			});
+		});
+		*/
+  }
 
+
+  private validateSignup(formClosureBlock, snapshotBlock, wallet, total, team, transfers) {
+  	let tokenBalanceAtClosedForm = transfers.reduce((balance, tx) => {
+						if (tx.to === wallet && tx.blockNumber <= formClosureBlock) {
+							// sum up all IN transactions before form closure
+							//console.log("+", balance, tx.value);
+							return balance + tx.value;
+						} else if (this._dataService.tokenDistributorAddresses.includes(tx.from) && tx.blockNumber <= snapshotBlock) {
+							// accept all "late" IN transactions from the distributor wallets
+							//console.log("+++", balance, tx.value);
+							return balance + tx.value;
+						} else if (tx.from === wallet && tx.blockNumber <= formClosureBlock) {
+							// subtract all OUT transactionsi before form closure
+							//console.log("-", balance, tx.value);
+							return balance - tx.value;
+						}
+
+						// do not count other late IN or OUT transactions yet
+						return balance;
+					}, 0);
+	
+
+	let minimalHoldAmount = tokenBalanceAtClosedForm;
+	let actualBalance = tokenBalanceAtClosedForm;
+
+	// correlation between other IN and late OUT transactions to prevent false positives
+	transfers.forEach(tx => {
+		if (tx.to === wallet && tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock && !this._dataService.tokenDistributorAddresses.includes(tx.from)) {
+			// late IN transactions (not from the team) provide buffer
+			actualBalance += tx.value;
+		} else if (tx.from === wallet && tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock) {
+			// late OUT transactions remove buffer
+			actualBalance -= tx.value;
+			if (minimalHoldAmount > actualBalance) {
+				minimalHoldAmount = actualBalance;
+			}
+		}
+	});
+
+	console.log("Signup details:", wallet, "total(", total, ")", "team(", team, ")");
+	console.log("total balance at closure", tokenBalanceAtClosedForm);
+	console.log("minimal balance held from closure till snapshot", minimalHoldAmount);
+	console.log("----------------------------------");
   }
 }
 

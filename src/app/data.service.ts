@@ -11,10 +11,11 @@ export class DataService {
   contractAddress = '0xe469c4473af82217b30cf17b10bcdb6c8c796e75';
   EXRNchainTokenSaleAddress = '0x9df04392eef34f213ce55226f40979c906cc04eb';
   eventTransferTopic = 'Transfer(address,address,uint256)';
-  tokenDistributorTopics: string[] = [
+  tokenDistributorAddresses: string[] = [
     '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
     '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
   ];
+  tokenDistributorTopics: string[];
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
     { block: 5721051, value: this.airdropAmount / 8 },
@@ -27,12 +28,15 @@ export class DataService {
     { minEXRN: 0, bonus: 0}
   ];
 
+  // API limits
+  maxTokenTransfersApiLimit = 10000;
+
 
   constructor(@Inject(HttpClient) private http: HttpClient) {
     // prepare the variables in correct format
     this.eventTransferTopic = '0x' + keccak256(this.eventTransferTopic);
 
-    this.tokenDistributorTopics = this.tokenDistributorTopics.map(x => {
+    this.tokenDistributorTopics = this.tokenDistributorAddresses.map(x => {
         return '0x' + x.substring(2).padStart(64, '0');
     });
   }
@@ -188,7 +192,38 @@ export class DataService {
   }
 
 
-  saveTokenTransfersOfSignups() {
-	return this.http.get('/signups/transfers');
+  retrieveLatestTransfers(wallet) {
+	return this.http.get('/signups/transfers/' + wallet);
+  }
+
+
+  ///////////////////////////////////////////////////
+  getLastSavedTransferBlock() {
+	return this.http.get<number>('/transfers/lastBlock');
+  }
+
+
+  getNewTransfers(startBlock) {
+	// Retrieves EXRN token transactions
+	const urlExrnTransfers = `https://api.etherscan.io/api` +
+		    `?module=account` +
+		    `&action=tokentx` +
+		    `&contractaddress=${ this.contractAddress }` +
+		    `&startBlock=${ startBlock }` +
+		    `&endBlock=latest` +
+		    `&sort=asc` +
+		    `&apikey=YourApiKeyToken`;
+
+	return this.http.get(urlExrnTransfers);
+  }
+
+
+  saveNewTransfers(newTransfers) {
+	return this.http.put('/transfers/save/', newTransfers);
+  }
+
+
+  getMaxTokenTransfersApiLimit() {
+	return this.maxTokenTransfersApiLimit;
   }
 }

@@ -8,9 +8,10 @@ import * as mongoose from 'mongoose';
 import * as path from 'path';
 import cron from './cronJobs/Controller';
 
-import contributions from '../../routes/contributions/Controller';
-import distributions from '../..//routes/distributions/Controller';
-import signups from '../../routes/signups/Controller';
+import contributions from './routes/contributions/Controller';
+import distributions from './routes/distributions/Controller';
+import signups from './routes/signups/Controller';
+import transfers from './routes/transfers/Controller';
 
 
 class App {
@@ -57,6 +58,7 @@ class App {
 		this.app.use('/signups', signups.routes());
 		this.app.use('/contributions', contributions.routes());
 		this.app.use('/distributions', distributions.routes());
+		this.app.use('/transfers', transfers.routes());
 
 		this.app.use((req, res) => res.sendFile(__dirname + '../../dist/index.html'));
 	}

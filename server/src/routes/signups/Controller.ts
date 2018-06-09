@@ -31,25 +31,6 @@ class Controller {
 	});
 
 
-	// retrieve block / time of most recent transfer for each wallet
-	this.router.get('/transfers', (req, res, next) => {
-	  Signup.find({}, { 'wallet': 1, 'moves': { '$slice': -1 } })
-		.then(documents => {
-			documents = documents.map(entry => {
-				let obj = {
-					wallet: entry.wallet,
-					blockNumber: entry.moves[0].blockNumber,
-					timeStamp: entry.moves[0].timeStamp
-				};
-
-				return obj;
-			});
-			res.json(documents);
-		})
-		.catch(err => next(err));
-	});
-
-
 	// retrieve all signups for a given wallet
 	this.router.get('/:wallet', (req, res, next) => {
 	  Signup.find({ wallet: req.params['wallet'] }, (err, document) => {
@@ -71,6 +52,63 @@ class Controller {
 	    res.json(document);
 	  });
 	});
+
+
+	// save transfers of a given wallet
+	this.router.put('/transfers/save/:wallet', (req, res, next) => {
+		if (req.body['result'] == null) {
+			res.json("BAD api call");
+			// TODO handle
+			return;
+		}
+
+		if (req.body['result'].length === 0) {
+			res.json("OK transfers empty");
+			return;
+		}
+		
+		let bulk = Signup.collection.initializeOrderedBulkOp();
+
+		req.body['result'].forEach(transfer => {
+			let obj = {
+				blockNumber: transfer.blockNumber,
+				timeStamp: transfer.timeStamp,
+				from: transfer.from,
+				to: transfer.to,
+				value: transfer.value
+			};
+
+			bulk.find({ wallet: req.params['wallet'] })
+			    .update({ $push: { moves: obj } });
+		});
+
+		bulk.execute(err => {
+			if (err) return next(err);
+			res.json("OK transfer bulk");
+		});
+	});
+
+
+	// retrieve all transfers of given wallet
+	this.router.get('/transfers/:wallet', (req, res, next) => {
+	  Signup.find({ 'wallet': req.params['wallet'] }, { 'wallet': 1, 'moves': 1 })
+		.then(documents => {
+			console.log("routes", JSON.stringify("transfers after update", documents));
+			/*
+			documents = documents.map(entry => {
+				let obj = {
+					wallet: entry.wallet,
+					blockNumber: entry.moves[0] ? entry.moves[0].blockNumber + 1 : 0,
+					moves: entry.moves
+				};
+				return obj;
+			});
+			*/
+			res.json(documents);
+		})
+		.catch(err => next(err));
+	});
+
 
 
 	return this.router;

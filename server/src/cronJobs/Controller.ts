@@ -1,14 +1,15 @@
-import taskShedular from './TaskScheduler'
-import { DataService } from  '../../../src/app/data.service'
+import taskSheduler from './TaskScheduler';
+import { DataService } from  '../../../src/app/data.service';
+
 
 class Controller {
   public init() {
-    taskShedular.everyMinute(function() {
-    //DataService.saveTokenTransfersOfSignups().then((data) => {
+    taskSheduler.everyMinute(function() {
+    //this._dataService.saveTokenTransfersOfSignups().then(data => {
         console.log("retrieved from the database");
 	//});
     })
   }
 }
 
-export default new Controller()
+export default new Controller();

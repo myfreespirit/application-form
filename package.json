@@ -5,10 +5,11 @@
   "scripts": {
     "ng": "ng",
     "start": "npm run serve-api",
-    "start-dev": "npm run build & concurrently --kill-others \"npm run serve-api\" \"npm run serve\"",
+    "start-dev": "npm run build & concurrently --kill-others \"npm run serve-dev\" \"npm run serve\"",
     "build": "tsc",
     "serve": "ng serve --proxy-config proxy.conf.json",
     "serve-api": "ts-node ./server/src/index.ts",
+    "serve-dev": "nodemon",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
