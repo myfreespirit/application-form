@@ -68,48 +68,9 @@ export class StaffComponent implements OnInit {
   }
 
 
-  updateTokenTransfers() {
-	this._dataService.getLastSavedTransferBlock()
-		.subscribe(lastBlock => {
-			console.log("last block", lastBlock);
-			this._dataService.getNewTransfers(lastBlock + 1)
-				.subscribe(newTransfers => {
-					console.log("new transfers length", newTransfers['result'].length);
-					this._dataService.saveNewTransfers(newTransfers)
-						.subscribe(response => {
-							if (newTransfers['result'].length === this._dataService.getMaxTokenTransfersApiLimit()) {
-								this.updateTokenTransfers();
-							}
-						});
-				});
-		});
-  }
-
-
   checkSignups() {
-	this.updateTokenTransfers();
-		/*
-			results.forEach(result => {
-				console.log("staff comp", JSON.stringify(result));
-				let wallet = result.wallet;
-				let total = result.signups[0].totalEXRN;
-				let team = result.signups[0].teamEXRN;
-				this._dataService.retrieveNewTransfers(wallet, result.blockNumber)
-					.subscribe(newTransfers => {
-						console.log("new transfers", JSON.stringify(newTransfers));
-						this._dataService.updateTransfers(wallet, newTransfers)
-							.subscribe(info => {
-								console.log("Saved transfers");
-								this._dataService.retrieveLatestTransfers(wallet)
-									.subscribe(allTransfers => {
-										//console.log("all transfers", JSON.stringify(allTransfers[0].moves));
-										this.validateSignup(5721283, 9999999, wallet, total, team, allTransfers[0].moves);
-									});
-							});
-					});
-			});
-		});
-		*/
+  	// per signup entry, validate it
+	// this.validateSignup(5721283, 9999999, wallet, total, team, allTransfers[0].moves);
   }
 
 

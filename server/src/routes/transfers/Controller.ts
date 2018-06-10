@@ -23,10 +23,9 @@ class Controller {
 
 
 	// save new token transfers
-	this.router.put('/save/', (req, res, next) => {
-		if (req.body['result'] == null) {
+	this.router.put('/save', (req, res, next) => {
+		if (req.body['result'] === null) {
 			res.json("BAD api call");
-			// TODO handle
 			return;
 		}
 
@@ -39,8 +38,8 @@ class Controller {
 
 		req.body['result'].forEach(transfer => {
 			let obj = {
-				blockNumber: transfer.blockNumber,
-				timeStamp: transfer.timeStamp,
+				blockNumber: Number(transfer.blockNumber),
+				timeStamp: Number(transfer.timeStamp),
 				from: transfer.from,
 				to: transfer.to,
 				value: transfer.value
@@ -53,6 +52,14 @@ class Controller {
 			if (err) return next(err);
 			res.json("OK transfer bulk");
 		});
+	});
+
+
+	// delete all token transfers linked to provided block number
+	this.router.put('/deleteBlock', (req, res, next) => {
+		Transfer.deleteMany({ 'blockNumber': req.body['blockNumber'] })
+			.then(result => res.json(result))
+			.catch(err => next(err));
 	});
 
 

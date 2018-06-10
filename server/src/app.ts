@@ -26,7 +26,7 @@ class App {
 	public app: express.Application;
 
 	private config() {
-		this.app.use(function (req, res, next) {
+		this.app.use((req, res, next) => {
 			// Website you wish to allow to connect
 			// res.setHeader('Access-Control-Allow-Origin', env.app_host);
 

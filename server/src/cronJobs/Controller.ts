@@ -1,15 +1,16 @@
 import taskSheduler from './TaskScheduler';
-import { DataService } from  '../../../src/app/data.service';
+import etherscanService from '../services/etherscan';
 
 
 class Controller {
   public init() {
-    taskSheduler.everyMinute(function() {
-    //this._dataService.saveTokenTransfersOfSignups().then(data => {
-        console.log("retrieved from the database");
-	//});
+    taskSheduler.everyFiveMinutes(function() {
+    	etherscanService.updateTokenTransfers().then(data => {
+        	console.log("cron job mark");
+    	});
     })
   }
 }
+
 
 export default new Controller();

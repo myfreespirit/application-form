@@ -192,38 +192,9 @@ export class DataService {
   }
 
 
+  /*
   retrieveLatestTransfers(wallet) {
 	return this.http.get('/signups/transfers/' + wallet);
   }
-
-
-  ///////////////////////////////////////////////////
-  getLastSavedTransferBlock() {
-	return this.http.get<number>('/transfers/lastBlock');
-  }
-
-
-  getNewTransfers(startBlock) {
-	// Retrieves EXRN token transactions
-	const urlExrnTransfers = `https://api.etherscan.io/api` +
-		    `?module=account` +
-		    `&action=tokentx` +
-		    `&contractaddress=${ this.contractAddress }` +
-		    `&startBlock=${ startBlock }` +
-		    `&endBlock=latest` +
-		    `&sort=asc` +
-		    `&apikey=YourApiKeyToken`;
-
-	return this.http.get(urlExrnTransfers);
-  }
-
-
-  saveNewTransfers(newTransfers) {
-	return this.http.put('/transfers/save/', newTransfers);
-  }
-
-
-  getMaxTokenTransfersApiLimit() {
-	return this.maxTokenTransfersApiLimit;
-  }
+  */
 }
