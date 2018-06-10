@@ -25,7 +25,7 @@ const EtherSchema = new mongoose.Schema({
     lowercase: true
   },
   value: {
-    type: Number,
+    type: String,
     required: true
   }
 });
