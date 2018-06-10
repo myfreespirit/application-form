@@ -128,7 +128,7 @@ export class DataService {
 						from: contr['from'],
 						to: contr['to'],
 						date: contr['timeStamp'],
-						value: contr['value']
+						value: Number(contr['value'])
 					};
 				});
 

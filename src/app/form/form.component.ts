@@ -128,9 +128,9 @@ export class FormComponent implements OnInit {
 
   private findCombination(given, owed, active, candidates) {
     // TODO: determine plausible margin for rounding errors and possible bonus on large contributions
-    const margin = 1;
+    const margin = 0.05;
 
-    if (Math.abs(given - owed) < margin) {
+    if (Math.abs(given - owed) / owed <= margin) {
         return active;
     }
 
