@@ -6,7 +6,7 @@ const TransferSchema = new mongoose.Schema({
     type: Number
   },
   timeStamp: {
-    type: Date
+    type: Number
   },
   from: {
     type: String

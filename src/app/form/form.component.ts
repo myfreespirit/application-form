@@ -88,8 +88,8 @@ export class FormComponent implements OnInit {
                 const eth = new BigNumber(tx.value).div(1e18).toString();
                 this.totalEthContributed = this.totalEthContributed.plus(eth);
                 return {
-                    date: tx.date * 1000,
-                    block: parseInt(tx.blockNumber, 10),
+                    date: tx.timeStamp * 1000,
+                    block: tx.blockNumber,
                     hash: tx.hash,
                     value: eth
                 };
@@ -102,8 +102,8 @@ export class FormComponent implements OnInit {
                 const eth = new BigNumber(tx.value).div(1e18).toString();
                 this.totalEthContributed = this.totalEthContributed.minus(eth);
                 return {
-                    date: tx.date * 1000,
-                    block: parseInt(tx.blockNumber, 10),
+                    date: tx.timeStamp * 1000,
+                    block: tx.blockNumber,
                     hash: tx.hash,
                     value: eth
                 };
@@ -113,10 +113,10 @@ export class FormComponent implements OnInit {
 
   private transformDistributions() {
     this.distributions = this.distributions.map(tx => {
-                const tokens = parseInt(tx.value, 16);
+                const tokens = tx.value;
                 this.totalExrnDistributed += tokens;
                 return {
-                    date: tx.date * 1000,
+                    date: tx.timeStamp * 1000,
                     from: tx.from,
                     block: tx.blockNumber,
                     hash: tx.hash,
@@ -293,7 +293,7 @@ export class FormComponent implements OnInit {
         .subscribe(data => {
             this.userTotalTokens = parseInt(data['result'], 10);
 
-	      this._dataService.getDistributedTokens(this.userAddress)
+	      this._dataService.getTransactions(this.userAddress)
 		.subscribe((data: any[]) => {
 		    this.contributions = data[0];
 		    this.refunds = data[1],
@@ -325,7 +325,7 @@ export class FormComponent implements OnInit {
   }
 
 
-  public showRefunds() : boolean {
+  public showRefunds(): boolean {
 	return this.refunds.length > 0;
   }
 }

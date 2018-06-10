@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 
-const ContributionSchema = new mongoose.Schema({
+const EtherSchema = new mongoose.Schema({
   hash: {
     type: String,
     required: true
@@ -10,20 +10,25 @@ const ContributionSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  date: {
+    type: Date,
+    required: true
+  },
   from: {
     type: String,
     required: true,
     lowercase: true
   },
-  date: {
+  to: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true
   },
   value: {
-    type: String,
+    type: Number,
     required: true
   }
 });
 
 
-export const Contribution = mongoose.model('Contribution', ContributionSchema);
+export const Ether = mongoose.model('Ether', EtherSchema);

@@ -38,11 +38,12 @@ class Controller {
 
 		req.body['result'].forEach(transfer => {
 			let obj = {
+				hash: transfer.hash,
 				blockNumber: Number(transfer.blockNumber),
 				timeStamp: Number(transfer.timeStamp),
 				from: transfer.from,
 				to: transfer.to,
-				value: transfer.value
+				value: Number(transfer.value)
 			};
 
 			bulk.insert(obj);
@@ -63,28 +64,13 @@ class Controller {
 	});
 
 
-	/*
-	// retrieve all signups for a given wallet
-	this.router.get('/:wallet', (req, res, next) => {
-	  Signup.find({ wallet: req.params['wallet'] }, (err, document) => {
-	    if (err) return next(err);
-	    res.json(document);
-	  });
+	// retrieve all distributions made to provided wallet
+	this.router.get('/distributions/:to/:from', (req, res, next) => {
+		Transfer.find({ 'to': req.params['to'], 'from': { $in: req.params['from'].split(',') } })
+			.then(result => res.json(result))
+			.catch(err => next(err));
 	});
 
-
-
-	// retrieve all transfers of given wallet
-	this.router.get('/transfers/:wallet', (req, res, next) => {
-	  Signup.find({ 'wallet': req.params['wallet'] }, { 'wallet': 1, 'moves': 1 })
-		.then(documents => {
-			console.log("routes", JSON.stringify("transfers after update", documents));
-			res.json(documents);
-		})
-		.catch(err => next(err));
-	});
-
-	*/
 
 	return this.router;
   }

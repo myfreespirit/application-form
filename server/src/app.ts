@@ -8,9 +8,8 @@ import * as mongoose from 'mongoose';
 import * as path from 'path';
 import cron from './cronJobs/Controller';
 
-import contributions from './routes/contributions/Controller';
-import distributions from './routes/distributions/Controller';
 import signups from './routes/signups/Controller';
+import ethers from './routes/ethers/Controller';
 import transfers from './routes/transfers/Controller';
 
 
@@ -28,7 +27,7 @@ class App {
 	private config() {
 		this.app.use((req, res, next) => {
 			// Website you wish to allow to connect
-			// res.setHeader('Access-Control-Allow-Origin', env.app_host);
+			// res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
 
 			// Request methods you wish to allow
 			res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -57,10 +56,9 @@ class App {
 		this.app.use(express.static(__dirname + '/../..'));
 
 		this.app.use('/signups', signups.routes());
-		this.app.use('/contributions', contributions.routes());
-		this.app.use('/distributions', distributions.routes());
+		this.app.use('/ethers', ethers.routes());
 		this.app.use('/transfers', transfers.routes());
-		console.log("DIRNAME", __dirname);
+
 		this.app.use((req, res) => res.sendFile(__dirname + '/../../index.html'));
 	}
 }
