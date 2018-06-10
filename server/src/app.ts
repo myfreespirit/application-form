@@ -54,13 +54,14 @@ class App {
 
 	private routes() {
 		// Serve only the static files from the dist directory
-		this.app.use(express.static(path.join(__dirname, 'dist')));
+		this.app.use(express.static(__dirname + '/../..'));
+
 		this.app.use('/signups', signups.routes());
 		this.app.use('/contributions', contributions.routes());
 		this.app.use('/distributions', distributions.routes());
 		this.app.use('/transfers', transfers.routes());
-
-		this.app.use((req, res) => res.sendFile(__dirname + '../../dist/index.html'));
+		console.log("DIRNAME", __dirname);
+		this.app.use((req, res) => res.sendFile(__dirname + '/../../index.html'));
 	}
 }
 

@@ -2,7 +2,7 @@ let request = require('request');
 
 
 class Etherscan {
-	baseUrl = 'http://localhost:8080';
+	baseUrl = process.env.BASE_URL || 'http://localhost:8080';
 	apiKey = 'YourApiKeyToken';
 	maxTokenTransfersApiLimit = 10000;
 
@@ -104,6 +104,8 @@ class Etherscan {
 											this.updateTokenTransfers();
 										});
 									});
+								} else {
+									resolve(records);
 								}
 							});
 						} else {
