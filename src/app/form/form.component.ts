@@ -2,8 +2,8 @@ import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 
 import { DataService } from '../data.service';
-
 import { BigNumber } from 'bignumber.js';
+
 
 @Component({
   selector: 'app-form',
@@ -39,8 +39,6 @@ export class FormComponent implements OnInit {
   refunds = [];
   distributions = [];
   correlations = [];
-
-  minimumExrnRequired = Math.pow(10, 7);
 
 
   constructor(@Inject(DataService) private _dataService: DataService) { }
@@ -83,164 +81,18 @@ export class FormComponent implements OnInit {
   }
 
 
-  private transformContributions() {
-    this.contributions = this.contributions.map(tx => {
-                const eth = new BigNumber(tx.value).div(1e18).toString();
-                this.totalEthContributed = this.totalEthContributed.plus(eth);
-                return {
-                    date: tx.timeStamp * 1000,
-                    block: tx.blockNumber,
-                    hash: tx.hash,
-                    value: eth
-                };
-            });
-  }
-
-
-  private transformRefunds() {
-    this.refunds = this.refunds.map(tx => {
-                const eth = new BigNumber(tx.value).div(1e18).toString();
-                this.totalEthContributed = this.totalEthContributed.minus(eth);
-                return {
-                    date: tx.timeStamp * 1000,
-                    block: tx.blockNumber,
-                    hash: tx.hash,
-                    value: eth
-                };
-            });
-  }
-
-
-  private transformDistributions() {
-    this.distributions = this.distributions.map(tx => {
-                const tokens = tx.value;
-                this.totalExrnDistributed += tokens;
-                return {
-                    date: tx.timeStamp * 1000,
-                    from: tx.from,
-                    block: tx.blockNumber,
-                    hash: tx.hash,
-                    value: tokens
-                };
-            });
-  }
-
-
-  private findCombination(given, owed, active, candidates) {
-    // TODO: determine plausible margin for rounding errors and possible bonus on large contributions
-    const margin = 0.05;
-
-    if (Math.abs(given - owed) / owed <= margin) {
-        return active;
-    }
-
-    if (given > owed || candidates.length === 0) {
-        return [];
-    }
-
-    const active1 = active.slice();
-    active1.push(candidates[0]);
-    const res1 = this.findCombination(given + candidates[0].value, owed, active1, candidates.slice(1));
-    if (res1.length !== 0) {
-        return res1;
-    }
-
-    const res2 = this.findCombination(given, owed, active, candidates.slice(1));
-    if (res2.length !== 0) {
-        return res2;
-    }
-
-    return [];
-  }
-
-
-  // TODO needs improvement in case more than one contribution is refunded in one transaction
-  private correlateRefunds() {
-    let correlations = [];
-
-    this.refunds.forEach(refund => {
-	const contribution = this.contributions.filter(contr => {
-		return contr.value === refund.value && contr.block < refund.block;
-	}).pop();
-
-	if (contribution) {
-		correlations.push([[contribution], [refund]]);
-		const index = this.contributions.indexOf(contribution);
-		if (index !== -1) {
-			this.contributions.splice(index, 1);
-		} else {
-			console.error("ERROR: wrong index when removing refund from contributions.")
-		}
-	}
-    });
-
-    this.refunds = correlations;
-  }
-
-
   private correlateTransactions() {
-    this.correlateRefunds();
+  //    let correlatedTransactions = this._dataService.correlateTransactions(this.refunds, this.contributions, this.distributions, this.correlations, this.totalEthContributed, this.userTotalTokens);
+    let correlatedTransactions = this._dataService.correlateTransactions(this.refunds, this.contributions, this.distributions, this.userTotalTokens);
 
-    let contrCandidates = [];
+    this.refunds = correlatedTransactions[0];
+    this.contributions = correlatedTransactions[1];
+    this.distributions = correlatedTransactions[2];
+    this.correlations = correlatedTransactions[3];
+    this.userTotalTokens = correlatedTransactions[4];
+    this.totalEthContributed = correlatedTransactions[5];
+    this.totalExrnDistributed = correlatedTransactions[6];
 
-    while (this.contributions.length) {
-        const contr = this.contributions.shift();
-        contrCandidates.push(contr);
-
-        // retrieve the total owed amount of EXRN so far for current contribution candidates
-        let owed = contrCandidates.reduce((total, ctr) => {
-            const rate = this._dataService.findDistributionRate(ctr.block);
-            return total + ctr.value * rate;
-        }, 0);
-        owed += this._dataService.applicableBonus(owed);
-
-        // Retrieve a list of possible distribution candidates for current contribution candidates
-        const nextContrBlock = this.contributions.length === 0 ? Number.MAX_VALUE : this.contributions[0].block;
-        const distrCandidates = this.distributions.filter(distr => {
-            return distr.block < nextContrBlock;  // Relaxed filter mode to allow for recuperation of the glitch (advance payment)
-            // return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;  // Strict filter mode
-        });
-
-        // Find a correlating match from combinations of distribution candidates for current contribution candidates
-        const combination = this.findCombination(0, owed, [], distrCandidates);
-
-        if (combination.length) {
-            this.correlations.push([contrCandidates, combination]);
-            contrCandidates = [];
-
-            // remove the correlated combination from distributions to ease up the complexity of next iteration
-            combination.forEach(combo => {
-                const index = this.distributions.findIndex(distr => {
-                    return distr.block === combo.block &&
-                            distr.hash === combo.hash &&
-                            distr.value === combo.value;
-                });
-                this.distributions.splice(index, 1);
-            });
-        }
-    }
-
-    // rest of contributions are still in the AWAITING state
-    if (contrCandidates.length) {
-	contrCandidates.forEach(contr => {
-		let distr = {
-			'block': 'AWAITING',
-			'value': Math.floor(this._dataService.findDistributionRate(contr.block) * contr.value)
-		};
-
-		this.correlations.push([[contr], [distr]]);
-		this.userTotalTokens += distr.value;
-	});
-    }
-
-
-    // Recalculate amount of EXRN purchased based on correlated data
-    this.totalExrnDistributed = this.correlations.reduce((total, corr) => {
-        return total +
-            corr[1].reduce((totalCorr, distr) => {
-                return totalCorr + distr.value;
-        }, 0);
-    }, 0);
 
     // Check whether user sold EXRN purchased from the team
     if (this.userTotalTokens < this.totalExrnDistributed) {
@@ -258,14 +110,13 @@ export class FormComponent implements OnInit {
 
 
     // Determine which extra notifications a user need to see
-    if (this.userTotalTokens >= this.minimumExrnRequired && this.userTotalTokens > this.totalExrnDistributed) {
+    if (this.userTotalTokens >= this._dataService.minimumExrnRequired && this.userTotalTokens > this.totalExrnDistributed) {
 	this.showNormalEligibility = true;
     }
     if (this.availableExrnDistributed) {
 	this.showContributorEligibility = true;
     }
-    this.showCallToAction = this.userTotalTokens < this.minimumExrnRequired && !this.showTransferReminder;
-
+    this.showCallToAction = this.userTotalTokens < this._dataService.minimumExrnRequired && !this.showTransferReminder;
   }
 
 
@@ -293,15 +144,11 @@ export class FormComponent implements OnInit {
         .subscribe(data => {
             this.userTotalTokens = parseInt(data['result'], 10);
 
-	      this._dataService.getTransactions(this.userAddress)
+	      this._dataService.getTransactionsByWallet(this.userAddress)
 		.subscribe((data: any[]) => {
 		    this.contributions = data[0];
 		    this.refunds = data[1],
 		    this.distributions = data[2];
-
-		    this.transformContributions();
-		    this.transformRefunds();
-		    this.transformDistributions();
 
 		    this.correlateTransactions();
 		  },

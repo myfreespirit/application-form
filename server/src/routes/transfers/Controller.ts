@@ -64,6 +64,14 @@ class Controller {
 	});
 
 
+	// retrieve all transfers
+	this.router.get('/distributions/', (req, res, next) => {
+		Transfer.find({})
+			.then(result => res.json(result))
+			.catch(err => next(err));
+	});
+
+
 	// retrieve all distributions made to provided wallet
 	this.router.get('/distributions/:to/:from', (req, res, next) => {
 		Transfer.find({ 'to': req.params['to'], 'from': { $in: req.params['from'].split(',') } })

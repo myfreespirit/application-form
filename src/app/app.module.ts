@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PapaParseModule } from 'ngx-papaparse';
 
 import { DataService } from './data.service';
 
@@ -27,8 +28,11 @@ import { StaffComponent } from './staff/staff.component';
     FormsModule,
     HttpClientModule,
     MaterialModule,
-    NgbModule.forRoot()
+    NgbModule.forRoot(),
+    PapaParseModule
   ],
-  providers: [DataService]
+  providers: [
+    DataService
+  ]
 })
 export class AppModule { }

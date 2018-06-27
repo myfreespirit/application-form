@@ -11,14 +11,22 @@ class Controller {
   }
 
   public routes() {
+	// retrieve all transfers
+	this.router.get('/', (req, res, next) => {
+		Ether.find({})
+			.then(result => res.json(result))
+			.catch(err => next(err));
+	});
+
+
 	// retrieve block number of most recent ether tx saved in the database
 	this.router.get('/lastBlock', (req, res, next) => {
-	Ether.findOne({}, 'blockNumber', { sort: { 'blockNumber': -1 } })
-		.then(block => {
-			block = block ? block.blockNumber : 0;
-			res.json(block);
-		})
-		.catch(err => next(err));
+		Ether.findOne({}, 'blockNumber', { sort: { 'blockNumber': -1 } })
+			.then(block => {
+				block = block ? block.blockNumber : 0;
+				res.json(block);
+			})
+			.catch(err => next(err));
 	});
 
 

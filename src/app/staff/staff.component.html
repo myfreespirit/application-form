@@ -1,13 +1,9 @@
-<hr />
-
-<button class="btn-block" mat-raised-button (click)="checkSignups();" [disabled]="false">CHECK</button>
-
 <mat-form-field>
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  <input matInput (keyup)="applyFilterInternal($event.target.value)" placeholder="Filter">
 </mat-form-field>
 
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort>
+  <table mat-table #sortInternal="matSort" [dataSource]="dataSourceInternal" matSort>
 
     <!-- Wallet Column -->
     <ng-container matColumnDef="wallet">
@@ -39,10 +35,78 @@
       <td mat-cell *matCellDef="let row" [style.color]="black"> {{ row.status }} </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsInternal"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsInternal;">
     </tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[50, 5, 10, 25, 100]"></mat-paginator>
+  <mat-paginator #paginatorInternal [pageSizeOptions]="[50, 5, 10, 25, 100]"></mat-paginator>
 </div>
+
+<hr />
+
+<input type="file" (change)="parse($event.target.files)">
+
+<mat-form-field>
+  <input matInput (keyup)="applyFilterExternal($event.target.value)" placeholder="Filter">
+</mat-form-field>
+
+<div class="mat-elevation-z8">
+  <table mat-table #sortExternal="matSort" [dataSource]="dataSourceExternal" matSort>
+
+    <!-- Wallet Column -->
+    <ng-container matColumnDef="walletExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ETH Wallet Address </th>
+      <td mat-cell *matCellDef="let row"> {{ row.walletExt }} </td>
+    </ng-container>
+
+    <!-- Total EXRN Column -->
+    <ng-container matColumnDef="totalExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Total EXRN balance </th>
+      <td mat-cell *matCellDef="let row"> {{ row.totalExt }} </td>
+    </ng-container>
+
+    <!-- Bought? -->
+    <ng-container matColumnDef="boughtExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Bought? </th>
+      <td mat-cell *matCellDef="let row"> {{ row.boughtExt }} </td>
+    </ng-container>
+
+    <!-- Team EXRN Column -->
+    <ng-container matColumnDef="teamExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount bought </th>
+      <td mat-cell *matCellDef="let row"> {{ row.teamExt }} </td>
+    </ng-container>
+
+    <!-- Minimal EXRN held Column -->
+    <ng-container matColumnDef="minimalExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Minimal EXRN held </th>
+      <td mat-cell *matCellDef="let row"> {{ row.minimalExt }} </td>
+    </ng-container>
+
+    <!-- Actual total EXRN Column -->
+    <ng-container matColumnDef="actualTotalExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual EXRN balance </th>
+      <td mat-cell *matCellDef="let row"> {{ row.actualTotalExt }} </td>
+    </ng-container>
+
+    <!-- Actual team EXRN Column -->
+    <ng-container matColumnDef="actualTeamExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual bought EXRN </th>
+      <td mat-cell *matCellDef="let row"> {{ row.actualTeamExt }} </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="statusExt">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+      <td mat-cell *matCellDef="let row" [style.color]="black"> {{ row.statusExt }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsExternal"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsExternal;">
+    </tr>
+  </table>
+
+  <mat-paginator #paginatorExternal [pageSizeOptions]="[50, 5, 10, 25, 100]"></mat-paginator>
+</div>
+
