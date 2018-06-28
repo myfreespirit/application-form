@@ -51,55 +51,57 @@
   <input matInput (keyup)="applyFilterExternal($event.target.value)" placeholder="Filter">
 </mat-form-field>
 
+<button class="btn-block" mat-raised-button (click)="export()" [disabled]="false">EXPORT</button>
+
 <div class="mat-elevation-z8">
   <table mat-table #sortExternal="matSort" [dataSource]="dataSourceExternal" matSort>
 
     <!-- Wallet Column -->
-    <ng-container matColumnDef="walletExt">
+    <ng-container matColumnDef="ETH Wallet Address">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> ETH Wallet Address </th>
-      <td mat-cell *matCellDef="let row"> {{ row.walletExt }} </td>
+      <td mat-cell *matCellDef="let row"> {{ row['ETH Wallet Address'] }} </td>
     </ng-container>
 
     <!-- Total EXRN Column -->
-    <ng-container matColumnDef="totalExt">
+    <ng-container matColumnDef="Total EXRN balance">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Total EXRN balance </th>
-      <td mat-cell *matCellDef="let row"> {{ row.totalExt }} </td>
+      <td mat-cell *matCellDef="let row"> {{ row['Total EXRN balance'] }} </td>
     </ng-container>
 
     <!-- Bought? -->
-    <ng-container matColumnDef="boughtExt">
+    <ng-container matColumnDef="Bought?">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Bought? </th>
-      <td mat-cell *matCellDef="let row"> {{ row.boughtExt }} </td>
+      <td mat-cell *matCellDef="let row"> {{ row['Bought?'] }} </td>
     </ng-container>
 
     <!-- Team EXRN Column -->
-    <ng-container matColumnDef="teamExt">
+    <ng-container matColumnDef="Amount bought">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Amount bought </th>
-      <td mat-cell *matCellDef="let row"> {{ row.teamExt }} </td>
+      <td mat-cell *matCellDef="let row"> {{ row['Amount bought'] }} </td>
     </ng-container>
 
     <!-- Minimal EXRN held Column -->
-    <ng-container matColumnDef="minimalExt">
+    <ng-container matColumnDef="Minimal EXRN held">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Minimal EXRN held </th>
-      <td mat-cell *matCellDef="let row"> {{ row.minimalExt }} </td>
+      <td mat-cell *matCellDef="let row"> {{ row['Minimal EXRN held'] }} </td>
     </ng-container>
 
     <!-- Actual total EXRN Column -->
-    <ng-container matColumnDef="actualTotalExt">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual EXRN balance </th>
-      <td mat-cell *matCellDef="let row"> {{ row.actualTotalExt }} </td>
+    <ng-container matColumnDef="Current EXRN balance">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Current EXRN balance </th>
+      <td mat-cell *matCellDef="let row"> {{ row['Current EXRN balance'] }} </td>
     </ng-container>
 
     <!-- Actual team EXRN Column -->
-    <ng-container matColumnDef="actualTeamExt">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual bought EXRN </th>
-      <td mat-cell *matCellDef="let row"> {{ row.actualTeamExt }} </td>
+    <ng-container matColumnDef="Actual EXRN bought">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Actual EXRN bought </th>
+      <td mat-cell *matCellDef="let row"> {{ row['Actual EXRN bought'] }} </td>
     </ng-container>
 
     <!-- Status Column -->
-    <ng-container matColumnDef="statusExt">
+    <ng-container matColumnDef="Status">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-      <td mat-cell *matCellDef="let row" [style.color]="black"> {{ row.statusExt }} </td>
+      <td mat-cell *matCellDef="let row" [style.color]="black"> {{ row['Status'] }} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumnsExternal"></tr>

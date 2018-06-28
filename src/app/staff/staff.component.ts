@@ -20,7 +20,7 @@ export class StaffComponent implements OnInit, AfterViewInit {
   dataExternal: SignupsDataExternal[] = [];
 
   displayedColumnsInternal = ['wallet', 'date', 'total', 'team', 'status'];
-  displayedColumnsExternal = ['walletExt', 'totalExt', 'boughtExt', 'teamExt', 'minimalExt', 'actualTotalExt', 'actualTeamExt', 'statusExt'];
+  displayedColumnsExternal = ['ETH Wallet Address', 'Total EXRN balance', 'Bought?', 'Amount bought', 'Minimal EXRN held', 'Current EXRN balance', 'Actual EXRN bought', 'Status'];
 
   dataSourceInternal: MatTableDataSource<SignupsDataInternal>;
   dataSourceExternal: MatTableDataSource<SignupsDataExternal>;
@@ -213,14 +213,14 @@ export class StaffComponent implements OnInit, AfterViewInit {
 				// INVALID WALLET ADDRESS
 					//skippedRecords.push(row);
 					this.dataExternal.push({
-						walletExt: row['ETH Wallet Address'],
-						totalExt: row['Total EXRN balance'],
-						boughtExt: row['Bought?'],
-						teamExt: row['Amount bought'],
-						minimalExt: 0,
-						actualTotalExt: 0,
-						actualTeamExt: 0,
-						statusExt: 'SKIPPED'
+						'ETH Wallet Address': row['ETH Wallet Address'],
+						'Total EXRN balance': row['Total EXRN balance'],
+						'Bought?': row['Bought?'],
+						'Amount bought': row['Amount bought'],
+						'Minimal EXRN held': 0,
+						'Current EXRN balance': 0,
+						'Actual EXRN bought': 0,
+						'Status': 'SKIPPED'
 					});
 				} else {
 				// VALID WALLET ADDRESS
@@ -239,14 +239,14 @@ export class StaffComponent implements OnInit, AfterViewInit {
 						if (team > 0) {
 							//DQcheatRegularRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'CHEATER'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'CHEATER'
 							});
 							return;
 						}
@@ -261,39 +261,39 @@ export class StaffComponent implements OnInit, AfterViewInit {
 						if (total < this._dataService.minimumExrnRequired) {
 							//DQinvalidRegularRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'REG INVALID'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'REG INVALID'
 							});
 						}
 						else if (total > minimal) {
 							//DQmovedRegularRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'REG MOVED'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'REG MOVED'
 							});
 						} else {
 							//OKheldRegularRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'REG QUALIFIED'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'REG QUALIFIED'
 							});
 						}
 					} else {
@@ -301,38 +301,38 @@ export class StaffComponent implements OnInit, AfterViewInit {
 						if (actual === 0) {
 							//OKemptyContributorRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'CONTR EMPTY'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'CONTR EMPTY'
 							});
 						} else if (total <= minimal) {
 							//OKheldContributorRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'CONTR QUALIFIED'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'CONTR QUALIFIED'
 							});
 						} else {
 							//OKmovedContributorRecords.push([wallet, total, team, minimal, actual]);
 							this.dataExternal.push({
-								walletExt: row['ETH Wallet Address'],
-								totalExt: row['Total EXRN balance'],
-								boughtExt: row['Bought?'],
-								teamExt: row['Amount bought'],
-								minimalExt: minimal,
-								actualTotalExt: actual,
-								actualTeamExt: actualTeam,
-								statusExt: 'CONTR MOVED'
+								['ETH Wallet Address']: row['ETH Wallet Address'],
+								'Total EXRN balance': row['Total EXRN balance'],
+								'Bought?': row['Bought?'],
+								'Amount bought': row['Amount bought'],
+								'Minimal EXRN held': minimal,
+								'Current EXRN balance': actual,
+								'Actual EXRN bought': actualTeam,
+								'Status': 'CONTR MOVED'
 							});
 						}
 					}
@@ -377,6 +377,26 @@ export class StaffComponent implements OnInit, AfterViewInit {
 		});
 	});
   }
+
+
+  export() {
+  	console.log(this.dataSourceExternal.filteredData);
+
+	let options = {
+		delimiter: ";",	// auto-detect
+		header: true
+	};
+
+	let data = this._papa.unparse(this.dataSourceExternal.filteredData, options);
+
+	let blob = new Blob([data], { type: 'text/csv' });
+	let blobURL = window.URL.createObjectURL(blob);
+
+	let anchor = document.createElement("a");
+	anchor.download = this.dataSourceExternal.filter + ".csv";
+	anchor.href = blobURL;
+	anchor.click();
+  }
 }
 
 
@@ -390,12 +410,12 @@ export interface SignupsDataInternal {
 
 
 export interface SignupsDataExternal {
-  walletExt: string;
-  totalExt: number;
-  boughtExt: string;
-  teamExt: number;
-  minimalExt: number;
-  actualTotalExt: number;
-  actualTeamExt: number;
-  statusExt: string;
+  'ETH Wallet Address': string;
+  'Total EXRN balance': number;
+  'Bought?': string;
+  'Amount bought': number;
+  'Minimal EXRN held': number;
+  'Current EXRN balance': number;
+  'Actual EXRN bought': number;
+  'Status': string;
 }
