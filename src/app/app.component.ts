@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
 })
 
 export class AppComponent {
-  version = 'v0.7.0';
-  title = 'Application form';
+  version = 'v0.7.1';
+  sequence = '(#3)';
+  title = 'EXRT Application form';
 }
