@@ -262,8 +262,8 @@ export class DataService {
             return total + ctr.value * rate;
         }, 0);
         let spent = contrCandidates.reduce((total, ctr) => {
-            return total + ctr.value;
-        }, 0);
+            return total.plus(ctr.value);
+        }, new BigNumber(0));
 	// retrieve applicableBonus based on ETH contributed
         owed *= this.applicableBonus(spent);
 
