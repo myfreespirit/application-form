@@ -27,8 +27,8 @@ export class DataService {
     { block: 0, value: this.airdropAmount }
   ];
   bonusExrnDistribution = [
-    { minEXRN: Math.pow(10, 9), bonus: Math.pow(10, 8) },
-    { minEXRN: 0, bonus: 0}
+    { minETH: 30, bonus: 0.1 },
+    { minETH: 0, bonus: 0.0 }
   ];
 
 
@@ -46,12 +46,12 @@ export class DataService {
   }
 
 
-  applicableBonus(owedEXRN: number) {
+  applicableBonus(spentETH) {
     const match = this.bonusExrnDistribution.find(entry => {
-        return owedEXRN >= entry.minEXRN;
+	    return spentETH >= entry.minETH;
     });
 
-    return match.bonus;
+    return 1.0 + match.bonus;
   }
 
 
@@ -261,8 +261,11 @@ export class DataService {
             const rate = this.findDistributionRate(ctr.block);
             return total + ctr.value * rate;
         }, 0);
-	// TODO retrieve applicableBonus based on ETH contributed instead
-        owed += this.applicableBonus(owed);
+        let spent = contrCandidates.reduce((total, ctr) => {
+            return total + ctr.value;
+        }, 0);
+	// retrieve applicableBonus based on ETH contributed
+        owed *= this.applicableBonus(spent);
 
         // Retrieve a list of possible distribution candidates for current contribution candidates
         const nextContrBlock = contributions.length === 0 ? Number.MAX_VALUE : contributions[0].block;
