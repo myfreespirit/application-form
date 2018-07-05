@@ -26,7 +26,7 @@
 		    Congratulations, you're allowed to receive regular EXRT rewards on your {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN!
             </div>
             <div *ngIf="showCallToAction && !inputWallet.dirty" class="alert alert-warning">
-		    You need {{ this.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
+		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
             </div>
           </div>
         </div>
