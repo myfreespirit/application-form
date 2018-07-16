@@ -8,6 +8,5 @@ import { Component } from '@angular/core';
 
 export class AppComponent {
   version = 'v0.7.2';
-  sequence = '(#3)';
-  title = 'EXRT Application form';
+  title = 'EXRT Distribution #3 Application';
 }
