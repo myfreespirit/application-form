@@ -320,4 +320,24 @@ export class DataService {
     return [refunds, contributions, distributions, correlations, userTotalTokens, totalEthContributed, totalExrnDistributed];
   }
 
+
+  reportMistake(user, wallet, total, team, comment) {
+	const url = 'https://api.telegram.org/' + 
+  			'bot637948427:AAEbfbx6VzhX9_Gl_CHQMxZ-EKRmtE9dOnk/' +
+			'sendMessage?' +
+			'chat_id=@EXRTAppTroubleshooting&' +
+			'text=';
+	
+	const msg = encodeURI(
+			'REPORT submitted by @' + user + '\n' +
+			'----------------------------------INFO----------------------------------\n' +
+			wallet + '\n' +
+			'Total EXRN: ' + total.toLocaleString() + '\n' +
+			'Team EXRN: ' + team.toLocaleString() + '\n' +
+			'------------------------------COMMENT------------------------------\n' +
+			comment;
+		);
+
+	return this.http.get(url + msg);
+  }
 }

@@ -22,6 +22,8 @@ export class FormComponent implements OnInit {
   showContributorEligibility: boolean;
   showCallToAction: boolean;
   showAPIerror: boolean;  // TODO: implement notification
+  showReport: boolean;
+  showReportResult: boolean;
 
   disableCheckWallet: boolean;
   displayHistory: boolean;
@@ -33,6 +35,8 @@ export class FormComponent implements OnInit {
   totalExrnDistributed: number;
   availableExrnDistributed: number;
   totalRewards: number;
+  username: string;
+  reportComment: string;
 
   signups: any;
   contributions = [];
@@ -60,6 +64,8 @@ export class FormComponent implements OnInit {
     this.showNormalEligibility = false;
     this.showContributorEligibility = false;
     this.showCallToAction = false;
+    this.showReport = false;
+    this.showReportResult = false;
 
     this.showAPIerror = false;
 
@@ -72,6 +78,8 @@ export class FormComponent implements OnInit {
     this.totalExrnDistributed = 0;
     this.availableExrnDistributed = 0;
     this.totalRewards = 0;
+    this.username = "";
+    this.reportComment = "";
 
     this.signups = undefined;
     this.contributions = [];
@@ -174,5 +182,17 @@ export class FormComponent implements OnInit {
 
   public showRefunds(): boolean {
 	return this.refunds.length > 0;
+  }
+
+
+  public showReportForm() {
+	this.showReport = true;
+  }
+
+
+  report() {
+	this._dataService.reportMistake(this.username, this.userAddress, this.userTotalTokens, this.availableExrnDistributed, this.reportComment).subscribe(result => {
+		this.showReportResult = true;
+	});
   }
 }

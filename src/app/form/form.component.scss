@@ -22,3 +22,14 @@ div {
   flex-grow: 1;
   flex-basis: auto;
 }
+
+mat-form-field {
+  width: 100%;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    padding-bottom: 25px;
+    width: 100%;
+}
