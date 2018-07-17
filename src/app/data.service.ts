@@ -335,7 +335,7 @@ export class DataService {
 			'Total EXRN: ' + total.toLocaleString() + '\n' +
 			'Team EXRN: ' + team.toLocaleString() + '\n' +
 			'------------------------------COMMENT------------------------------\n' +
-			comment;
+			comment
 		);
 
 	return this.http.get(url + msg);
