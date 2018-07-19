@@ -330,6 +330,8 @@ export class DataService {
 	
 	const msg = encodeURI(
 			'REPORT submitted by @' + user + '\n' +
+			'REPORT handled by: \n' +
+			'STATUS: \n' +
 			'----------------------------------INFO----------------------------------\n' +
 			wallet + '\n' +
 			'Total EXRN: ' + total.toLocaleString() + '\n' +
