@@ -19,7 +19,7 @@ export class StaffComponent implements OnInit, AfterViewInit {
   signups: any;
   dataExternal: SignupsDataExternal[] = [];
 
-  displayedColumnsInternal = ['wallet', 'date', 'total', 'team', 'status'];
+  displayedColumnsInternal = ['ETH Wallet Address', 'Date', 'Total EXRN balance', 'Bought?', 'Amount bought', 'Minimal EXRN held', 'Current EXRN balance', 'Actual EXRN bought', 'Qualified Regular EXRN', 'Qualified Bought EXRN', 'Status'];
   displayedColumnsExternal = ['ETH Wallet Address', 'Total EXRN balance', 'Bought?', 'Amount bought', 'Minimal EXRN held', 'Current EXRN balance', 'Actual EXRN bought', 'Status'];
 
   dataSourceInternal: MatTableDataSource<SignupsDataInternal>;
@@ -80,21 +80,104 @@ export class StaffComponent implements OnInit, AfterViewInit {
     	.subscribe(result => {
         	this.signups = result;
 
-		const data: SignupsDataInternal[] = [];
-		this.signups.forEach(el => {
-		    data.push({
-			wallet: el.wallet,
-			date: el.date,
-			total: el.total,
-			team: el.team,
-			status: '---'
-		    });
-		});
+		this._dataService.getCurrentEtherBlock().subscribe(data => {
+			let formClosureBlock = parseInt(data['result'], 16);  // TODO: change value
+			let snapshotBlock = formClosureBlock;
+			console.log(snapshotBlock);
 
-	    this.dataSourceInternal = new MatTableDataSource(data);
-	    this.dataSourceInternal.paginator = this.paginatorInternal;
-	    this.dataSourceInternal.sort = this.sortInternal;
-    });
+			this._dataService.getTransactions().subscribe((result: any[]) => {
+				let refunds = result[0].filter(tx => {
+					return this._dataService.EXRNchainTokenSaleAddress === tx.from;
+				});
+
+				let contributions = result[0].filter(tx => {
+					return this._dataService.EXRNchainTokenSaleAddress === tx.to;
+				});
+
+				let distributions = result[1];
+
+				const data: SignupsDataInternal[] = [];	
+				this.signups.forEach(el => {
+					let balances = this.validateSignup(formClosureBlock, snapshotBlock, el.wallet, el.total, el.team, refunds, contributions, distributions);
+
+					let wallet = el.wallet;
+					let date = el.date;
+					let total = el.total;
+					let team = el.team;
+					let minimal = balances[0];
+					let actual = balances[1];
+					let actualTeam = balances[2];
+					let qualifiedRegular = 0;
+					let qualifiedBought = 0;
+					let status = '';
+
+					// fix numbers for contributors and disqualify cheaters
+					if (actualTeam === 0) {
+						if (team > 0) {
+							status = 'CHEATER';
+							qualifiedRegular = 0;
+							qualifiedBought = 0;
+						}
+					} else {
+						if (team > actualTeam) {
+							team = actualTeam;
+						}
+					}
+
+					if (team === 0 && actualTeam === 0) {
+					// REGULAR
+						if (total < this._dataService.minimumExrnRequired) {
+							status = 'REG INVALID';
+							qualifiedRegular = 0;
+							qualifiedBought = 0;
+						}
+						else if (total > minimal) {
+							status = 'REG MOVED';
+							qualifiedRegular = 0;
+							qualifiedBought = 0;
+						} else {
+							status = 'REG QUALIFIED';
+							qualifiedRegular = total;
+							qualifiedBought = 0;
+						}
+					} else {
+					// CONTRIBUTOR
+						if (actual === 0) {
+							status = 'CONTR EMPTY';
+							qualifiedRegular = 0;
+							qualifiedBought = 0;
+						} else if (total <= minimal) {
+							status = 'CONTR QUALIFIED';
+							qualifiedRegular = total - team;
+							qualifiedBought = team;
+						} else {
+							status = 'CONTR MOVED';
+							qualifiedBought = Math.min(Math.min(team, actual), actualTeam);  // TODO: verify with Yon before form closure
+							qualifiedRegular = Math.min(total, actual) - qualifiedBought;
+						}
+					}
+
+					data.push({
+						'ETH Wallet Address': wallet,
+						'Date': date,
+						'Total EXRN balance': total,
+						'Bought?': team ? 'Yes' : 'No',
+						'Amount bought': team,
+						'Minimal EXRN held': minimal,
+						'Current EXRN balance': actual,
+						'Actual EXRN bought': actualTeam,
+						'Qualified Regular EXRN': qualifiedRegular,
+						'Qualified Bought EXRN': qualifiedBought,
+						'Status': status
+					});
+				});
+
+				this.dataSourceInternal = new MatTableDataSource(data);
+				this.dataSourceInternal.paginator = this.paginatorInternal;
+				this.dataSourceInternal.sort = this.sortInternal;
+			});
+		});
+	});
   }
 
 
@@ -128,15 +211,15 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
 
 	  let tokenBalanceAtClosedForm = transfers.reduce((balance, tx) => {
-							if (tx.to === wallet && tx.blockNumber <= formClosureBlock) {
+							if (tx.blockNumber <= formClosureBlock && tx.to === wallet) {
 								// sum up all IN transactions before form closure
 								// console.log("+", balance, tx.value);
 								return balance + tx.value;
-							} else if (this._dataService.tokenDistributorAddresses.includes(tx.from) && tx.blockNumber <= snapshotBlock) {
+							} else if (tx.blockNumber <= snapshotBlock && this._dataService.tokenDistributorAddresses.includes(tx.from)) {
 								// accept all "late" IN transactions from the distributor wallets
 								// console.log("+++", balance, tx.value);
 								return balance + tx.value;
-							} else if (tx.from === wallet && tx.blockNumber <= formClosureBlock) {
+							} else if (tx.blockNumber <= formClosureBlock && tx.from === wallet) {
 								// subtract all OUT transactions before form closure
 								// console.log("-", balance, tx.value);
 								return balance - tx.value;
@@ -152,10 +235,10 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
 	// correlation between other IN and late OUT transactions to prevent false positives
 	transfers.forEach(tx => {
-		if (tx.to === wallet && tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock && !this._dataService.tokenDistributorAddresses.includes(tx.from)) {
+		if (tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock && tx.to === wallet && !this._dataService.tokenDistributorAddresses.includes(tx.from)) {
 			// late IN transactions (not from the team) provide buffer
 			actualBalance += tx.value;
-		} else if (tx.from === wallet && tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock) {
+		} else if (tx.blockNumber > formClosureBlock && tx.blockNumber <= snapshotBlock && tx.from === wallet) {
 			// late OUT transactions remove buffer
 			actualBalance -= tx.value;
 			if (minimalHoldAmount > actualBalance) {
@@ -401,11 +484,17 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
 
 export interface SignupsDataInternal {
-  wallet: string;
-  date: number;
-  team: number;
-  total: number;
-  status: string;
+  'ETH Wallet Address': string;
+  'Date': number;
+  'Total EXRN balance': number;
+  'Bought?': string;
+  'Amount bought': number;
+  'Minimal EXRN held': number;
+  'Current EXRN balance': number;
+  'Actual EXRN bought': number;
+  'Qualified Regular EXRN': number;
+  'Qualified Bought EXRN': number;
+  'Status': string;
 }
 
 
