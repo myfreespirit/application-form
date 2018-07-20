@@ -17,6 +17,7 @@ import { DataService } from '../data.service';
 export class StaffComponent implements OnInit, AfterViewInit {
 
   signups: any;
+  showNotification: boolean;
   dataExternal: SignupsDataExternal[] = [];
 
   displayedColumnsInternal = ['ETH Wallet Address', 'Date', 'Total EXRN balance', 'Bought?', 'Amount bought', 'Minimal EXRN held', 'Current EXRN balance', 'Actual EXRN bought', 'Qualified Regular EXRN', 'Qualified Bought EXRN', 'Status'];
@@ -32,7 +33,9 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
   
   constructor(@Inject(DataService) private _dataService: DataService,
-		  @Inject(Papa) private _papa: Papa) {
+  	@Inject(Papa) private _papa: Papa) {
+
+    this.showNotification = true;
     this.dataSourceInternal = new MatTableDataSource([]);
     this.dataSourceExternal = new MatTableDataSource([]);
 
@@ -175,6 +178,7 @@ export class StaffComponent implements OnInit, AfterViewInit {
 				this.dataSourceInternal = new MatTableDataSource(data);
 				this.dataSourceInternal.paginator = this.paginatorInternal;
 				this.dataSourceInternal.sort = this.sortInternal;
+				this.showNotification = false;
 			});
 		});
 	});

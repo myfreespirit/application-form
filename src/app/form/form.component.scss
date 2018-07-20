@@ -11,6 +11,9 @@ input[type=text] {
   width: 100%;
   text-align: center;
 }
+.txt-left input[type=text] {
+  text-align: left;
+}
 
 div {
   margin-bottom: 2px;
@@ -28,8 +31,8 @@ mat-form-field {
 }
 
 #footer {
-    position: fixed;
+    position: relative;
     bottom: 0;
-    padding-bottom: 25px;
     width: 100%;
+    height: 20px;
 }

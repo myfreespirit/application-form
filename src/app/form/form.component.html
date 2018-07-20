@@ -16,13 +16,13 @@
             <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
               Please CHECK your Ethereum wallet address before SIGNUP.
             </div>
-            <div *ngIf="showContributorEligibility && !inputWallet.dirty" class="alert alert-success">
+            <div *ngIf="!showSignupResult && showContributorEligibility && !inputWallet.dirty" class="alert alert-success">
 		    Congratulations, you're allowed to receive 10x EXRT rewards on your {{ this.availableExrnDistributed | number: fractionSize }} EXRN!
             </div>
             <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
 		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x rewards on it!
             </div>
-            <div *ngIf="showNormalEligibility && !inputWallet.dirty" class="alert alert-success">
+            <div *ngIf="!showSignupResult && showNormalEligibility && !inputWallet.dirty" class="alert alert-success">
 		    Congratulations, you're allowed to receive regular EXRT rewards on your {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN!
             </div>
             <div *ngIf="showCallToAction && !inputWallet.dirty" class="alert alert-warning">
@@ -59,6 +59,10 @@
         </div>
       </form>
     </div>
+    <div *ngIf="showSignupResult" class="col-12 alert alert-success">
+	  Your signup has successfully been recorded, thank you!<br />
+	  Please verify in "Your previous signups" that the numbers are correct.
+    </div>
   </div>
 
 
@@ -76,6 +80,15 @@
           Your previous signups ({{ signups['signups'].length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
+      <div class="row">
+	      <div class="col-12">
+		      <em>
+			      Signed up too many times? Don't worry!<br />
+			      Only your last submission (at the bottom) will be taken into account.<br />
+		      </em>
+		      <br />
+	      </div>
+      </div>
       <div class="row">
         <div class="d-none d-md-block col-md-4">Date</div>
         <div class="col-6 col-md-4">EXRN Total</div>
@@ -172,7 +185,15 @@
           Your other rewards ({{ distributions.length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
-
+      <div class="row">
+	      <div class="col-12">
+		      <em>
+			      Here you might find original airdrop from October 2017 or rewards from (logo) contests.<br />
+			      If something looks out of the ordinary, please report it below to secure your submission.<br />
+		      </em>
+		      <br />
+	      </div>
+      </div>
       <div class="row">
         <div class="col-6 col-md-3">Date</div>
         <div class="d-none d-md-block col-md-3">Block</div>
@@ -257,27 +278,23 @@
 		</div>
 
 		<div class="col-12" id="footer">
-			Found a mistake? <a href="#" (click)="showReportForm()">Report it here.</a>
+			Found a mistake? <a href="#report" (click)="showReportForm()">Report it here.</a>
 		</div>
 	</div>
 
-	<div class="row" *ngIf="showReport">
-		<div class="col-12">
-			<hr />
-		</div>
+	<br />
 
-		<div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
-			<div *ngIf="showReportResult" class="alert alert-success">
-				Your report has been sent and will be investigated, thank you {{ username }}!
-			</div>
+	<div class="row" *ngIf="showReport && showReportResult">
+		<div class="col-12 alert alert-success">
+			Your report has been sent and will be investigated, thank you {{ username }}!
 		</div>
 	</div>
 
-	<div class="row" *ngIf="showReport">
+	<div id="report" class="row" *ngIf="showReport">
 		<div class="col-12">
 			<form>
 				<div class="row">
-					<div class="col-12">
+					<div class="col-12 txt-left">
 						<mat-form-field>
 							<input matInput type="text" name="username" [(ngModel)]="username" placeholder="Your Telegram username"> 
 							<span matPrefix>@&nbsp;</span>

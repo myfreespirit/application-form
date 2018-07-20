@@ -23,6 +23,7 @@ export class FormComponent implements OnInit {
   showCallToAction: boolean;
   showAPIerror: boolean;  // TODO: implement notification
   showReport: boolean;
+  showSignupResult: boolean;
   showReportResult: boolean;
 
   disableCheckWallet: boolean;
@@ -65,6 +66,7 @@ export class FormComponent implements OnInit {
     this.showContributorEligibility = false;
     this.showCallToAction = false;
     this.showReport = false;
+    this.showSignupResult = false;
     this.showReportResult = false;
 
     this.showAPIerror = false;
@@ -131,9 +133,10 @@ export class FormComponent implements OnInit {
   signup() {
     this.showSpinnerSignups = true;
     this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe(data => {
-      this.signups = data;
-      this.showSpinnerSignups = false;
-      this.firstSignupHappened = this.signups !== undefined;
+	this.signups = data;
+	this.showSpinnerSignups = false;
+	this.firstSignupHappened = this.signups !== undefined;
+	this.showSignupResult = true;
     });
   }
 
