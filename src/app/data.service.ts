@@ -26,10 +26,12 @@ export class DataService {
     { block: 4866696, value: this.airdropAmount / 2 },
     { block: 0, value: this.airdropAmount }
   ];
+  /*
   bonusExrnDistribution = [
     { minETH: 30, bonus: 0.1 },
     { minETH: 0, bonus: 0.0 }
   ];
+  */
 
 
   // API limits
@@ -47,11 +49,14 @@ export class DataService {
 
 
   applicableBonus(spentETH) {
+  	return 1.0;
+  /*
     const match = this.bonusExrnDistribution.find(entry => {
 	    return spentETH >= entry.minETH;
     });
 
     return 1.0 + match.bonus;
+  */
   }
 
 
@@ -205,7 +210,7 @@ export class DataService {
 
 
   private findCombination(given, owed, active, candidates) {
-    // TODO: determine plausible margin for rounding errors and possible bonus on large contributions
+    // TODO: determine plausible margin for rounding errors
     const margin = 0.05;
 
     if (Math.abs(given - owed) / owed <= margin) {
@@ -261,11 +266,13 @@ export class DataService {
             const rate = this.findDistributionRate(ctr.block);
             return total + ctr.value * rate;
         }, 0);
+	/*
         let spent = contrCandidates.reduce((total, ctr) => {
             return total.plus(ctr.value);
         }, new BigNumber(0));
 	// retrieve applicableBonus based on ETH contributed
-        owed *= this.applicableBonus(spent);
+	owed *= this.applicableBonus(spent);
+	*/
 
         // Retrieve a list of possible distribution candidates for current contribution candidates
         const nextContrBlock = contributions.length === 0 ? Number.MAX_VALUE : contributions[0].block;
