@@ -118,45 +118,45 @@ export class StaffComponent implements OnInit, AfterViewInit {
 					if (actualTeam === 0) {
 						if (team > 0) {
 							status = 'CHEATER';
-							qualifiedRegular = 0;
 							qualifiedBought = 0;
-						}
-					} else {
-						if (team > actualTeam) {
-							team = actualTeam;
+							qualifiedRegular = 0;
 						}
 					}
 
-					if (team === 0 && actualTeam === 0) {
-					// REGULAR
-						if (total < this._dataService.minimumExrnRequired) {
-							status = 'REG INVALID';
-							qualifiedRegular = 0;
-							qualifiedBought = 0;
-						}
-						else if (total > minimal) {
-							status = 'REG MOVED';
-							qualifiedRegular = 0;
-							qualifiedBought = 0;
+					if (status !== 'CHEATER') {
+						if (team === 0 && actualTeam === 0) {
+						// REGULAR
+							if (total < this._dataService.minimumExrnRequired) {
+								status = 'REG INVALID';
+								qualifiedBought = 0;
+								qualifiedRegular = 0;
+							}
+							else if (total > minimal) {
+								status = 'REG MOVED';
+								qualifiedBought = 0;
+								qualifiedRegular = 0;
+							} else {
+								status = 'REG QUALIFIED';
+								qualifiedBought = 0;
+								qualifiedRegular = total;
+							}
 						} else {
-							status = 'REG QUALIFIED';
-							qualifiedRegular = total;
-							qualifiedBought = 0;
-						}
-					} else {
-					// CONTRIBUTOR
-						if (actual === 0) {
-							status = 'CONTR EMPTY';
-							qualifiedRegular = 0;
-							qualifiedBought = 0;
-						} else if (total <= minimal) {
-							status = 'CONTR QUALIFIED';
-							qualifiedRegular = total - team;
-							qualifiedBought = team;
-						} else {
-							status = 'CONTR MOVED';
-							qualifiedBought = Math.min(Math.min(team, actual), actualTeam);  // TODO: verify with Yon before form closure
-							qualifiedRegular = Math.min(total, actual) - qualifiedBought;
+						// CONTRIBUTOR
+							if (actual === 0) {
+								status = 'CONTR EMPTY';
+								qualifiedBought = 0;
+								qualifiedRegular = 0;
+							} else if (total <= minimal) {
+								status = 'CONTR QUALIFIED';
+								qualifiedBought = Math.min(team, actualTeam);
+								// qualifiedRegular = (Math.min(total, minimal) >= this._dataService.minimumExrnRequired) ? total - qualifiedBought : 0;
+								qualifiedRegular = (total >= this._dataService.minimumExrnRequired) ? total - qualifiedBought : 0;  // simplification due to minimal >= total
+							} else {
+								status = 'CONTR MOVED';
+								qualifiedBought = Math.min(Math.min(team, actualTeam), minimal);
+								// qualifiedRegular = (Math.min(minimal, total) >= this._dataService.minimumExrnRequired) ? Math.min(minimal, total) - qualifiedBought : 0;
+								qualifiedRegular = (minimal >= this._dataService.minimumExrnRequired) ? minimal - qualifiedBought : 0;  // simplification due to minimal < total
+							}
 						}
 					}
 
