@@ -304,15 +304,25 @@ export class DataService {
 
     // rest of contributions are still in the AWAITING state
     if (contrCandidates.length) {
-	contrCandidates.forEach(contr => {
-		let distr = {
-			'block': 'AWAITING',
-			'value': Math.floor(this.findDistributionRate(contr.block) * contr.value)
-		};
+		contrCandidates.forEach(contr => {
+		const waitingPeriodMilliseconds = Date.now() - contr.date;
+		const waitingPeriodDays = waitingPeriodMilliseconds / (24 * 60 * 60 * 1000);
+		if (waitingPeriodDays < 14.0) {
+			let distr = {
+				'block': 'AWAITING',
+				'value': Math.floor(this.findDistributionRate(contr.block) * contr.value)
+			};
 
-		correlations.push([[contr], [distr]]);
-		userTotalTokens += distr.value;
-		//totalExrnDistributed += distr.value;
+			correlations.push([[contr], [distr]]);
+			userTotalTokens += distr.value;
+		} else {
+			let distr = {
+				'block': 'N/A',
+				'value': 0
+			};
+
+			correlations.push([[contr], [distr]]);
+		}
 	});
     }
 
