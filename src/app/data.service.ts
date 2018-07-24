@@ -9,6 +9,7 @@ import { BigNumber } from 'bignumber.js';
 
 @Injectable()
 export class DataService {
+  apiKey = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
   contractAddress = '0xe469c4473af82217b30cf17b10bcdb6c8c796e75';
   EXRNchainTokenSaleAddress = '0x9df04392eef34f213ce55226f40979c906cc04eb';
   eventTransferTopic = 'Transfer(address,address,uint256)';
@@ -76,7 +77,7 @@ export class DataService {
                     `&contractaddress=${ this.contractAddress }` +
                     `&address=${ wallet }` +
                     `&tag=latest` +
-                    `&apikey=YourApiKeyToken`;
+		    `&apikey=${ this.apiKey }`;
 
     return this.http.get(url);
   }
@@ -125,7 +126,7 @@ export class DataService {
     const url = `https://api.etherscan.io/api` +
 		`?module=proxy` +
 		`&action=eth_blockNumber` +
-		`&apikey=YourApiKeyToken`;
+	        `&apikey=${ this.apiKey }`;
 
     return this.http.get(url);
   }

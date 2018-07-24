@@ -3,7 +3,7 @@ let request = require('request');
 
 class Etherscan {
 	baseUrl = process.env.BASE_URL || 'http://localhost:8080';
-	apiKey = 'YourApiKeyToken';
+	apiKey = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
 	maxEtherTransfersApiLimit = 10000;
 	maxTokenTransfersApiLimit = 10000;
 
@@ -42,7 +42,8 @@ class Etherscan {
 			    `&address=${ this.EXRNchainTokenSaleAddress }` +
 			    `&startblock=${ startBlock }` +
 			    `&endblock=latest` +
-			    `&apikey=YourApiKeyToken`;
+			    `&apikey=${ this.apiKey }`;
+
 
 		return new Promise<any>((resolve, reject) => {
 				request(urlEtherTransfers, (error, response, body) => {
