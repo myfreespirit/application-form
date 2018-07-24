@@ -9,7 +9,7 @@ import { BigNumber } from 'bignumber.js';
 
 @Injectable()
 export class DataService {
-  apiKey = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
+  apiKey = 'YBI2DJTZ2DSJZYQERT8YRTGJR6VIU1PPNG';
   contractAddress = '0xe469c4473af82217b30cf17b10bcdb6c8c796e75';
   EXRNchainTokenSaleAddress = '0x9df04392eef34f213ce55226f40979c906cc04eb';
   eventTransferTopic = 'Transfer(address,address,uint256)';
