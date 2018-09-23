@@ -4,8 +4,8 @@ import etherscanService from '../services/etherscan';
 
 class Controller {
   public init() {
-	taskSheduler.everyMinute(function() {
-		etherscanService.updateEtherTransfers().then(data => {
+    taskSheduler.everyMinute(function() {
+	etherscanService.updateEtherTransfers().then(data => {
 		console.log("cron job: ether transfers update completed.");
 	});
     })

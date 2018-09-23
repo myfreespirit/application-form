@@ -1,6 +1,7 @@
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CountdownModule } from "ng2-countdown-timer";
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
@@ -25,6 +26,7 @@ import { StaffComponent } from './staff/staff.component';
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
+    CountdownModule,
     FormsModule,
     HttpClientModule,
     MaterialModule,

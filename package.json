@@ -42,6 +42,7 @@
     "less": "^3.0.4",
     "mongoose": "^5.0.16",
     "morgan": "^1.9.0",
+    "ng2-countdown-timer": "^1.2.2",
     "ngx-papaparse": "^3.0.0-beta.0",
     "node-cron": "^1.2.1",
     "npm": "^5.8.0",

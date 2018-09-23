@@ -45,6 +45,15 @@ export class FormComponent implements OnInit {
   distributions = [];
   correlations = [];
 
+  timerRoundExpired: boolean;
+
+  text:any = {
+    Month: 'Months',
+    Days: "Days",
+    Hours: "Hours",
+    Minutes: "Minutes",
+    Seconds: "Seconds"
+  };
 
   constructor(@Inject(DataService) private _dataService: DataService) { }
 
@@ -54,6 +63,8 @@ export class FormComponent implements OnInit {
 
     this.disableCheckWallet = false;
     this.firstSignupHappened = false;
+
+    this.timerRoundExpired = false;
   }
 
 
@@ -197,5 +208,10 @@ export class FormComponent implements OnInit {
 	this._dataService.reportMistake(this.username, this.userAddress, this.userTotalTokens, this.availableExrnDistributed, this.reportComment).subscribe(result => {
 		this.showReportResult = true;
 	});
+  }
+
+
+  roundExpired(event) {
+	this.timerRoundExpired = true;
   }
 }

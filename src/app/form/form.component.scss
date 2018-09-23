@@ -36,3 +36,19 @@ mat-form-field {
     width: 100%;
     height: 20px;
 }
+
+
+// Count down timer
+.timerNotification {
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size:16px;
+}
+/deep/ .countdown {
+    height: 100px;
+}
+/deep/ .measurements {
+    padding: 5px;
+}
+/deep/ .divider {
+    font-size: 16px;
+}

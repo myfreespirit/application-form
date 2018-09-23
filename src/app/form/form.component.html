@@ -35,6 +35,24 @@
   </div>
 
 
+  <div class="row" *ngIf="!displayHistory">
+    <div class="col-12 timerNotification">
+      <hr />
+        <div *ngIf="!timerRoundExpired">
+	  This round closes soon, do not move your EXRN until you receive EXRT!
+	  <hr />
+	</div>
+	<div *ngIf="timerRoundExpired">
+	  This round has closed, do not move your EXRN until you receive EXRT!
+	</div>
+    </div>
+
+    <div class="col-12" *ngIf="!timerRoundExpired">
+      <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="Oct 1, 2018 20:00:00 UTC"></countdown>
+    </div>
+  </div>
+
+
   <div class="row" *ngIf="displayHistory">
     <div class="col-6 col-md-4 offset-md-1 col-lg-3 offset-lg-3">
       EXRN Total
@@ -54,7 +72,7 @@
             <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
           </div>
           <div class="col-12 col-md-1 col-lg-1 text-left">
-            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens">SIGNUP</button>
+            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired">SIGNUP</button>
           </div>
         </div>
       </form>
