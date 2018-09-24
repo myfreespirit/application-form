@@ -19,6 +19,7 @@ export class DataService {
   ];
   tokenDistributorTopics: string[];
 
+  waitingPeriodThreshold = 30.0;
   minimumExrnRequired = Math.pow(10, 7);
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
@@ -309,7 +310,7 @@ export class DataService {
 		contrCandidates.forEach(contr => {
 		const waitingPeriodMilliseconds = Date.now() - contr.date;
 		const waitingPeriodDays = waitingPeriodMilliseconds / (24 * 60 * 60 * 1000);
-		if (waitingPeriodDays < 14.0) {
+		if (waitingPeriodDays < this.waitingPeriodThreshold) {
 			let distr = {
 				'block': 'AWAITING',
 				'value': Math.floor(this.findDistributionRate(contr.block) * contr.value)
