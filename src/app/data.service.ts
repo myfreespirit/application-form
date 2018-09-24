@@ -22,6 +22,7 @@ export class DataService {
   minimumExrnRequired = Math.pow(10, 7);
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
+    { block: 6392320, value: this.airdropAmount / 4 },  // Discounted price week of 24th of September 2018
     { block: 5721051, value: this.airdropAmount / 8 },
     { block: 5539570, value: this.airdropAmount / 4 },
     { block: 4866696, value: this.airdropAmount / 2 },
