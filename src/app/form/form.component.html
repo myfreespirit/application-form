@@ -311,7 +311,8 @@
 				<div class="row">
 					<div class="col-12 txt-left">
 						<mat-form-field>
-							<input matInput type="text" name="username" [(ngModel)]="username" placeholder="Your Telegram username"> 
+							<input matInput type="text" name="username" [(ngModel)]="username" placeholder="&nbsp; Your Telegram username" #usernameTG="ngModel" required>
+							<mat-error *ngIf="usernameTG.invalid">TG username is mandatory</mat-error>
 							<span matPrefix>@&nbsp;</span>
 						</mat-form-field>
 					</div>
@@ -327,7 +328,7 @@
 					</div>
 				</div>
 				
-				<button class="btn-block" mat-raised-button (click)="report()">SEND FEEDBACK</button>
+				<button class="btn-block" mat-raised-button (click)="report()" [disabled]="usernameTG.invalid">SEND FEEDBACK</button>
 			</form>
 		</div>
 	</div>
