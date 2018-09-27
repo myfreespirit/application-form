@@ -1,5 +1,22 @@
 <div class="container-fluid">
   <div class="row">
+    <div class="col-12 timerNotification">
+        <hr />
+        <div *ngIf="!timerRoundExpired">
+	  This round closes soon, do not move your EXRN until you receive EXRT!
+	</div>
+	<div *ngIf="timerRoundExpired">
+	  This round has closed, do not move your EXRN until you receive EXRT!
+	</div>
+	<hr />
+    </div>
+
+    <div class="col-12" *ngIf="!timerRoundExpired">
+      <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="Oct 1, 2018 20:00:00 UTC"></countdown>
+    </div>
+  </div>
+
+  <div class="row">
     <div class="col-12">
       <form #walletForm="ngForm">
         <div class="row">
@@ -267,24 +284,6 @@
     </mat-expansion-panel>
 
   </mat-accordion>
-
-
-    <div class="row">
-    <div class="col-12 timerNotification">
-      <hr />
-        <div *ngIf="!timerRoundExpired">
-	  This round closes soon, do not move your EXRN until you receive EXRT!
-	  <hr />
-	</div>
-	<div *ngIf="timerRoundExpired">
-	  This round has closed, do not move your EXRN until you receive EXRT!
-	</div>
-    </div>
-
-    <div class="col-12" *ngIf="!timerRoundExpired">
-      <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="Oct 1, 2018 20:00:00 UTC"></countdown>
-    </div>
-  </div>
 
 
 	<div class="row" *ngIf="!showReport && displayHistory">
