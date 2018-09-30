@@ -14,6 +14,8 @@ import { BigNumber } from 'bignumber.js';
 
 export class FormComponent implements OnInit {
 
+  APIerror = '';
+
   showSpinnerSignups: boolean;
   showSpinnerContributions: boolean;
   showSpinnerOtherRewards: boolean;
@@ -78,6 +80,8 @@ export class FormComponent implements OnInit {
 
 
   private resetState() {
+    this.APIerror = '';
+
     this.showSpinnerSignups = true;
     this.showSpinnerContributions = true;
     this.showSpinnerOtherRewards = true;
@@ -157,6 +161,10 @@ export class FormComponent implements OnInit {
 	this.showSpinnerSignups = false;
 	this.firstSignupHappened = this.signups !== undefined;
 	this.showSignupResult = true;
+    }, msg => {
+	this.showSpinnerSignups = false;
+	this.showAPIerror = true;
+	this.APIerror = msg.error;
     });
   }
 

@@ -81,6 +81,9 @@
 	  Your signup has successfully been recorded, thank you!<br />
 	  Please verify in "Your previous signups" that the numbers are correct.
     </div>
+    <div *ngIf="showAPIerror" class="col-12 alert alert-danger">
+      Something went wrong: {{ APIerror }}
+    </div>
   </div>
 
 

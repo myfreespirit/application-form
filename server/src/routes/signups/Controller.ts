@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { Round } from '../../models/round';
 import { Signup } from '../../models/signup';
 
 
@@ -42,15 +43,25 @@ class Controller {
 
 	// save signup details for given wallet
 	this.router.put('/save/:wallet/:totalEXRN/:teamEXRN', (req, res, next) => {
-	  const obj = { totalEXRN: req.params['totalEXRN'], teamEXRN: req.params['teamEXRN'] };
+	  let endOfRound = 0;
 
-	  Signup.findOneAndUpdate({ wallet: req.params['wallet'] },
-				  { $push: { signups: obj } },
-				  { upsert: true, new : true },
-				  (err, document) => {
+	  Round.find({ }, (err, documents) => {
 	    if (err) return next(err);
-	    res.json(document);
-	  });
+
+	    endOfRound = documents[documents.length - 1].end;
+            if (+new Date() > +new Date(endOfRound)) {
+		return res.status(403).send("Round was already closed - update your local clock please!");
+            }
+
+	    const obj = { totalEXRN: req.params['totalEXRN'], teamEXRN: req.params['teamEXRN'] };
+            Signup.findOneAndUpdate({ wallet: req.params['wallet'] },
+					  { $push: { signups: obj } },
+					  { upsert: true, new : true },
+					  (err, document) => {
+		if (err) return next(err);
+		res.json(document);
+	    });
+          });
 	});
 
 

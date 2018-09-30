@@ -61,6 +61,11 @@ class App {
 		this.app.use('/signups', signups.routes());
 		this.app.use('/transfers', transfers.routes());
 
+		this.app.use(function(err, req, res, next) {
+		    if(!err) return next();
+		    res.status(500).send({ status:"error", message: err.message });
+		});
+
 		this.app.use((req, res) => res.sendFile(path.resolve('dist/index.html')));
 	}
 }
