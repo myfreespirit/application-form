@@ -2,17 +2,18 @@
   <div class="row">
     <div class="col-12 timerNotification">
         <hr />
-        <div *ngIf="!timerRoundExpired">
+        <div *ngIf="showTimer()">
 	  This round closes soon, do not move your EXRN until you receive EXRT!
+	  <hr />
 	</div>
 	<div *ngIf="timerRoundExpired">
 	  This round has closed, do not move your EXRN until you receive EXRT!
+	  <hr />
 	</div>
-	<hr />
     </div>
 
-    <div class="col-12" *ngIf="!timerRoundExpired">
-      <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="Oct 1, 2018 20:00:00 UTC"></countdown>
+    <div class="col-12" *ngIf="showTimer()">
+	    <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
     </div>
   </div>
 

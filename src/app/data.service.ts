@@ -362,4 +362,9 @@ export class DataService {
 
 	return this.http.get(url + msg);
   }
+
+
+  getAllRounds() {
+	  return this.http.get('/rounds/');
+  }
 }

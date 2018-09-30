@@ -1,12 +1,19 @@
 {
-    "/signups": {
-	"target": "http://localhost:8080",
-	"secure": false
-    },
     "/ethers": {
 	"target": "http://localhost:8080",
 	"secure": false
     },
+
+    "/rounds": {
+	"target": "http://localhost:8080",
+	"secure": false
+    },
+
+    "/signups": {
+	"target": "http://localhost:8080",
+	"secure": false
+    },
+
     "/transfers": {
 	"target": "http://localhost:8080",
 	"secure": false

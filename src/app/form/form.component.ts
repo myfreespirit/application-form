@@ -45,8 +45,11 @@ export class FormComponent implements OnInit {
   distributions = [];
   correlations = [];
 
+  rounds: any;
+  roundExpiration: Date;
+  daysLeftInRound = 21;
+  thresholdDaysLeftInRound = 20;
   timerRoundExpired: boolean;
-
   text:any = {
     Month: 'Months',
     Days: "Days",
@@ -55,8 +58,8 @@ export class FormComponent implements OnInit {
     Seconds: "Seconds"
   };
 
-  constructor(@Inject(DataService) private _dataService: DataService) { }
 
+  constructor(@Inject(DataService) private _dataService: DataService) { }
 
   ngOnInit() {
     this.resetState();
@@ -65,6 +68,12 @@ export class FormComponent implements OnInit {
     this.firstSignupHappened = false;
 
     this.timerRoundExpired = false;
+
+    this._dataService.getAllRounds().subscribe(result => {
+	this.rounds = result;
+	this.roundExpiration = this.rounds[this.rounds.length - 1].end;
+	this.daysLeftInRound = (new Date(this.roundExpiration) - new Date()) / 1000 / 60 / 60 / 24;
+    });
   }
 
 
@@ -208,6 +217,11 @@ export class FormComponent implements OnInit {
 	this._dataService.reportMistake(this.username, this.userAddress, this.userTotalTokens, this.availableExrnDistributed, this.reportComment).subscribe(result => {
 		this.showReportResult = true;
 	});
+  }
+
+
+  showTimer() {
+	return !this.timerRoundExpired && this.daysLeftInRound <= this.thresholdDaysLeftInRound;
   }
 
 
