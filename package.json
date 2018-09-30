@@ -5,10 +5,9 @@
   "scripts": {
     "ng": "ng",
     "start": "tsc && node ./dist/server/src/index.js",
-    "start-dev": "npm run build & concurrently --kill-others \"nodemon\" \"npm run serve\"",
     "build": "ng build --build-optimizer --vendor-chunk --aot --prod --named-chunks false --output-hashing all",
-    "serve": "ng serve --proxy-config proxy.conf.json",
-    "serve-dev": "nodemon",
+    "serve-client": "ng serve --proxy-config proxy.conf.json",
+    "serve-server": "nodemon",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
