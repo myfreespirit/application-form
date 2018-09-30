@@ -72,7 +72,7 @@ export class FormComponent implements OnInit {
     this._dataService.getAllRounds().subscribe(result => {
 	this.rounds = result;
 	this.roundExpiration = this.rounds[this.rounds.length - 1].end;
-	this.daysLeftInRound = (new Date(this.roundExpiration) - new Date()) / 1000 / 60 / 60 / 24;
+	this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
     });
   }
 
