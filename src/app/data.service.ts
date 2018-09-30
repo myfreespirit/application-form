@@ -17,6 +17,20 @@ export class DataService {
     '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
     '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
   ];
+  blacklistedAddresses: string[] = [
+	// TEAM WALLETS
+    '0x9df04392eef34f213ce55226f40979c906cc04eb',
+    '0x19bf5d3ab758d8dcc2f45f618e14d67df0e5e98f',
+    '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
+    '0xe6fc7a203b9c6be115885f3f574d38fb717eff12',
+    '0x0b2e0c5501cb1ee63f3b69a524f991a32baab09b',
+    '0x7ab1b286309720de8e6de26aa4712372cac5d4c3',
+        // EXCHANGE WALLETS
+    '0x2a0c0dbecc7e4d658f48e01e3fa353f44050c208',  // Idex
+    '0x8d12a197cb00d4747a1fe03395095ce2a5cc6819',  // EtherDelta / ForkDelta
+    '0x274f3c32c90517975e29dfc209a23f315c1e5fc7',  // Hotbit
+    '0xe03c23519e18d64f144d2800e30e81b0065c48b5'   // Mercatox
+  ];
   tokenDistributorTopics: string[];
 
   waitingPeriodThreshold = 30.0;

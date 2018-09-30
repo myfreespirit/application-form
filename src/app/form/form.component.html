@@ -31,6 +31,9 @@
             <div *ngIf="inputWallet.invalid && inputWallet.dirty" class="alert alert-danger">
               Please provide a valid Ethereum wallet address.
             </div>
+            <div *ngIf="isBlacklisted()" class="alert alert-danger">
+	      This address is blacklisted. Team wallets or Exchange wallets are not allowed to be signed up with.
+            </div>
             <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
               Please CHECK your Ethereum wallet address before SIGNUP.
             </div>
@@ -72,7 +75,7 @@
             <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
           </div>
           <div class="col-12 col-md-1 col-lg-1 text-left">
-            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired">SIGNUP</button>
+            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired || isBlacklisted()">SIGNUP</button>
           </div>
         </div>
       </form>

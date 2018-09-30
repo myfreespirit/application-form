@@ -236,4 +236,9 @@ export class FormComponent implements OnInit {
   roundExpired(event) {
 	this.timerRoundExpired = true;
   }
+
+
+  isBlacklisted() {
+	return this._dataService.blacklistedAddresses.includes(this.userAddress);
+  }
 }

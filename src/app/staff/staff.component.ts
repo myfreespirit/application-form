@@ -114,16 +114,21 @@ export class StaffComponent implements OnInit, AfterViewInit {
 					let qualifiedBought = 0;
 					let status = '';
 
-					// fix numbers for contributors and disqualify cheaters
-					if (actualTeam === 0) {
+					// exclude blacklisted wallets
+					if (this._dataService.blacklistedAddresses.includes(el.wallet)) {
+						status = 'BLACKLIST';
+						qualifiedBought = 0;
+						qualifiedRegular = 0;
+					} else if (actualTeam === 0) {
 						if (team > 0) {
+							// disqualify cheaters
 							status = 'CHEATER';
 							qualifiedBought = 0;
 							qualifiedRegular = 0;
 						}
 					}
 
-					if (status !== 'CHEATER') {
+					if (status !== 'CHEATER' && status !== 'BLACKLIST') {
 						if (team === 0 && actualTeam === 0) {
 						// REGULAR
 							if (total < this._dataService.minimumExrnRequired) {
@@ -152,6 +157,7 @@ export class StaffComponent implements OnInit, AfterViewInit {
 								// qualifiedRegular = (Math.min(total, minimal) >= this._dataService.minimumExrnRequired) ? total - qualifiedBought : 0;
 								qualifiedRegular = (total >= this._dataService.minimumExrnRequired) ? total - qualifiedBought : 0;  // simplification due to minimal >= total
 							} else {
+								// fix numbers of contributors
 								status = 'CONTR MOVED';
 								qualifiedBought = Math.min(Math.min(team, actualTeam), minimal);
 								// qualifiedRegular = (Math.min(minimal, total) >= this._dataService.minimumExrnRequired) ? Math.min(minimal, total) - qualifiedBought : 0;
