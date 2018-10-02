@@ -10,6 +10,9 @@ const RoundSchema = new mongoose.Schema({
   },
   end: {
     type: Date
+  },
+  endBlock: {
+    type: Number
   }
 });
 

@@ -4,6 +4,8 @@
 	</div>
 </div>
 
+<button class="btn-block" mat-raised-button (click)="export()" [disabled]="false">EXPORT</button>
+
 <mat-form-field>
   <input matInput (keyup)="applyFilterInternal($event.target.value)" placeholder="Filter">
 </mat-form-field>
