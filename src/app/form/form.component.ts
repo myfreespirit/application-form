@@ -174,7 +174,17 @@ export class FormComponent implements OnInit {
     this.displayHistory = true;
 
     this._dataService.getSignups(this.userAddress).subscribe(data => {
-      this.signups = data[0];
+      this.signups = [];
+      let previousRoundEnd = 0;
+      this.rounds.forEach(round => {
+	console.log("round", round);
+	this.signups[round.id] = data[0]['signups'].filter(signup => {
+		return signup.date > previousRoundEnd && signup.date <= round.end;
+	});
+	previousRoundEnd = round.end;
+      });
+	console.log("signups", this.signups);
+
       this.showSpinnerSignups = false;
       this.firstSignupHappened = this.signups !== undefined;
     });

@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material';
 import { MatProgressSpinnerModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatSortModule } from '@angular/material';
 
 
@@ -19,7 +20,8 @@ import { MatSortModule } from '@angular/material';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
-    MatTableModule
+    MatTableModule,
+    MatTabsModule
   ],
   exports: [
     MatButtonModule,
@@ -29,7 +31,8 @@ import { MatSortModule } from '@angular/material';
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSortModule,
-    MatTableModule
+    MatTableModule,
+    MatTabsModule
   ],
 })
 export class MaterialModule { }

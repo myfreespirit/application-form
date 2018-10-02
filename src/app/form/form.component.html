@@ -98,7 +98,7 @@
           <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerSignups ? 'block' : 'none'"></mat-spinner>
         </mat-panel-title>
         <mat-panel-description>
-          Your previous signups ({{ signups['signups'].length }})
+		Your previous signups ({{ signups[rounds.length - 1].length }})
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="row">
@@ -110,17 +110,31 @@
 		      <br />
 	      </div>
       </div>
-      <div class="row">
-        <div class="d-none d-md-block col-md-4">Date</div>
-        <div class="col-6 col-md-4">EXRN Total</div>
-        <div class="col-6 col-md-4">EXRN from team</div>
-      </div>
-      <hr />
-      <div class="row" *ngFor="let signup of signups['signups']">
-        <div class="d-none d-md-block col-md-4">{{ signup['date'] | date:'MMM d, y, h:mm a' }}</div>
-        <div class="col-6 col-md-4">{{ signup['totalEXRN'] | number: fractionSize }}</div>
-        <div class="col-6 col-md-4">{{ signup['teamEXRN'] | number: fractionSize }}</div>
-      </div>
+
+      <mat-tab-group mat-stretch-tabs selectedIndex="{{ rounds.length - 1 }}" class="example-stretched-tabs mat-elevation-z4">
+	  <span *ngFor="let round of rounds">
+		<mat-tab label="Round #{{ round.round }}">
+			<hr />
+			<div class="row" *ngIf="round.round < 3">
+				<div class="col-12">
+					The signups data of first two rounds cannot be visualized as it is not compatible with this app unfortunately.
+				</div>
+			</div>
+			<div class="row" *ngIf="round.round >= 3">
+				<div class="d-none d-md-block col-md-4">Date</div>
+				<div class="col-6 col-md-4">EXRN Total</div>
+				<div class="col-6 col-md-4">EXRN from team</div>
+			</div>
+			<hr />
+			<div class="row" *ngFor="let signup of signups[round.id]">
+				<div class="d-none d-md-block col-md-4">{{ signup['date'] | date:'MMM d, y, h:mm a' }}</div>
+				<div class="col-6 col-md-4">{{ signup['totalEXRN'] | number: fractionSize }}</div>
+				<div class="col-6 col-md-4">{{ signup['teamEXRN'] | number: fractionSize }}</div>
+			</div>
+		</mat-tab>
+	  </span>
+      </mat-tab-group>
+
     </mat-expansion-panel>
 
 
