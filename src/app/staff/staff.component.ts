@@ -113,12 +113,12 @@ export class StaffComponent implements OnInit, AfterViewInit {
 							if (team === 0 && actualTeam === 0) {
 							// REGULAR
 								if (total < this._dataService.minimumExrnRequired) {
-									status = 'REG INVALID';
+									status = 'REG INSUFFICIENT';
 									qualifiedBought = 0;
 									qualifiedRegular = 0;
 								}
 								else if (total > minimal) {
-									status = 'REG MOVED';
+									status = 'REG INVALID';
 									qualifiedBought = 0;
 									qualifiedRegular = 0;
 								} else {
