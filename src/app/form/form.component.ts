@@ -173,17 +173,17 @@ export class FormComponent implements OnInit {
     this.resetState();
     this.displayHistory = true;
 
-    this._dataService.getSignups(this.userAddress).subscribe(data => {
+    this._dataService.getSignups(this.userAddress).subscribe((data: any[]) => {
       this.signups = [];
       let previousRoundEnd = 0;
+      data = data.length ? data[0]['signups'] : [];
+
       this.rounds.forEach(round => {
-	console.log("round", round);
-	this.signups[round.id] = data[0]['signups'].filter(signup => {
+	  this.signups[round.id] = data.filter(signup => {
 		return signup.date > previousRoundEnd && signup.date <= round.end;
-	});
-	previousRoundEnd = round.end;
+	  });
+	  previousRoundEnd = round.end;
       });
-	console.log("signups", this.signups);
 
       this.showSpinnerSignups = false;
       this.firstSignupHappened = this.signups !== undefined;
