@@ -29,25 +29,28 @@
           </div>
           <div class="col-12 col-md-8 offset-md-1 col-lg-6 offset-lg-3">
             <div *ngIf="inputWallet.invalid && inputWallet.dirty" class="alert alert-danger">
-              Please provide a valid Ethereum wallet address.
+		    Please provide a valid Ethereum wallet address.
             </div>
             <div *ngIf="isBlacklisted()" class="alert alert-danger">
-	      This address is blacklisted. Team wallets or Exchange wallets are not allowed to be signed up with.
+		    This address is blacklisted. Team wallets or Exchange wallets are not allowed to be signed up with.
             </div>
-            <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
-              Please CHECK your Ethereum wallet address before SIGNUP.
+            <div *ngIf="showCallToAction && !inputWallet.dirty && !showContributorEligibility" class="alert alert-danger">
+		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
             </div>
             <div *ngIf="!showSignupResult && showContributorEligibility && !inputWallet.dirty" class="alert alert-success">
 		    Congratulations, you're allowed to receive 10x EXRT rewards on your {{ this.availableExrnDistributed | number: fractionSize }} EXRN!
             </div>
-            <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
-		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x rewards on it!
-            </div>
             <div *ngIf="!showSignupResult && showNormalEligibility && !inputWallet.dirty" class="alert alert-success">
 		    Congratulations, you're allowed to receive regular EXRT rewards on your {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN!
             </div>
-            <div *ngIf="showCallToAction && !inputWallet.dirty" class="alert alert-warning">
+            <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
+		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x EXRT rewards on it!
+            </div>
+            <div *ngIf="showCallToAction && !inputWallet.dirty && showContributorEligibility" class="alert alert-warning">
 		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
+            </div>
+            <div *ngIf="displayHistory && inputWallet.dirty && inputWallet.valid" class="alert alert-warning">
+		    Please CHECK your Ethereum wallet address before SIGNUP.
             </div>
           </div>
         </div>
@@ -75,7 +78,7 @@
             <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
           </div>
           <div class="col-12 col-md-1 col-lg-1 text-left">
-            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired || isBlacklisted()">SIGNUP</button>
+            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired || isBlacklisted() || showCallToAction && !inputWallet.dirty && !showContributorEligibility">SIGNUP</button>
           </div>
         </div>
       </form>
