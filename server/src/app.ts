@@ -18,6 +18,7 @@ class App {
 
 	constructor() {
 		this.app = express();
+
 		this.config();
 		this.routes();
 		cron.init();
@@ -50,6 +51,8 @@ class App {
 		this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 		this.app.use(logger('dev'));
+
+		this.app.enable('trust proxy');
 	}
 
 	private routes() {
