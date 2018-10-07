@@ -60,13 +60,15 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
 
   getLastSignups() {
-    this._dataService.getLastSignups().subscribe(result => {
-        	this.signups = result;
+	this._dataService.getAllRounds().subscribe((rounds: any[]) => {
+		let formClosureBlock = rounds[rounds.length - 1].endBlock;
+		let prevFormEndDate = rounds[rounds.length - 2].end;
 
 		this._dataService.getCurrentEtherBlock().subscribe(data => {
-			this._dataService.getAllRounds().subscribe((rounds: any[]) => {
-				let formClosureBlock = rounds[rounds.length - 1].endBlock;
-				let snapshotBlock = parseInt(data['result'], 16);
+			let snapshotBlock = parseInt(data['result'], 16);
+
+			this._dataService.getAllLatestSignupsAfter(prevFormEndDate).subscribe(result => {
+				this.signups = result;
 				console.log("form closed @", formClosureBlock, "snapshot @", snapshotBlock);
 
 				this._dataService.getTransactions().subscribe((result: any[]) => {

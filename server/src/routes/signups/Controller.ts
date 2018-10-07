@@ -32,6 +32,28 @@ class Controller {
 	});
 
 
+	// retrieve most recent signup after a specific date for each wallet
+	this.router.get('/after/:date', (req, res, next) => {
+	  Signup.find({}, { 'signups': { '$slice': -1 } })
+		.then(documents => {
+			documents = documents.filter(entry => {
+				return entry.signups[0].date > req.params['date'];
+			}).map(entry => {
+				let obj = {
+					wallet: entry.wallet,
+					date: entry.signups[0].date,
+					total: entry.signups[0].totalEXRN,
+					team: entry.signups[0].teamEXRN
+				};
+
+				return obj;
+			});
+			res.json(documents);
+		})
+		.catch(err => next(err));
+	});
+
+
 	// retrieve all signups for a given wallet
 	this.router.get('/:wallet', (req, res, next) => {
 	  Signup.find({ wallet: req.params['wallet'] }, (err, document) => {

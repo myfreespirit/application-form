@@ -134,8 +134,13 @@ export class DataService {
   }
 
 
-  getLastSignups() {
+  getAllLatestSignups() {
 	return this.http.get('/signups/all');
+  }
+
+
+  getAllLatestSignupsAfter(date) {
+	return this.http.get('/signups/after/' + +new Date(date));
   }
 
 
