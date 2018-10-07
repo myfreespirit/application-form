@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { Round } from '../../models/round';
 import { Signup } from '../../models/signup';
+import { Md5 } from 'ts-md5/dist/md5';
 
 
 class Controller {
@@ -65,9 +66,6 @@ class Controller {
 
 	// save signup details for given wallet
 	this.router.put('/save/:wallet/:totalEXRN/:teamEXRN', (req, res, next) => {
-	  console.log(req.connection.remoteAddress);
-	  console.log(req.ip);
-	  console.log(req.ips);
 	  let endOfRound = 0;
 
 	  Round.find({ }, (err, documents) => {
@@ -78,7 +76,7 @@ class Controller {
 		return res.status(403).send("Round was already closed - update your local clock please!");
             }
 
-	    const obj = { totalEXRN: req.params['totalEXRN'], teamEXRN: req.params['teamEXRN'] };
+	    const obj = { totalEXRN: req.params['totalEXRN'], teamEXRN: req.params['teamEXRN'], md5HashedIP: Md5.hashStr(req.ip) };
             Signup.findOneAndUpdate({ wallet: req.params['wallet'] },
 					  { $push: { signups: obj } },
 					  { upsert: true, new : true },
