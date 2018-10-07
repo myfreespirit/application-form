@@ -65,6 +65,7 @@ class Controller {
 
 	// save signup details for given wallet
 	this.router.put('/save/:wallet/:totalEXRN/:teamEXRN', (req, res, next) => {
+	  console.log(req.connection.remoteAddress);
 	  let endOfRound = 0;
 
 	  Round.find({ }, (err, documents) => {
