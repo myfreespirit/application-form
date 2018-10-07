@@ -153,11 +153,26 @@ export class FormComponent implements OnInit {
     this.showCallToAction = this.userTotalTokens < this._dataService.minimumExrnRequired && !this.showTransferReminder;
   }
 
+  
+  private divideSignupsPerRound(data: any[]) {
+      this.signups = [];
+      let previousRoundEnd = 0;
+
+      this.rounds.forEach(round => {
+	  this.signups[round.id] = data.filter(signup => {
+		return signup.date > previousRoundEnd && signup.date <= round.end;
+	  });
+	  previousRoundEnd = round.end;
+      });
+  }
+
 
   signup() {
     this.showSpinnerSignups = true;
-    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe(data => {
-	this.signups = data;
+    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe((data: any[]) => {
+	data = data['signups'];
+	this.divideSignupsPerRound(data);
+
 	this.showSpinnerSignups = false;
 	this.firstSignupHappened = this.signups !== undefined;
 	this.showSignupResult = true;
@@ -174,16 +189,8 @@ export class FormComponent implements OnInit {
     this.displayHistory = true;
 
     this._dataService.getSignups(this.userAddress).subscribe((data: any[]) => {
-      this.signups = [];
-      let previousRoundEnd = 0;
       data = data.length ? data[0]['signups'] : [];
-
-      this.rounds.forEach(round => {
-	  this.signups[round.id] = data.filter(signup => {
-		return signup.date > previousRoundEnd && signup.date <= round.end;
-	  });
-	  previousRoundEnd = round.end;
-      });
+      this.divideSignupsPerRound(data);
 
       this.showSpinnerSignups = false;
       this.firstSignupHappened = this.signups !== undefined;
