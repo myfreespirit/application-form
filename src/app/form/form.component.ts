@@ -164,6 +164,8 @@ export class FormComponent implements OnInit {
 	  });
 	  previousRoundEnd = round.end;
       });
+
+      this.firstSignupHappened = this.signups[this.rounds.length - 1].length > 0;
   }
 
 
@@ -174,7 +176,6 @@ export class FormComponent implements OnInit {
 	this.divideSignupsPerRound(data);
 
 	this.showSpinnerSignups = false;
-	this.firstSignupHappened = this.signups !== undefined;
 	this.showSignupResult = true;
     }, msg => {
 	this.showSpinnerSignups = false;
@@ -193,7 +194,6 @@ export class FormComponent implements OnInit {
       this.divideSignupsPerRound(data);
 
       this.showSpinnerSignups = false;
-      this.firstSignupHappened = this.signups !== undefined;
     });
 
     this._dataService.getTotalTokens(this.userAddress)
