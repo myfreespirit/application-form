@@ -72,10 +72,10 @@
       <form>
         <div class="row">
           <div class="col-6 col-md-4 offset-md-1 col-lg-3 offset-lg-3">
-            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTotalTokens="ngModel">
+            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="isManualEntryDisabled" #inputTotalTokens="ngModel">
           </div>
           <div class="col-6 col-md-4 col-lg-3">
-            <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="firstSignupHappened" #inputTeamTokens="ngModel">
+            <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="isManualEntryDisabled" #inputTeamTokens="ngModel">
           </div>
           <div class="col-12 col-md-1 col-lg-1 text-left">
             <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.dirty || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired || isBlacklisted() || showCallToAction && !inputWallet.dirty && !showContributorEligibility">SIGNUP</button>

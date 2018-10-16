@@ -31,6 +31,7 @@ export class FormComponent implements OnInit {
   disableCheckWallet: boolean;
   displayHistory: boolean;
   firstSignupHappened: boolean;
+  isManualEntryDisabled: boolean;
 
   userAddress = '';
   userTotalTokens: number;
@@ -68,6 +69,7 @@ export class FormComponent implements OnInit {
 
     this.disableCheckWallet = false;
     this.firstSignupHappened = false;
+    this.isManualEntryDisabled = true;
 
     this.timerRoundExpired = false;
 
