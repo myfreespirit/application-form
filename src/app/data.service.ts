@@ -39,6 +39,7 @@ export class DataService {
   minimumExrnRequired = Math.pow(10, 7);
   airdropAmount = Math.pow(10, 7);
   distributionRates = [
+    { block: 6937738, value: this.airdropAmount / 4 },  // Start  of contribution sale - Christmas 2018 discount
     { block: 6437452, value: this.airdropAmount / 8 },  // Finish of contribution sale on October 2nd 2018
     { block: 6392320, value: this.airdropAmount / 4 },  // Start  of contribution sale on the week of 24th of September 2018
     { block: 5721051, value: this.airdropAmount / 8 },
