@@ -38,6 +38,7 @@ export class DataService {
   waitingPeriodThreshold = 30.0;
   minimumExrnRequired = Math.pow(10, 7);
   airdropAmount = Math.pow(10, 7);
+  airdropLastBlock = 4532706;
   distributionRates = [
     { block: 6937738, value: this.airdropAmount / 4 },  // Start  of contribution sale - Christmas 2018 discount
     { block: 6437452, value: this.airdropAmount / 8 },  // Finish of contribution sale on October 2nd 2018
@@ -282,6 +283,7 @@ export class DataService {
     contributions = correlatedRefunds[1];
 
     let contrCandidates = [];
+    let firstContrBlock = contributions.length ? contributions[0].block : 0;
 
     while (contributions.length) {
         const contr = contributions.shift();
@@ -303,6 +305,10 @@ export class DataService {
         // Retrieve a list of possible distribution candidates for current contribution candidates
         const nextContrBlock = contributions.length === 0 ? Number.MAX_VALUE : contributions[0].block;
         const distrCandidates = distributions.filter(distr => {
+	    // check for airdrops
+	    if (distr.block <= this.airdropLastBlock && distr.block < firstContrBlock && distr.value === this.airdropAmount)
+		return false;
+
             return distr.block < nextContrBlock;  // Relaxed filter mode to allow for recuperation of the glitch (advance payment)
             // return distr.block >= contrCandidates[0].block && distr.block < nextContrBlock;  // Strict filter mode
         });
