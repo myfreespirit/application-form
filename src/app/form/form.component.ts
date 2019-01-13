@@ -187,7 +187,17 @@ export class FormComponent implements OnInit {
   }
 
 
+  private isValidEthAddress() {
+	let regexp = new RegExp('^0x[a-fA-F0-9]{40}$');
+	return regexp.test(this.userAddress);
+  }
+
+
   checkWallet() {
+    if (!this.isValidEthAddress()) {
+	return;
+    }
+
     this.resetState();
     this.displayHistory = true;
 
