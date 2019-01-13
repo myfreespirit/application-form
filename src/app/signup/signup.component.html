@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Successful Registration</h2>
+<mat-dialog-content class="mat-typography">
+  <p>Congratulations, you've successfully registered for this round! In case your EXRN balance changes, you will need to SIGNUP again before the end of this round. Feel free to take a screenshot of this window as an additional proof of your submission.</p>
+ 
+  <p>Round #{{ data.round }}</p>
+
+  <p>Total: {{ data.total | number: fractionSize }} EXRN</p>
+
+  <p>Team: {{ data.team | number: fractionSize }} EXRN</p>
+
+  <p>Time: {{ data.time | date:'medium':'UTC' }} UTC</p>
+
+  <p>Your wallet: {{ data.wallet }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>DONE</button>
+</mat-dialog-actions>
+

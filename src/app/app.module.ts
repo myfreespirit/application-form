@@ -13,6 +13,7 @@ import { DataService } from './data.service';
 
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
+import { SignupSuccessDialog } from './signup/signup.component';
 import { StaffComponent } from './staff/staff.component';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { StaffComponent } from './staff/staff.component';
   declarations: [
     AppComponent,
     FormComponent,
+    SignupSuccessDialog,
     StaffComponent
   ],
   imports: [
@@ -32,6 +34,9 @@ import { StaffComponent } from './staff/staff.component';
     MaterialModule,
     NgbModule.forRoot(),
     PapaParseModule
+  ],
+  entryComponents: [
+    SignupSuccessDialog
   ],
   providers: [
     DataService

@@ -1,7 +1,9 @@
 import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { DataService } from '../data.service';
+import { SignupSuccessDialog } from '../signup/signup.component';
 import { BigNumber } from 'bignumber.js';
 
 
@@ -62,7 +64,7 @@ export class FormComponent implements OnInit {
   };
 
 
-  constructor(@Inject(DataService) private _dataService: DataService) { }
+  constructor(@Inject(DataService) private _dataService: DataService, @Inject(MatDialog) private dialog: MatDialog) { }
 
   ngOnInit() {
     this.resetState();
@@ -179,6 +181,18 @@ export class FormComponent implements OnInit {
 
 	this.showSpinnerSignups = false;
 	this.showSignupResult = true;
+
+	let dialogRef = this.dialog.open(SignupSuccessDialog);
+	dialogRef.componentInstance['data'] = {
+		round: this.rounds.length,
+		time: Date.now(),
+		total: this.userTotalTokens,
+		team: this.availableExrnDistributed,
+		wallet: this.userAddress
+	};
+	// dialogRef.afterClosed().subscribe(result => {
+	//	console.log(`Dialog result: ${result}`);
+	// });
     }, msg => {
 	this.showSpinnerSignups = false;
 	this.showAPIerror = true;
