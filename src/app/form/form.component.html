@@ -38,10 +38,10 @@
 		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
             </div>
             <div *ngIf="!showSignupResult && showContributorEligibility && !inputWallet.dirty" class="alert alert-success">
-		    Congratulations, you're allowed to receive 10x EXRT rewards on your {{ this.availableExrnDistributed | number: fractionSize }} EXRN!
+		    {{ this.availableExrnDistributed | number: fractionSize }} EXRN is eligible for 10x EXRT rewards. Don't forget to SIGNUP below!
             </div>
             <div *ngIf="!showSignupResult && showNormalEligibility && !inputWallet.dirty" class="alert alert-success">
-		    Congratulations, you're allowed to receive regular EXRT rewards on your {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN!
+		    {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN is eligible for regular EXRT rewards. Don't forget to SIGNUP below!
             </div>
             <div *ngIf="showTransferReminder && !inputWallet.dirty" class="alert alert-info">
 		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x EXRT rewards on it!
