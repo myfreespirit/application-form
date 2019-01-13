@@ -46,6 +46,12 @@
             <div *ngIf="showCallToAction && showContributorEligibility" class="alert alert-warning">
 		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
             </div>
+            <div *ngIf="!firstSignupHappened && inputWallet.valid" class="alert alert-warning">
+		    Don't forget to SIGNUP below to receive EXRT rewards this round!
+            </div>
+            <div *ngIf="firstSignupHappened && isSignupOutdated()" class="alert alert-warning">
+		    Your last signup is NOT up to date anymore. Please SIGNUP again!
+            </div>
           </div>
         </div>
       </form>

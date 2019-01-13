@@ -270,4 +270,22 @@ export class FormComponent implements OnInit {
   isBlacklisted() {
 	return this._dataService.blacklistedAddresses.includes(this.userAddress);
   }
+
+
+  isSignupOutdated() {
+	if (this.signups != undefined) {
+		let nrOfOwnSignups = this.signups[this.rounds.length - 1].length;
+		let lastOwnSignup = this.signups[this.rounds.length - 1][nrOfOwnSignups -1];
+
+		if (lastOwnSignup.totalEXRN != this.userTotalTokens) {
+			return true;
+		}
+
+		if (lastOwnSignup.teamEXRN != this.availableExrnDistributed) {
+			return true;
+		}
+	}
+
+	return false;
+  }
 }
