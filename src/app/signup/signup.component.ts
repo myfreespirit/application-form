@@ -1,6 +1,6 @@
 import { Inject } from '@angular/core';
 import { Component } from '@angular/core';
-import { MatDialog  } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 
 @Component({
@@ -11,4 +11,7 @@ import { MatDialog  } from '@angular/material';
 
 
 export class SignupSuccessDialog {
+	data: any;
+
+	constructor(@Inject(MatDialogRef) public dialogRef: MatDialogRef<SignupSuccessDialog>) {}
 }
