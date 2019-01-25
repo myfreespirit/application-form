@@ -1,9 +1,8 @@
-<div>
+<div *ngIf="router.url != '/exrt-testnet'">
   <h1>
 	  {{ title }}
   </h1>
-
-  <app-form></app-form>
 </div>
+
 
 <router-outlet></router-outlet>

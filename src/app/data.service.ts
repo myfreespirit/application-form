@@ -397,4 +397,14 @@ export class DataService {
   getAllRounds() {
 	  return this.http.get('/rounds/');
   }
+
+
+  hashIt(salt, pass) {
+	const req = {};
+	req['salt'] = salt;
+	req['pass'] = pass;
+
+	return this.http.post('/testnet/hash/', req);
+  }
+
 }

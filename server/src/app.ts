@@ -11,6 +11,7 @@ import cron from './cronJobs/Controller';
 import ethers from './routes/ethers/Controller';
 import rounds from './routes/rounds/Controller';
 import signups from './routes/signups/Controller';
+import testnet from './routes/testnet/Controller';
 import transfers from './routes/transfers/Controller';
 
 
@@ -62,6 +63,7 @@ class App {
 		this.app.use('/ethers', ethers.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
+		this.app.use('/testnet', testnet.routes());
 		this.app.use('/transfers', transfers.routes());
 
 		this.app.use(function(err, req, res, next) {

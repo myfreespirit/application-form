@@ -1,0 +1,40 @@
+<div>
+  <h1>
+	  {{ title }}
+  </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+	<form #testnetForm="ngForm">
+	    <div class="row">
+		<div class="col-4 offset-4">
+			<input type="text" name="salt" placeholder="Random salt" [(ngModel)]="userSalt" required #inputSalt="ngModel">
+		</div>
+	    </div>
+
+	    <div class="row">
+		<div class="col-4 offset-4">
+			<input type="text" name="pass" placeholder="Access key / password" [(ngModel)]="userPass" required #inputPass="ngModel">
+		</div>
+	    </div>
+
+	    <div class="row">
+		<div class="col-4 offset-4">
+			<button class="btn-block" mat-raised-button (click)="hashIt()" [disabled]="inputSalt.invalid || inputPass.invalid">MD5 (APR) HASH</button>
+		</div>
+	    </div>
+
+	    <div class="row">
+		<div class="col-4 offset-4">
+			<p>
+				Result: {{ hash }}
+			</p>
+		</div>
+	    </div>
+
+	</form>
+    </div>
+</div>
+
