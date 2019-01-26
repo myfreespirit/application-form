@@ -1,4 +1,7 @@
 "assets": [
-    "assets",
-    "favicon.png" 
+	"assets",
+	"favicon.png"
+],
+"scripts": [
+	"node_modules/auth0-js/build/auth0.js"
 ]
