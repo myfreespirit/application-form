@@ -9,13 +9,18 @@ import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PapaParseModule } from 'ngx-papaparse';
 
+
+import { AuthService } from './auth.service';
 import { DataService } from './data.service';
+
 
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
 import { SignupSuccessDialog } from './signup/signup.component';
 import { StaffComponent } from './staff/staff.component';
 import { TestnetComponent } from './testnet/testnet.component';
+import { AdminComponent } from './admin/admin.component';
+
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -24,7 +29,8 @@ import { TestnetComponent } from './testnet/testnet.component';
     FormComponent,
     SignupSuccessDialog,
     StaffComponent,
-    TestnetComponent
+    TestnetComponent,
+    AdminComponent
   ],
   imports: [
     AppRoutingModule,
@@ -41,6 +47,7 @@ import { TestnetComponent } from './testnet/testnet.component';
     SignupSuccessDialog
   ],
   providers: [
+    AuthService,
     DataService
   ]
 })

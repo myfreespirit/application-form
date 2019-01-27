@@ -24,7 +24,6 @@ export class TestnetComponent implements OnInit {
 
 
   ngOnInit() {
-
   }
 
 
