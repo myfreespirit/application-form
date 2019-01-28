@@ -5,7 +5,7 @@
 </div>
 
 
-<div class="row">
+<div *ngIf=false class="row">
     <div class="col-12">
 	<form #testnetForm="ngForm">
 	    <div class="row">
@@ -38,3 +38,80 @@
     </div>
 </div>
 
+
+<mat-vertical-stepper [linear]="isLinear" #stepper>
+	<mat-step [stepControl]="formGroup1">
+		<form [formGroup]="formGroup1">
+			<ng-template matStepLabel>Enter your wallet</ng-template>
+			<mat-form-field>
+				<input matInput placeholder="personal ETH address" formControlName="formControl1" required pattern="0x[a-fA-F0-9]{40}">
+			</mat-form-field>
+			<div>
+				<button mat-button mat-raised-button matStepperNext>NEXT</button>
+			</div>
+		</form>
+	</mat-step>
+
+	<mat-step [stepControl]="formGroup2">
+	<form [formGroup]="formGroup2">
+		<ng-template matStepLabel>Enter your telegram</ng-template>
+		<mat-form-field>
+			<span matPrefix>@ &nbsp;</span>
+			<input matInput placeholder="Telegram nickname" formControlName="formControl2" required>
+		</mat-form-field>
+		<div>
+			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+			<button mat-button mat-raised-button matStepperNext>NEXT</button>
+		</div>
+	</form>
+	</mat-step>
+
+	<mat-step [stepControl]="formGroup3">
+	<form [formGroup]="formGroup3">
+		<ng-template matStepLabel>Set username</ng-template>
+		<mat-form-field>
+			<input matInput placeholder="username" formControlName="formControl3" required>
+		</mat-form-field>
+		<div>
+			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+			<button mat-button mat-raised-button matStepperNext>NEXT</button>
+		</div>
+	</form>
+	</mat-step>
+
+	<mat-step [stepControl]="formGroup4">
+	<form [formGroup]="formGroup4">
+		<ng-template matStepLabel>Generate access key</ng-template>
+		<mat-form-field>
+			<input matInput placeholder="password" formControlName="formControl4" required>
+		</mat-form-field>
+		<div>
+			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+			<button mat-button mat-raised-button matStepperNext>NEXT</button>
+		</div>
+	</form>
+	</mat-step>
+
+	<mat-step [stepControl]="formGroup5" optional>
+	<form [formGroup]="formGroup5">
+		<ng-template matStepLabel>Motivation</ng-template>
+		<mat-form-field>
+			<textarea matInput type="text" rows="5" maxlength="2000" placeholder="Please tell us why we should grant you access" formControlName="formControl5"></textarea>
+		</mat-form-field>
+		<div>
+			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+			<button mat-button mat-raised-button matStepperNext>NEXT</button>
+		</div>
+	</form>
+	</mat-step>
+
+	<mat-step>
+		<ng-template matStepLabel>Submit</ng-template>
+		You are now done.
+		<div>
+			<button mat-button mat-raised-button (click)="apply()">SAVE</button>
+			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+			<button mat-button mat-raised-button (click)="stepper.reset()">RESET</button>
+		</div>
+	</mat-step>
+</mat-vertical-stepper>
