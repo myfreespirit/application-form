@@ -34,7 +34,6 @@ export class TestnetComponent implements OnInit {
 
   constructor(@Inject(TestnetService) private _testnetService: TestnetService) {
 	this.formSubmitted = false;
-  	this.passCopied = false;
 
   	this.randomPassword(12);
   }
@@ -62,7 +61,7 @@ export class TestnetComponent implements OnInit {
 	this.inpPassword = "";
 	this.inpMotivation = "";
 
-	this.passCopied = false;
+	this.randomPassword(12);
   }
 
 

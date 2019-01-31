@@ -54,7 +54,7 @@
 					<button mat-button mat-raised-button (click)="getHistory()">REFRESH</button>
 			</mat-step>
 			<mat-step>
-				<ng-template matStepLabel>Request reset</ng-template>
+				<ng-template matStepLabel>Request application reset</ng-template>
 				<div class="alert alert-info">
 					This process is not a guarantee that this application will be reset.
 					Please specify your telegram username so that we can get back to you.
@@ -74,7 +74,6 @@
 				<div>
 					<button mat-button mat-raised-button matStepperNext (click)="resetRequest(); stepper.reset();" [disabled]="telegram.errors !== null">SEND REQUEST</button>
 				</div>
-
 			</mat-step>
 		</div>
 
