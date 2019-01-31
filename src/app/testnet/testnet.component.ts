@@ -61,14 +61,14 @@ export class TestnetComponent implements OnInit {
 	this.inpPassword = "";
 	this.inpMotivation = "";
 
-	this.randomPassword(12);
+	this.randomPassword(16);
   }
 
 
   randomPassword(length: number) {
   	this.passCopied = false;
   	this.inpPassword = "";
-	let chars = "abcdefghijklmnopqrstuvwxyz!@#%^&*()_+-={}[]\,./?ABCDEFGHIJKLMNOP1234567890";
+	let chars = "abcdefghijklmnopqrstuvwxyz!@#ABCDEFGHIJKLMNOP1234567890";
 
 	for (let x = 0; x < length; x++) {
 		let i = Math.floor(Math.random() * chars.length);
