@@ -134,7 +134,7 @@
 					<mat-step>
 						<ng-template matStepLabel>Generate access key</ng-template>
 						<mat-form-field>
-							<input matInput [(ngModel)]="inpPassword" name="password" #password="ngModel" ng-cut="$event.preventDefault()" ng-copy="$event.preventDefault()" required disabled>
+							<input matInput [(ngModel)]="inpPassword" name="password" #password="ngModel" required disabled>
 						</mat-form-field>
 
 						<div *ngIf="!passCopied" class="alert alert-warning">
