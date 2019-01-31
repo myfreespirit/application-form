@@ -16,15 +16,15 @@ export class TestnetService {
 
 
 	isUsernameTaken(username: string) {
-		return this.http.get('/testnet/username/' + username);
+		return this.http.get('/testnet/username/' + username.toLowerCase());
 	}
 
 
 	save(wallet: string, telegram: string, username: string, hash: string, motivation: string) {
 		const req = {};
-		req['wallet'] = wallet;
+		req['wallet'] = wallet.toLowerCase();
 		req['telegram'] = telegram;
-		req['username'] = username;
+		req['username'] = username.toLowerCase();
 		req['hash'] = hash;
 		req['motivation'] = motivation;
 
@@ -42,13 +42,13 @@ export class TestnetService {
 
 
 	getHistory(wallet: string) {
-		return this.http.get('/testnet/history/' + wallet);
+		return this.http.get('/testnet/history/' + wallet.toLowerCase());
 	}
 
 
 	resetRequest(wallet: string, telegram: string) {
 		const req = {};
-		req['wallet'] = wallet;
+		req['wallet'] = wallet.toLowerCase();
 		req['telegram'] = telegram;
 
 		return this.http.put('/testnet/reset/request', req);

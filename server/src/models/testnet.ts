@@ -24,6 +24,7 @@ const TestnetSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    lowercase: true,
     match: /^0x[0-9a-f]{40}$/
   },
   telegram: {
@@ -33,6 +34,7 @@ const TestnetSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
+    lowercase: true,
     unique: true
   },
   hash: {

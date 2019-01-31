@@ -13,7 +13,7 @@ export class UniqueWalletAsyncValidator implements AsyncValidator {
 	}
 
 	validate(ctrl: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
-		return this.testnetService.getApplicationByWallet(ctrl.value.toLowerCase()).pipe(
+		return this.testnetService.getApplicationByWallet(ctrl.value).pipe(
 			map((isTaken: any[]) => (isTaken.length != 0 ? { uniqueWallet: true } : null)),
 			catchError(() => { return of({ unknown: true }); })
 		);
