@@ -5,113 +5,178 @@
 </div>
 
 
-<div *ngIf=false class="row">
-    <div class="col-12">
-	<form #testnetForm="ngForm">
-	    <div class="row">
-		<div class="col-4 offset-4">
-			<input type="text" name="salt" placeholder="Random salt" [(ngModel)]="userSalt" required #inputSalt="ngModel">
-		</div>
-	    </div>
-
-	    <div class="row">
-		<div class="col-4 offset-4">
-			<input type="text" name="pass" placeholder="Access key / password" [(ngModel)]="userPass" required #inputPass="ngModel">
-		</div>
-	    </div>
-
-	    <div class="row">
-		<div class="col-4 offset-4">
-			<button class="btn-block" mat-raised-button (click)="hashIt()" [disabled]="inputSalt.invalid || inputPass.invalid">MD5 (APR) HASH</button>
-		</div>
-	    </div>
-
-	    <div class="row">
-		<div class="col-4 offset-4">
-			<p>
-				Result: {{ hash }}
-			</p>
-		</div>
-	    </div>
-
-	</form>
-    </div>
+<div *ngIf="formSubmitted" class="alert alert-success">
+	Thank you, your request has been submitted!
+	You can use the same form to check the status.
 </div>
 
 
-<mat-vertical-stepper [linear]="isLinear" #stepper>
-	<mat-step [stepControl]="formGroup1">
-		<form [formGroup]="formGroup1">
+<form #formTestnet="ngForm">
+	<mat-vertical-stepper [linear]="wallet.errors?.uniqueWallet ? false : isLinear" #stepper>
+		<mat-step>
 			<ng-template matStepLabel>Enter your wallet</ng-template>
 			<mat-form-field>
-				<input matInput placeholder="personal ETH address" formControlName="formControl1" required pattern="0x[a-fA-F0-9]{40}">
+				<mat-spinner color="warn" diameter="25" [style.display]="wallet.pending ? 'block' : 'none'"></mat-spinner>
+				<input matInput [(ngModel)]="inpWallet" name="wallet" #wallet="ngModel" placeholder="ETH address" required pattern="0x[a-fA-F0-9]{40}" appUniqueWalletAsyncValidator>
 			</mat-form-field>
-			<div>
+
+			<div *ngIf="wallet.invalid && (wallet.dirty || wallet.touched)">
+				<div *ngIf="wallet.errors.required" class="alert alert-danger">
+					Your ETH wallet address is required.
+				</div>
+				<div *ngIf="wallet.errors.pattern" class="alert alert-danger">
+					This is not a valid ETH wallet address.
+				</div>
+				<div *ngIf="wallet.errors.uniqueWallet" class="alert alert-danger">
+					This ETH wallet address is already signed up for Testnet.
+				</div>
+				<div *ngIf="wallet.errors.uniqueWallet" class="alert alert-warning">
+					It could be that somebody else signed up with your wallet or that you forgot the credentials.<br />
+					In this case you can exceptionally request approval for this registration to be reset under Step 3.
+				</div>
+				<div *ngIf="wallet.errors.unknown" class="alert alert-danger">
+					Something went wrong. Please try again or contact an admin on Telegram.
+				</div>
+			</div>
+
+			<div *ngIf="!wallet.pending && wallet.errors === null">
 				<button mat-button mat-raised-button matStepperNext>NEXT</button>
 			</div>
-		</form>
-	</mat-step>
+		</mat-step>
 
-	<mat-step [stepControl]="formGroup2">
-	<form [formGroup]="formGroup2">
-		<ng-template matStepLabel>Enter your telegram</ng-template>
-		<mat-form-field>
-			<span matPrefix>@ &nbsp;</span>
-			<input matInput placeholder="Telegram nickname" formControlName="formControl2" required>
-		</mat-form-field>
-		<div>
-			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
-			<button mat-button mat-raised-button matStepperNext>NEXT</button>
-		</div>
-	</form>
-	</mat-step>
 
-	<mat-step [stepControl]="formGroup3">
-	<form [formGroup]="formGroup3">
-		<ng-template matStepLabel>Set username</ng-template>
-		<mat-form-field>
-			<input matInput placeholder="username" formControlName="formControl3" required>
-		</mat-form-field>
-		<div>
-			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
-			<button mat-button mat-raised-button matStepperNext>NEXT</button>
-		</div>
-	</form>
-	</mat-step>
+		<div *ngIf="wallet.errors?.uniqueWallet">
+			<mat-step>
+				<ng-template matStepLabel>History</ng-template>
+					<mat-list role="list">
+						<mat-list-item role="listitem" *ngFor="let state of states">{{ state.date | date:'MMM d, y, h:mm a' }} - {{ state.status }}</mat-list-item>
+					</mat-list>
+					<button mat-button mat-raised-button (click)="getHistory()">REFRESH</button>
+			</mat-step>
+			<mat-step>
+				<ng-template matStepLabel>Request reset</ng-template>
+				<div class="alert alert-info">
+					This process is not a guarantee that this application will be reset.
+					Please specify your telegram username so that we can get back to you.
+				</div>
 
-	<mat-step [stepControl]="formGroup4">
-	<form [formGroup]="formGroup4">
-		<ng-template matStepLabel>Generate access key</ng-template>
-		<mat-form-field>
-			<input matInput placeholder="password" formControlName="formControl4" required>
-		</mat-form-field>
-		<div>
-			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
-			<button mat-button mat-raised-button matStepperNext>NEXT</button>
-		</div>
-	</form>
-	</mat-step>
+				<mat-form-field>
+					<span matPrefix>@ &nbsp;</span>
+					<input matInput [(ngModel)]="inpTelegram" name="telegram" #telegram="ngModel" placeholder="Telegram username" required>
+				</mat-form-field>
 
-	<mat-step [stepControl]="formGroup5" optional>
-	<form [formGroup]="formGroup5">
-		<ng-template matStepLabel>Motivation</ng-template>
-		<mat-form-field>
-			<textarea matInput type="text" rows="5" maxlength="2000" placeholder="Please tell us why we should grant you access" formControlName="formControl5"></textarea>
-		</mat-form-field>
-		<div>
-			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
-			<button mat-button mat-raised-button matStepperNext>NEXT</button>
-		</div>
-	</form>
-	</mat-step>
+				<div *ngIf="telegram.invalid && (telegram.dirty || telegram.touched)" class="alert alert-danger">
+					<div *ngIf="telegram.errors.required">
+						Your Telegram username is required.
+					</div>
+				</div>
 
-	<mat-step>
-		<ng-template matStepLabel>Submit</ng-template>
-		You are now done.
-		<div>
-			<button mat-button mat-raised-button (click)="apply()">SAVE</button>
-			<button mat-button mat-raised-button matStepperPrevious>BACK</button>
-			<button mat-button mat-raised-button (click)="stepper.reset()">RESET</button>
+				<div>
+					<button mat-button mat-raised-button matStepperNext (click)="resetRequest(); stepper.reset();" [disabled]="telegram.errors !== null">SEND REQUEST</button>
+				</div>
+
+			</mat-step>
 		</div>
-	</mat-step>
-</mat-vertical-stepper>
+
+
+		<div *ngIf="!wallet.pending && wallet.errors === null">
+			<mat-step>
+				<ng-template matStepLabel>Enter your telegram</ng-template>
+				<mat-form-field>
+					<span matPrefix>@ &nbsp;</span>
+					<input matInput [(ngModel)]="inpTelegram" name="telegram" #telegram="ngModel" placeholder="Telegram username" required>
+				</mat-form-field>
+
+				<div *ngIf="telegram.invalid && (telegram.dirty || telegram.touched)" class="alert alert-danger">
+					<div *ngIf="telegram.errors.required">
+						Your Telegram username is required.
+					</div>
+				</div>
+
+				<div>
+					<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+					<button *ngIf="telegram.errors === null" mat-button mat-raised-button matStepperNext>NEXT</button>
+				</div>
+			</mat-step>
+
+
+			<div *ngIf="telegram.errors === null">
+				<mat-step>
+					<ng-template matStepLabel>Set Testnet username</ng-template>
+					<mat-form-field>
+						<mat-spinner color="warn" diameter="25" [style.display]="username.pending ? 'block' : 'none'"></mat-spinner>
+						<input matInput [(ngModel)]="inpUsername" name="username" #username="ngModel" placeholder="Choose your testnet username" required pattern="[a-zA-Z0-9]+" appUniqueUsernameAsyncValidator>
+					</mat-form-field>
+
+					<div *ngIf="username.invalid && (username.dirty || username.touched)" class="alert alert-danger">
+						<div *ngIf="username.errors.required">
+							A Testnet username is required.
+						</div>
+						<div *ngIf="username.errors.pattern">
+							A valid username must be alphanumeric, without special characters or spaces.
+						</div>
+						<div *ngIf="username.errors.uniqueUsername">
+							This username is already signed up for Testnet, please choose another one.
+						</div>
+						<div *ngIf="username.errors.unknown">
+							Something went wrong. Please try again or contact an admin on Telegram.
+						</div>
+					</div>
+
+					<div>
+						<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+						<button *ngIf="username.errors === null" mat-button mat-raised-button matStepperNext>NEXT</button>
+					</div>
+				</mat-step>
+
+
+				<div *ngIf="!username.pending && username.errors === null">
+					<mat-step>
+						<ng-template matStepLabel>Generate access key</ng-template>
+						<mat-form-field>
+							<input matInput [(ngModel)]="inpPassword" name="password" #password="ngModel" ng-cut="$event.preventDefault()" ng-copy="$event.preventDefault()" required disabled>
+						</mat-form-field>
+
+						<div *ngIf="!passCopied" class="alert alert-warning">
+							Please copy your access key / password using the button below.
+						</div>
+						<div *ngIf="passCopied" class="alert alert-info">
+							Your access key / password has been copied to your clipboard. Make sure you store it safely.
+						</div>
+
+						<div>
+							<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+							<button mat-button mat-raised-button matTooltip="Generate new access key" (click)="randomPassword(12)">GENERATE</button>
+							<button mat-button mat-raised-button matTooltip="Copy your access key" (click)="copyPassword(password)">COPY</button>
+
+							<button mat-button mat-raised-button matStepperNext [disabled]="!passCopied">NEXT</button>
+						</div>
+					</mat-step>
+
+
+					<div *ngIf="passCopied">
+						<mat-step optional>
+							<ng-template matStepLabel>Provide motivation</ng-template>
+							<mat-form-field>
+								<textarea matInput [(ngModel)]="inpMotivation" name="motivation" #motivation="ngModel" type="text" rows="5" maxlength="2000" placeholder="Please provide additional information to increase your odds of being accepted as a tester."></textarea>
+							</mat-form-field>
+							<div>
+								<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+								<button mat-button mat-raised-button matStepperNext>NEXT</button>
+							</div>
+						</mat-step>
+
+
+						<mat-step>
+							<ng-template matStepLabel>Finalize application</ng-template>
+							<div>
+								<button mat-button mat-raised-button (click)="apply(); stepper.reset();">SEND APPLICATION</button>
+								<button mat-button mat-raised-button matStepperPrevious>BACK</button>
+							</div>
+						</mat-step>
+					</div>
+				</div>
+			</div>
+		</div>
+	</mat-vertical-stepper>
+</form>

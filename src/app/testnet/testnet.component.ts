@@ -2,7 +2,9 @@ import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { DataService } from '../data.service';
+import { ngCopy } from 'angular-6-clipboard';
+
+import { TestnetService } from '../services/testnet.service';
 
 
 @Component({
@@ -15,57 +17,101 @@ import { DataService } from '../data.service';
 export class TestnetComponent implements OnInit {
 
   title = "EXRT Testnet registration";
-  userSalt: string;
-  userPass: string;
-  hash: any;
 
-  isLinear = false;
-  formGroup1: FormGroup;
-  formGroup2: FormGroup;
-  formGroup3: FormGroup;
-  formGroup4: FormGroup;
-  formGroup5: FormGroup;
+  isLinear = true;
+  formSubmitted: boolean;
+  passCopied: boolean;
+
+  inpWallet: string;
+  inpTelegram: string;
+  inpUsername: string;
+  inpSalt: string;
+  inpPassword: string;
+  inpMotivation: string;
+
+  states: any[];
 
 
-  constructor(@Inject(DataService) private _dataService: DataService, @Inject(FormBuilder) private _formBuilder: FormBuilder) {
+  constructor(@Inject(TestnetService) private _testnetService: TestnetService) {
+	this.formSubmitted = false;
+  	this.passCopied = false;
+
+  	this.randomPassword(12);
   }
 
 
   ngOnInit() {
-	this.formGroup1 = this._formBuilder.group({
-		formControl1: ['', Validators.required]
-	});
-
-	this.formGroup2 = this._formBuilder.group({
-		formControl2: ['', Validators.required]
-	});
-
-	this.formGroup3 = this._formBuilder.group({
-		formControl3: ['', Validators.required]
-	});
-
-	this.formGroup4 = this._formBuilder.group({
-		formControl4: ['', Validators.required]
-	});
-
-	this.formGroup5 = this._formBuilder.group({
-		formControl5: ''
-	});
-  }
-
-
-  hashIt() {
-	this._dataService.hashIt(this.userSalt, this.userPass).subscribe(result => {
-		this.hash = result;
-	});
   }
 
 
   apply() {
-	console.log(this.formGroup1.valid, this.formGroup1.value['formControl1']);
-	console.log(this.formGroup2.valid, this.formGroup2.value['formControl2']);
-	console.log(this.formGroup3.valid, this.formGroup3.value['formControl3']);
-	console.log(this.formGroup4.valid, this.formGroup4.value['formControl4']);
-	console.log(this.formGroup5.valid, this.formGroup5.value['formControl5']);
+	this._testnetService.hashIt(this.inpSalt, this.inpPassword).subscribe((hash: string) => {
+		this._testnetService.save(this.inpWallet, this.inpTelegram, this.inpUsername, hash, this.inpMotivation).subscribe(result => {
+			this.resetInput();
+			this.formSubmitted = true;
+		});
+	});
+  }
+
+
+  private resetInput() {
+	this.inpWallet = "";
+	this.inpTelegram = "";
+	this.inpUsername = "";
+	this.inpSalt = "";
+	this.inpPassword = "";
+	this.inpMotivation = "";
+
+	this.passCopied = false;
+  }
+
+
+  randomPassword(length: number) {
+  	this.passCopied = false;
+  	this.inpPassword = "";
+	let chars = "abcdefghijklmnopqrstuvwxyz!@#%^&*()_+-={}[]\,./?ABCDEFGHIJKLMNOP1234567890";
+
+	for (let x = 0; x < length; x++) {
+		let i = Math.floor(Math.random() * chars.length);
+		this.inpPassword += chars.charAt(i);
+	}
+
+  	this.inpSalt = this.randomSalt(8);
+  }
+
+
+  randomSalt(length: number) {
+  	let result = "";
+	let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+
+	for (let x = 0; x < length; x++) {
+		let i = Math.floor(Math.random() * chars.length);
+		result += chars.charAt(i);
+	}
+
+	return result;
+  }
+
+
+  copyPassword() {
+  	ngCopy(this.inpPassword);
+	this.passCopied = true;
+  }
+
+
+  getHistory() {
+	this._testnetService.getApplicationByWallet(this.inpWallet).subscribe(result => {
+		this.states = result[0]['states'];
+	});
+  }
+
+
+  resetRequest() {
+	this._testnetService.resetRequest(this.inpWallet, this.inpTelegram).subscribe(result => {
+		this.resetInput();
+		this.formSubmitted = true;
+
+		this.states = result['states'];
+	});
   }
 }

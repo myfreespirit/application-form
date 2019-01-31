@@ -11,6 +11,11 @@ import { PapaParseModule } from 'ngx-papaparse';
 
 import { AuthService } from './auth.service';
 import { DataService } from './data.service';
+import { TestnetService } from './services/testnet.service';
+
+
+import { UniqueUsernameAsyncValidatorDirective } from './directives/unique-username-async-validator.directive';
+import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-async-validator.directive';
 
 
 import { AppComponent } from './app.component';
@@ -29,7 +34,9 @@ import { AdminComponent } from './admin/admin.component';
     SignupSuccessDialog,
     StaffComponent,
     TestnetComponent,
-    AdminComponent
+    AdminComponent,
+    UniqueUsernameAsyncValidatorDirective,
+    UniqueWalletAsyncValidatorDirective
   ],
   imports: [
     AppRoutingModule,
@@ -46,7 +53,8 @@ import { AdminComponent } from './admin/admin.component';
   ],
   providers: [
     AuthService,
-    DataService
+    DataService,
+    TestnetService
   ]
 })
 export class AppModule { }
