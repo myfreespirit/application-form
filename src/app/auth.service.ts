@@ -14,7 +14,7 @@ export class AuthService {
     clientID: 'QacT9hipz4g06kUuzTr_NurHE4vcjkNB',
     domain: 'delicate-silence-4570.eu.auth0.com',
     responseType: 'token id_token',
-    redirectUri: 'https://testeddefault.herokuapp.com/admin',
+    redirectUri: 'http://localhost:4200/admin',
     scope: 'openid'
   });
 
