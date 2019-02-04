@@ -3,6 +3,9 @@
  */
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
+import * as expressJwt from "express-jwt";
+import jwt from 'jsonwebtoken';
+import * as jwks from 'jwks-rsa';
 import * as logger from 'morgan';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
@@ -17,12 +20,25 @@ import transfers from './routes/transfers/Controller';
 
 class App {
 
+	jwtCheck = expressJwt({
+	    secret: jwks.expressJwtSecret({
+		cache: true,
+		rateLimit: true,
+		jwksRequestsPerMinute: 1000,
+		jwksUri: "https://delicate-silence-4570.eu.auth0.com/.well-known/jwks.json"
+	    }),
+	    audience: 'https://delicate-silence-4570.eu.auth0.com/api/v2/',
+	    algorithms: ['RS256']
+	});
+
 	constructor() {
 		this.app = express();
 
 		this.config();
 		this.routes();
 		cron.init();
+
+		this.app.use(this.jwtCheck);
 	}
 
 	public app: express.Application;
@@ -63,7 +79,7 @@ class App {
 		this.app.use('/ethers', ethers.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
-		this.app.use('/testnet', testnet.routes());
+		this.app.use('/testnet', this.jwtCheck, testnet.routes());
 		this.app.use('/transfers', transfers.routes());
 
 		this.app.use(function(err, req, res, next) {

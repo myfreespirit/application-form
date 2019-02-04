@@ -10,6 +10,11 @@ export class TestnetService {
 	constructor(@Inject(HttpClient) private http: HttpClient) { }
 
 
+	getAllRegistrations() {
+		return this.http.get('/testnet/all/');
+	}
+
+
 	getApplicationByWallet(wallet: string) {
 		return this.http.get('/testnet/wallet/' + wallet.toLowerCase());
 	}

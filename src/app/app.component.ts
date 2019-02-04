@@ -2,7 +2,7 @@ import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { DataService } from './data.service';
+import { DataService } from './services/data.service';
 
 
 @Component({

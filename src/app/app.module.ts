@@ -8,15 +8,12 @@ import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PapaParseModule } from 'ngx-papaparse';
 
-
-import { AuthService } from './auth.service';
-import { DataService } from './data.service';
+import { AuthService } from './services/auth.service';
+import { DataService } from './services/data.service';
 import { TestnetService } from './services/testnet.service';
-
 
 import { UniqueUsernameAsyncValidatorDirective } from './directives/unique-username-async-validator.directive';
 import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-async-validator.directive';
-
 
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
@@ -24,6 +21,12 @@ import { SignupSuccessDialog } from './signup/signup.component';
 import { StaffComponent } from './staff/staff.component';
 import { TestnetComponent } from './testnet/testnet.component';
 import { AdminComponent } from './admin/admin.component';
+
+import { JwtModule } from '@auth0/angular-jwt';
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 
 @NgModule({
@@ -46,7 +49,13 @@ import { AdminComponent } from './admin/admin.component';
     HttpClientModule,
     MaterialModule,
     NgbModule.forRoot(),
-    PapaParseModule
+    PapaParseModule,
+    JwtModule.forRoot({
+        config: {
+            tokenGetter: tokenGetter,
+            blacklistedRoutes: ['']
+        }
+    })
   ],
   entryComponents: [
     SignupSuccessDialog

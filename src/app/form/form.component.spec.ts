@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../material.module';
 
-import { DataService } from '../data.service';
+import { DataService } from '../services/data.service';
 
 import { FormComponent } from './form.component';
 

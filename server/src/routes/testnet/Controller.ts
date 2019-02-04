@@ -12,9 +12,18 @@ class Controller {
   }
 
   public routes() {
+  	// retrieve all testnet registrations
+	this.router.get('/all/', (req, res, next) => {
+		Testnet.find({}, (err, document) => {
+			if (err) return next(err);
+			res.json(document);
+		});
+	});
+
+
 	// retrieve testnet registrations by wallet
 	this.router.get('/wallet/:wallet', (req, res, next) => {
-		Testnet.find({ wallet: req.params['wallet'] }, (err, document) => {
+	Testnet.find({ wallet: req.params['wallet'] }, 'wallet states', (err, document) => {
 		    if (err) return next(err);
 		    res.json(document);
 		});
@@ -23,7 +32,7 @@ class Controller {
 
 	// retrieve testnet registrations by username 
 	this.router.get('/username/:username', (req, res, next) => {
-		Testnet.find({ username: req.params['username'] }, (err, document) => {
+		Testnet.find({ username: req.params['username'] }, 'username', (err, document) => {
 		    if (err) return next(err);
 		    res.json(document);
 		});

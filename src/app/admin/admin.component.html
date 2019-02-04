@@ -1,21 +1,64 @@
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
+	<div class="container-fluid">
+		<div class="navbar-header">
 
-      <button
-        class="btn btn-primary btn-margin"
-        *ngIf="!auth.isAuthenticated()"
-        (click)="auth.login()">
-          Log In
-      </button>
+			<div *ngIf="!auth.isAuthenticated()">
+				<button
+					class="btn btn-primary btn-margin"
+					(click)="auth.login()">
+						Log In
+				</button>
+			</div>
 
-      <button
-        class="btn btn-primary btn-margin"
-        *ngIf="auth.isAuthenticated()"
-        (click)="auth.logout()">
-          Log Out
-      </button>
+			<div *ngIf="auth.isAuthenticated()">
+				<button
+					class="btn btn-primary btn-margin"
+					(click)="auth.logout()">
+						Log Out
+				</button>
+			</div>
 
-    </div>
-  </div>
+		</div>
+	</div>
 </nav>
+
+
+
+<div *ngIf="auth.isAuthenticated()">
+	<mat-form-field>
+	  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+	</mat-form-field>
+
+	<div class="mat-elevation-z8">
+	  <table mat-table #sort="matSort" [dataSource]="dataSource" matSort multiTemplateDataRows>
+
+		  <ng-container matColumnDef="{{ column }}" *ngFor="let column of displayedColumns">
+		    <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
+		    <td mat-cell *matCellDef="let element"> {{ element[column ]}} </td>
+		  </ng-container>
+
+		  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+		  <ng-container matColumnDef="expandedDetail">
+		    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+		      <div class="example-element-detail"
+			   [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+			<div class="example-element-diagram">
+			  <div class="example-element-symbol"> {{ element.telegram }} </div>
+			  <div class="example-element-name"> {{ element.username }} </div>
+			</div>
+		      </div>
+		    </td>
+		  </ng-container>
+
+		  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+		  <tr mat-row *matRowDef="let element; columns: displayedColumns;"
+		      class="example-element-row"
+		      [class.example-expanded-row]="expandedElement === element"
+		      (click)="expandedElement = element">
+		  </tr>
+		  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+	  </table>
+
+	  <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 50, 100]"></mat-paginator>
+	</div>
+</div>

@@ -2,7 +2,7 @@ import { Inject } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { DataService } from '../data.service';
+import { DataService } from '../services/data.service';
 import { SignupSuccessDialog } from '../signup/signup.component';
 import { BigNumber } from 'bignumber.js';
 

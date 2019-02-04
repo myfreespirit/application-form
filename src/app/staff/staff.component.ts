@@ -4,7 +4,7 @@ import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { Papa } from 'ngx-papaparse';
 import { filter } from "rxjs/operators";
 
-import { DataService } from '../data.service';
+import { DataService } from '../services/data.service';
 
 
 @Component({
