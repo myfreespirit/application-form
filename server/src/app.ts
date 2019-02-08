@@ -24,10 +24,10 @@ class App {
 	    secret: jwks.expressJwtSecret({
 		cache: true,
 		rateLimit: true,
-		jwksRequestsPerMinute: 1000,
+		jwksRequestsPerMinute: 5,
 		jwksUri: "https://delicate-silence-4570.eu.auth0.com/.well-known/jwks.json"
 	    }),
-	    audience: 'https://delicate-silence-4570.eu.auth0.com/api/v2/',
+	    aud: 'https://testeddefault.herokuapp.com/testnet',
 	    algorithms: ['RS256']
 	});
 

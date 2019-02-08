@@ -11,13 +11,13 @@ export class AuthService {
 
   userProfile: any;
   refreshSubscription: any;
-  requestedScopes: string = 'openid';
+  requestedScopes: string = 'read:testnet';
 
   auth0 = new auth0.WebAuth({
     clientID: AUTH_CONFIG.clientID,
     domain: AUTH_CONFIG.domain,
     responseType: 'token id_token',
-    redirectUri: AUTH_CONFIG.callbackURL
+    redirectUri: AUTH_CONFIG.redirectUri
   });
 
   constructor(@Inject(Router) public router: Router) {
@@ -82,7 +82,7 @@ export class AuthService {
 
   public renewToken() {
     this.auth0.checkSession({
-        audience: AUTH_CONFIG.apiUrl
+        audience: AUTH_CONFIG.audience
       }, (err, result) => {
         if (!err) {
           this.setSession(result);
