@@ -11,7 +11,6 @@ export class AuthService {
 
   userProfile: any;
   refreshSubscription: any;
-  requestedScopes: string = 'read:testnet';
 
   auth0 = new auth0.WebAuth({
     clientID: AUTH_CONFIG.clientID,
@@ -49,7 +48,7 @@ export class AuthService {
     // use it to set scopes in the session for the user. Otherwise
     // use the scopes as requested. If no scopes were requested,
     // set it to nothing
-    const scopes = authResult.scope || this.requestedScopes || '';
+    const scopes = authResult.scope || '';
 
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);

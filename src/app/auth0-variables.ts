@@ -9,5 +9,5 @@ export const AUTH_CONFIG: AuthConfig = {
   clientID: 'fyTIVe5MunpoamUevDhYsANVJDLz5Bw3',
   domain: 'delicate-silence-4570.eu.auth0.com',
   redirectUri: 'https://testeddefault.herokuapp.com/admin',
-  audience: 'https://testeddefault.herokuapp.com/testnet'
+  audience: 'https://testeddefault.herokuapp.com/api'
 };

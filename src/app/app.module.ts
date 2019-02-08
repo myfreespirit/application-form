@@ -25,7 +25,6 @@ import { AdminComponent } from './admin/admin.component';
 import { JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
-//	return localStorage.getItem('access_token');
 	return localStorage.getItem('id_token');
 }
 
