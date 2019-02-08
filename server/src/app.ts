@@ -3,8 +3,9 @@
  */
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import * as expressJwt from "express-jwt";
-import jwt from 'jsonwebtoken';
+import * as expressJwt from 'express-jwt';
+import * as jwtAuthz from 'express-jwt-authz';
+import * as jwt from 'jsonwebtoken';
 import * as jwks from 'jwks-rsa';
 import * as logger from 'morgan';
 import * as mongoose from 'mongoose';
@@ -37,8 +38,6 @@ class App {
 		this.config();
 		this.routes();
 		cron.init();
-
-		this.app.use(this.jwtCheck);
 	}
 
 	public app: express.Application;
@@ -79,7 +78,7 @@ class App {
 		this.app.use('/ethers', ethers.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
-		this.app.use('/testnet', this.jwtCheck, testnet.routes());
+		this.app.use('/testnet', this.jwtCheck, jwtAuthz([ 'read:testnet' ]), testnet.routes());
 		this.app.use('/transfers', transfers.routes());
 
 		this.app.use(function(err, req, res, next) {
