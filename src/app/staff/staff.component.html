@@ -80,8 +80,7 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumnsInternal"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumnsInternal;">
-    </tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsInternal;"></tr>
   </table>
 
   <mat-paginator #paginatorInternal [pageSizeOptions]="[50, 5, 10, 25, 100]"></mat-paginator>
