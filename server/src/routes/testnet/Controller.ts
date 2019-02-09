@@ -12,15 +12,6 @@ class Controller {
   }
 
   public routes() {
-  	// retrieve all testnet registrations
-	this.router.get('/all/', (req, res, next) => {
-		Testnet.find({}, (err, document) => {
-			if (err) return next(err);
-			res.json(document);
-		});
-	});
-
-
 	// retrieve testnet registrations by wallet
 	this.router.get('/wallet/:wallet', (req, res, next) => {
 	Testnet.find({ wallet: req.params['wallet'] }, 'wallet states', (err, document) => {

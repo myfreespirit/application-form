@@ -11,6 +11,7 @@ import * as mongoose from 'mongoose';
 import * as path from 'path';
 import cron from './cronJobs/Controller';
 
+import api from './routes/api/Controller';
 import ethers from './routes/ethers/Controller';
 import rounds from './routes/rounds/Controller';
 import signups from './routes/signups/Controller';
@@ -24,7 +25,7 @@ class App {
 	    secret: jwks.expressJwtSecret({
 		cache: true,
 		rateLimit: true,
-		jwksRequestsPerMinute: 5,
+		jwksRequestsPerMinute: 1000,
 		jwksUri: "https://delicate-silence-4570.eu.auth0.com/.well-known/jwks.json"
 	    }),
 	    aud: 'https://testeddefault.herokuapp.com/api',
@@ -77,8 +78,10 @@ class App {
 		this.app.use('/ethers', ethers.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
-		this.app.use('/testnet', this.jwtCheck, testnet.routes());
+		this.app.use('/testnet', testnet.routes());
 		this.app.use('/transfers', transfers.routes());
+
+		this.app.use('/api', this.jwtCheck, api.routes());
 
 		this.app.use(function(err, req, res, next) {
 		    if(!err) return next();

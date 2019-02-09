@@ -11,7 +11,7 @@ export class TestnetService {
 
 
 	getAllRegistrations() {
-		return this.http.get('/testnet/all/');
+		return this.http.get('/api/testnet/all/');
 	}
 
 
