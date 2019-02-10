@@ -42,7 +42,7 @@
 			  <input matInput (keyup)="applyFilter($event.target.value, tab)" placeholder="Filter">
 			</mat-form-field>
 
-			<button mat-button mat-raised-button (click)="export()" [disabled]="true">EXPORT</button>
+			<button mat-button mat-raised-button (click)="export()"	class="btn btn-primary btn-margin" [disabled]="true">EXPORT</button>
 
 			<div class="mat-elevation-z8">
 				<table mat-table [dataSource]="dataSource[tab]" matSort multiTemplateDataRows>
@@ -63,7 +63,7 @@
 								</div>
 								<p>
 									Move to:
-									<button mat-button mat-raised-button *ngFor="let action of getActionButtons(tab)" (click)="moveApplication(tab, element, action)">
+									<button mat-button mat-raised-button class="btn btn-primary btn-margin" *ngFor="let action of getActionButtons(tab)" (click)="moveApplication(tab, element, action)">
 										{{ action }}
 									</button>
 								</p>
