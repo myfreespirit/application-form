@@ -39,7 +39,7 @@
 		<mat-tab label="{{ tab }} ({{ data[tab]?.length || 0 }})" *ngFor="let tab of displayedTabs">
 
 			<mat-form-field>
-			  <input matInput (keyup)="applyFilter($event.target.value, tab)" placeholder="Filter">
+			  <input matInput (keyup)="applyFilter($event.target.value, tab)" [(ngModel)]="dataSource[tab].filter" placeholder="Filter">
 			</mat-form-field>
 
 			<button mat-button mat-raised-button (click)="export()"	class="btn btn-primary btn-margin" [disabled]="true">EXPORT</button>

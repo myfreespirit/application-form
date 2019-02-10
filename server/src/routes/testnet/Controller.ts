@@ -38,10 +38,13 @@ class Controller {
 		obj['username'] = req.body['username'];
 		obj['hash'] = req.body['hash'];
 		obj['motivation'] = req.body['motivation'];
-		obj['states'] = [ {status: 'APPLIED', telegram: req.body['telegram']} ];
+		let states = [ {status: 'APPLIED', telegram: req.body['telegram']} ];
 
 		Testnet.findOneAndUpdate({ wallet: req.body['wallet'] },
-					{ $set: obj },
+					{
+						$set: obj,
+						$push: { states: states }
+					},
 					{ upsert: true, new: true },
 					(err, document) => {
 						if (err) return next(err);

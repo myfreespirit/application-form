@@ -96,6 +96,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 			this.dataSource[tab] = new MatTableDataSource(this.data[tab]);
 			this.dataSource[tab].paginator = this.paginator.toArray()[index];
 			this.dataSource[tab].sort = this.sort.toArray()[index];
+			this.applyFilter('', tab);
 		});
 	});
   }
