@@ -15,6 +15,16 @@ export class TestnetService {
 	}
 
 
+	updateRegistration(wallet: string, status: string) {
+		const req = {}
+		req['wallet'] = wallet.toLowerCase();
+		req['telegram'] = 'EXRNToken';
+		req['status'] = status;
+
+		return this.http.put('/api/testnet/update', req);
+	}
+
+
 	getApplicationByWallet(wallet: string) {
 		return this.http.get('/testnet/wallet/' + wallet.toLowerCase());
 	}

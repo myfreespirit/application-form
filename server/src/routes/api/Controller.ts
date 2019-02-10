@@ -20,6 +20,23 @@ class Controller {
 	});
 
 
+  	// update registration
+	this.router.put('/testnet/update/', (req, res, next) => {
+		let obj = {
+			status: req.body['status'],
+			telegram: req.body['telegram']
+		};
+
+		Testnet.findOneAndUpdate({ wallet: req.body['wallet'] },
+					{ $push: { states: obj } },
+					{ upsert: true, new: true },
+					(err, document) => {
+						if (err) return next(err);
+						res.json(document);
+		});
+	});
+
+
 	return this.router;
   }
 }

@@ -29,6 +29,11 @@
 </nav>
 
 
+<div *ngIf="displayError" class="alert alert-danger">
+	Something went wrong. Please check Developer Tools' Console and report back to developer.
+</div>
+
+
 <div *ngIf="auth.isAuthenticated()">
 	<mat-tab-group mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4">
 		<mat-tab label="{{ tab }} ({{ data[tab]?.length || 0 }})" *ngFor="let tab of displayedTabs">
@@ -57,11 +62,9 @@
 									<span class="example-element-description"> {{ state.date | date:'MMM d, y, h:mm a' }} @{{ state.telegram }} {{ state.status }} </span>
 								</div>
 								<p>
-									<button mat-button mat-raised-button *ngFor="let tab of displayedTabs"
-										class="btn btn-primary"
-										[disabled]="true"
-										(click)="getAllRegistrations()">
-											{{ tab }}
+									Move to:
+									<button mat-button mat-raised-button *ngFor="let action of getActionButtons(tab)" (click)="moveApplication(tab, element, action)">
+										{{ action }}
 									</button>
 								</p>
 							</div>
@@ -77,7 +80,7 @@
 					  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 				</table>
 
-				<mat-paginator #paginator[tab] [pageSizeOptions]="[1, 5, 10, 50, 100, 500]"></mat-paginator>
+				<mat-paginator #paginator[tab] [pageSizeOptions]="[5, 10, 50, 100, 500]"></mat-paginator>
 			</div>
 
 		</mat-tab>

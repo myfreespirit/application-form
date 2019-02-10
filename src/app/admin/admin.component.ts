@@ -24,6 +24,8 @@ import { TestnetService } from '../services/testnet.service';
 
 export class AdminComponent implements OnInit, AfterViewInit {
 
+  displayError = false;
+
   data = [];
   displayedTabs = ['BACKLOG', 'RESETS', 'OBSERVERS', 'TESTERS', 'REJECTED'];
   displayedColumns = ['telegram', 'username', 'Total EXRN', 'Total EXRT'];
@@ -41,7 +43,6 @@ export class AdminComponent implements OnInit, AfterViewInit {
 		this.dataSource[tab] = new MatTableDataSource([]);
 		this.dataSource[tab].paginator = this.paginator.toArray()[index];
 		this.dataSource[tab].sort = this.sort.toArray()[index];
-		console.log(tab);
 	});
   }
 
@@ -73,9 +74,10 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 
   private getAllRegistrations() {
+  	this.displayError = false;
+
 	this.data = [];
 	this.displayedTabs.forEach(tab => {
-		console.log("test");
 		this.data[tab] = [];
 	});
 
@@ -83,25 +85,11 @@ export class AdminComponent implements OnInit, AfterViewInit {
 		result.forEach(el => {
 			let category = "";
 			const lastStatus = el.states[el.states.length - 1].status;
-			switch (lastStatus) {
-				case 'APPLIED':
-					category = 'BACKLOG';
-					break;
-				case 'RESET REQUEST':
-					category = 'RESETS';
-					break;
-				case 'APPROVED OBSERVER':
-					category = 'OBSERVERS';
-					break;
-				case 'APPROVED TESTER':
-					category = 'TESTERS';
-					break;
-				case 'REJECTED':
-					category = 'REJECTED';
-					break;
-			}
+			let action = this.getActionFromStatus(lastStatus);
 
-			this.data[category].push({ 'telegram': '@'+el.telegram, 'username': el.username, 'access_key': el.hash, 'wallet': el.wallet, 'motivation': el.motivation, 'states': el.states });
+			if (action !== 'SKIP') {
+				this.data[action].push({ 'telegram': '@'+el.telegram, 'username': el.username, 'access_key': el.hash, 'wallet': el.wallet, 'motivation': el.motivation, 'states': el.states });
+			}
 		});
 
 		this.displayedTabs.forEach((tab, index) => {
@@ -110,6 +98,96 @@ export class AdminComponent implements OnInit, AfterViewInit {
 			this.dataSource[tab].sort = this.sort.toArray()[index];
 		});
 	});
+  }
+
+
+  getActionButtons(tab: string) {
+	switch(tab) {
+		case 'BACKLOG':
+			return ['OBSERVERS', 'TESTERS', 'REJECTED'];
+		case 'RESETS':
+			return ['RESET APPROVED', 'RESET DENIED'];
+		case 'OBSERVERS':
+			return ['TESTERS', 'REJECTED'];
+		case 'TESTERS':
+			return ['OBSERVERS', 'REJECTED'];
+		case 'REJECTED':
+			return ['BACKLOG', 'OBSERVERS', 'TESTERS'];
+	}
+	return [];
+  }
+
+
+  moveApplication(tab: string, element: any, action: string) {
+	let status = "";
+
+	switch(action) {
+		case 'OBSERVERS':
+			status = 'APPROVED OBSERVER';
+			break;
+		case 'TESTERS':
+			status = 'APPROVED TESTER';
+			break;
+		case 'BACKLOG':
+			status = 'APPLIED';
+			break;
+		default:
+			status = action;
+			break;
+	}
+
+	this.testnet.updateRegistration(element.wallet, status).subscribe((result: any) => {
+		if (result.states[result.states.length - 1].status === status) {
+			if (status !== 'RESET APPROVED' && status !== 'RESET DENIED') {
+				element.states = result.states;
+				this.data[action].push(element);
+				this.dataSource[action].data = this.data[action];
+			} else if (status === 'RESET DENIED') {
+				// application needs to be moved back to original state prior to RESET REQUEST
+				const filteredStates = result.states.filter(state => {
+					return !state.status.startsWith('RESET');
+				});
+
+				const originalStatus = filteredStates[filteredStates.length - 1].status;
+				const originalAction = this.getActionFromStatus(originalStatus);
+				this.testnet.updateRegistration(element.wallet, originalStatus).subscribe((resultInner: any) => {
+					if (resultInner.states[resultInner.states.length - 1].status === originalStatus) {
+						element.states = resultInner.states;
+						this.data[originalAction].push(element);
+						this.dataSource[originalAction].data = this.data[originalAction];
+					} else {
+						this.displayError = true;
+					}
+				});
+			}
+
+			// Remove element from current table
+			this.data[tab] = this.data[tab].filter(el => { return el.wallet !== element.wallet; });
+			this.dataSource[tab].data = this.data[tab];
+		} else {
+			this.displayError = true;
+		}
+	});
+  }
+
+
+  private getActionFromStatus(state: string): string {
+	switch (state) {
+		case 'APPLIED':
+			return 'BACKLOG';
+		case 'RESET REQUEST':
+			return 'RESETS';
+		case 'APPROVED OBSERVER':
+			return 'OBSERVERS';
+		case 'APPROVED TESTER':
+			return'TESTERS';
+		case 'REJECTED':
+			return 'REJECTED';
+		case 'RESET APPROVED':
+		case 'RESET DENIED':
+		default:
+			return 'SKIP';
+	}
   }
 }
 
