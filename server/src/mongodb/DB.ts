@@ -10,7 +10,7 @@ export class DB {
 
     (<any>mongoose).Promise = global.Promise;
     mongoose.connection.on('connected', () => {
-      console.log('Connected to mongodb at ' + this.connectionString);
+      console.log('Connected to mongodb');
     });
     mongoose.connection.on('disconnected', () => {
       console.log('Disconnected from mongodb');
@@ -21,7 +21,7 @@ export class DB {
     return new Promise((resolve, reject) => {
       mongoose.connect(this.connectionString, { useNewUrlParser: true, useCreateIndex: true }, (error: MongoError) => {
         if (error) {
-          console.log('Error while connecting to ' + this.connectionString);
+          console.log('Error while connecting to mongodb');
           console.log(' -> ' + error.message);
           reject();
           // TODO: if the initial connect fails, no reconnect seems to occur

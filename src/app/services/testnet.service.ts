@@ -56,11 +56,6 @@ export class TestnetService {
 	}
 
 
-	getHistory(wallet: string) {
-		return this.http.get('/testnet/history/' + wallet.toLowerCase());
-	}
-
-
 	resetRequest(wallet: string, telegram: string) {
 		const req = {};
 		req['wallet'] = wallet.toLowerCase();
