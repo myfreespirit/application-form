@@ -14,7 +14,27 @@ export class UniqueWalletAsyncValidator implements AsyncValidator {
 
 	validate(ctrl: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
 		return this.testnetService.getApplicationByWallet(ctrl.value).pipe(
-			map((isTaken: any[]) => (isTaken.length != 0 ? { uniqueWallet: true } : null)),
+			map((result: any[]) => {
+				if (result.length != 0) {
+					const states = result[0].states;
+					const status = states[states.length - 1].status;
+
+					if (status === 'RESET APPROVED') {
+						return null;
+					} else if (status === 'APPROVED OBSERVER') {
+						return { observerWallet: true };
+					} else if (status === 'APPROVED TESTER') {
+						return { testerWallet: true };
+					} else if (status === 'REJECTED') {
+						return { rejectedWallet: true };
+					} else {
+						return { uniqueWallet: true };
+					}
+				}
+
+				return null;
+
+			}),
 			catchError(() => { return of({ unknown: true }); })
 		);
 	}

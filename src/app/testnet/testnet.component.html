@@ -27,7 +27,7 @@
 				<div *ngIf="wallet.errors.pattern" class="alert alert-danger">
 					This is not a valid ETH wallet address.
 				</div>
-				<div *ngIf="wallet.errors.uniqueWallet" class="alert alert-danger">
+				<div *ngIf="wallet.errors.uniqueWallet" class="alert alert-info">
 					This ETH wallet address is already signed up for Testnet.
 				</div>
 				<div *ngIf="wallet.errors.uniqueWallet" class="alert alert-warning">
@@ -37,15 +37,27 @@
 				<div *ngIf="wallet.errors.unknown" class="alert alert-danger">
 					Something went wrong. Please try again or contact an admin on Telegram.
 				</div>
+
+				<div *ngIf="!wallet.pending">
+					<div *ngIf="wallet.errors.observerWallet" class="alert alert-success">
+						Congratulations, you've been approved as an OBSERVER.
+					</div>
+					<div *ngIf="wallet.errors.testerWallet" class="alert alert-success">
+						Congratulations, you've been approved as a TESTER.
+					</div>
+					<div *ngIf="wallet.errors.rejectedWallet" class="alert alert-danger">
+						Unfortunately your application was rejected.
+					</div>
+				</div>
 			</div>
 
-			<div *ngIf="!wallet.pending && wallet.errors === null">
+			<div *ngIf="!wallet.pending && wallet.errors?.required === null && wallet.errors?.pattern === null && wallet.errors?.unknown === null">
 				<button mat-button mat-raised-button class="btn btn-primary btn-margin" matStepperNext>NEXT</button>
 			</div>
 		</mat-step>
 
 
-		<div *ngIf="wallet.errors?.uniqueWallet">
+		<div *ngIf="!wallet.pending && wallet.errors && (wallet.errors.uniqueWallet || wallet.errors.observerWallet || wallet.errors.testerWallet || wallet.errors.rejectedWallet)">
 			<mat-step>
 				<ng-template matStepLabel>History</ng-template>
 					<mat-list role="list">
