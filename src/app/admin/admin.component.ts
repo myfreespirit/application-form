@@ -26,6 +26,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
   displayError = false;
   displaySpin = false;
+  displayResults = false;
 
   data = [];
   displayedTabs = ['BACKLOG', 'RESETS', 'OBSERVERS', 'TESTERS', 'REJECTED'];
@@ -77,6 +78,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
   private getAllRegistrations() {
   	this.displayError = false;
 	this.displaySpin = true;
+	this.displayResults = true;
 
 	this.data = [];
 	this.displayedTabs.forEach(tab => {
@@ -202,6 +204,11 @@ export class AdminComponent implements OnInit, AfterViewInit {
 		default:
 			return 'SKIP';
 	}
+  }
+
+
+  markObservers() {
+	console.log("lets do it");
   }
 }
 
