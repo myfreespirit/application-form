@@ -7,7 +7,8 @@ class Etherscan {
 	maxEtherTransfersApiLimit = 10000;
 	maxTokenTransfersApiLimit = 10000;
 
-	contractAddress = '0xe469c4473af82217b30cf17b10bcdb6c8c796e75';
+	contractAddressEXRN = '0xe469c4473af82217b30cf17b10bcdb6c8c796e75';
+	contractAddressEXRT = '0xb20043F149817bff5322F1b928e89aBFC65A9925';
 	EXRNchainTokenSaleAddress = '0x9df04392eef34f213ce55226f40979c906cc04eb';
 
 
@@ -128,27 +129,27 @@ class Etherscan {
 	 *					TOKEN TRANSFERS UPDATE					*
 	 *												*
 	 ***********************************************************************************************/
-  	private getLastSavedTokenTransferBlock(): Promise<number> {
+  	private getLastSavedTokenTransferBlock(token: string): Promise<number> {
 		return new Promise<number>((resolve, reject) => {
-				request(this.baseUrl + '/transfers/lastBlock', (error, response, body) => {
+				request(this.baseUrl + '/transfers/lastBlock/' + token, (error, response, body) => {
 					this.handleResponse(resolve, reject, error, body);
 				});
 			});
 	}
 
 	
-	private getNewTokenTransfers(startBlock): Promise<any> {
-		const urlExrnTransfers = `https://api.etherscan.io/api` +
+	private getNewTokenTransfers(token: string, startBlock: number): Promise<any> {
+		const urlTransfers = `https://api.etherscan.io/api` +
 			    `?module=account` +
 			    `&action=tokentx` +
-			    `&contractaddress=${ this.contractAddress }` +
+			    `&contractaddress=${ token === 'EXRN' ? this.contractAddressEXRN : this.contractAddressEXRT }` +
 			    `&startBlock=${ startBlock }` +
 			    `&endBlock=latest` +
 			    `&sort=asc` +
 			    `&apikey=${ this.apiKey }`;
 
 		return new Promise<any>((resolve, reject) => {
-				request(urlExrnTransfers, (error, response, body) => {
+				request(urlTransfers, (error, response, body) => {
 					this.handleResponse(resolve, reject, error, body);
 				});
 			});
@@ -156,10 +157,10 @@ class Etherscan {
 	}
 
 
-	private saveNewTokenTransfers(newTransfers): Promise<any> {
+	private saveNewTokenTransfers(token: string, newTransfers): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
 				let options = {
-					uri: this.baseUrl + '/transfers/save',
+					uri: this.baseUrl + '/transfers/save/' + token,
 					body: JSON.stringify(newTransfers),
 					method: 'PUT',
 					headers: {
@@ -178,10 +179,10 @@ class Etherscan {
 	 * it is possible that the block of the last saved token transfer still contains unsaved token transfers
 	 * hence we will remove all saved token transfers of this block and start with this whole block in new batch.
 	 */
-	removeTokenTransfers(blockNumber): Promise<any> {
+	removeTokenTransfers(token: string, blockNumber: number): Promise<any> {
 		return new Promise<any>((resolve, reject) => {
 				let options = {
-					uri: this.baseUrl + '/transfers/deleteBlock',
+					uri: this.baseUrl + '/transfers/deleteBlock/' + token,
 					body: JSON.stringify({ 'blockNumber': blockNumber }),
 					method: 'PUT',
 					headers: {
@@ -197,19 +198,19 @@ class Etherscan {
 	}
 
 
-	updateTokenTransfers(): Promise<any> {
+	updateTokenTransfers(token: string): Promise<any> {
 		return new Promise<number>((resolve, reject) => {
-				this.getLastSavedTokenTransferBlock().then(lastBlock => {
-					this.getNewTokenTransfers(lastBlock + 1).then(newTransfers => {
+				this.getLastSavedTokenTransferBlock(token).then(lastBlock => {
+					this.getNewTokenTransfers(token, lastBlock + 1).then(newTransfers => {
 						const numberOfRecords = newTransfers['result'].length;
 
 						if (numberOfRecords > 0) {
-							console.log("# new token transfers:", numberOfRecords);
-							this.saveNewTokenTransfers(newTransfers).then(response => {
+							console.log("# new " + token + " transfers:", numberOfRecords);
+							this.saveNewTokenTransfers(token, newTransfers).then(response => {
 								if (numberOfRecords === this.maxTokenTransfersApiLimit) {
-									this.getLastSavedTokenTransferBlock().then(partialBlock => {
-										this.removeTokenTransfers(partialBlock).then(removed => {
-											this.updateTokenTransfers();
+									this.getLastSavedTokenTransferBlock(token).then(partialBlock => {
+										this.removeTokenTransfers(token, partialBlock).then(removed => {
+											this.updateTokenTransfers(token);
 										});
 									});
 								} else {

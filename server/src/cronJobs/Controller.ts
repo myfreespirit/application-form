@@ -12,8 +12,12 @@ class Controller {
 
 
     taskSheduler.everyFiveMinutes(function() {
-    	etherscanService.updateTokenTransfers().then(data => {
-		console.log("cron job: token transfers update completed.");
+    	etherscanService.updateTokenTransfers("EXRN").then(data => {
+		console.log("cron job: EXRN transfers update completed.");
+    	});
+
+  	etherscanService.updateTokenTransfers("EXRT").then(data => {
+		console.log("cron job: EXRT transfers update completed.");
     	});
     })
   }

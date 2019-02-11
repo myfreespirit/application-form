@@ -23,6 +23,13 @@ class TaskScheduler {
   }
 
 
+  public everyFifteenMinutes(fn) {
+    cron.schedule('0 */15 * * * *', function() {
+      fn();
+    });
+  }
+
+
   public everyHour(fn) {
     cron.schedule('0 0 */1 * * *', function() {
       fn();

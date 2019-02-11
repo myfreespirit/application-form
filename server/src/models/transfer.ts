@@ -19,5 +19,11 @@ const TransferSchema = new mongoose.Schema({
   }
 });
 
+const TransferEXRN = mongoose.model('TransferEXRN', TransferSchema);
+const TransferEXRT = mongoose.model('TransferEXRT', TransferSchema);
 
-export const Transfer = mongoose.model('Transfer', TransferSchema);
+
+module.exports = {
+	TransferEXRN: TransferEXRN,
+	TransferEXRT: TransferEXRT
+};

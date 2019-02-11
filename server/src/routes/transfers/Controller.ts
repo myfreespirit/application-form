@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Transfer } from '../../models/transfer';
+const { TransferEXRN, TransferEXRT } = require('../../models/transfer');
 
 
 class Controller {
@@ -12,18 +12,27 @@ class Controller {
 
   public routes() {
 	// retrieve block number of most recent transfer saved in the database
-	this.router.get('/lastBlock', (req, res, next) => {
-	Transfer.findOne({}, 'blockNumber', { sort: { 'blockNumber': -1 } })
-		.then(block => {
-			block = block ? block.blockNumber : 0;
-			res.json(block);
-		})
-		.catch(err => next(err));
+	this.router.get('/lastBlock/:token', (req, res, next) => {
+		if (req.params['token'] === 'EXRN') {
+			TransferEXRN.findOne({}, 'blockNumber', { sort: { 'blockNumber': -1 } })
+				.then(block => {
+					block = block ? block.blockNumber : 0;
+					res.json(block);
+				})
+				.catch(err => next(err));
+		} else if (req.params['token'] === 'EXRT') {
+			TransferEXRT.findOne({}, 'blockNumber', { sort: { 'blockNumber': -1 } })
+				.then(block => {
+					block = block ? block.blockNumber : 0;
+					res.json(block);
+				})
+				.catch(err => next(err));
+		}
 	});
 
 
 	// save new token transfers
-	this.router.put('/save', (req, res, next) => {
+	this.router.put('/save/:token', (req, res, next) => {
 		if (req.body['result'] === null) {
 			res.json("BAD api call");
 			return;
@@ -34,7 +43,12 @@ class Controller {
 			return;
 		}
 		
-		let bulk = Transfer.collection.initializeOrderedBulkOp();
+		let bulk = null;
+		if (req.params['token'] === 'EXRN') {
+			bulk = TransferEXRN.collection.initializeOrderedBulkOp();
+		} else if (req.params['token'] === 'EXRT') {
+			bulk = TransferEXRT.collection.initializeOrderedBulkOp();
+		}
 
 		req.body['result'].forEach(transfer => {
 			let obj = {
@@ -57,16 +71,22 @@ class Controller {
 
 
 	// delete all token transfers linked to provided block number
-	this.router.put('/deleteBlock', (req, res, next) => {
-		Transfer.deleteMany({ 'blockNumber': req.body['blockNumber'] })
-			.then(result => res.json(result))
-			.catch(err => next(err));
+	this.router.put('/deleteBlock/:token', (req, res, next) => {
+		if (req.params['token'] === 'EXRN') {
+			TransferEXRN.deleteMany({ 'blockNumber': req.body['blockNumber'] })
+				.then(result => res.json(result))
+				.catch(err => next(err));
+		} else if (req.params['token'] === 'EXRT') {
+			TransferEXRT.deleteMany({ 'blockNumber': req.body['blockNumber'] })
+				.then(result => res.json(result))
+				.catch(err => next(err));
+		}
 	});
 
 
 	// retrieve all transfers
 	this.router.get('/distributions/', (req, res, next) => {
-		Transfer.find({})
+		TransferEXRN.find({})
 			.then(result => res.json(result))
 			.catch(err => next(err));
 	});
@@ -74,7 +94,7 @@ class Controller {
 
 	// retrieve all distributions made to provided wallet
 	this.router.get('/distributions/:to/:from', (req, res, next) => {
-		Transfer.find({ 'to': req.params['to'], 'from': { $in: req.params['from'].split(',') } })
+		TransferEXRN.find({ 'to': req.params['to'], 'from': { $in: req.params['from'].split(',') } })
 			.then(result => res.json(result))
 			.catch(err => next(err));
 	});
