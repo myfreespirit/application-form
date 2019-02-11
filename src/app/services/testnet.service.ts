@@ -25,6 +25,11 @@ export class TestnetService {
 	}
 
 
+	getTokenBalances() {
+		return this.http.get('/api/balances/all/');
+	}
+
+
 	getApplicationByWallet(wallet: string) {
 		return this.http.get('/testnet/wallet/' + wallet.toLowerCase());
 	}

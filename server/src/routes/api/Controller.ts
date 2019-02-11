@@ -13,10 +13,31 @@ class Controller {
   public routes() {
   	// retrieve all testnet registrations
 	this.router.get('/testnet/all/', (req, res, next) => {
-		Testnet.find({}, (err, document) => {
-			if (err) return next(err);
-			res.json(document);
-		});
+		Testnet.aggregate(
+			[
+				{
+					$lookup: {
+							from: 'balances',
+							localField: 'wallet',
+							foreignField: 'wallet',
+							as: 'tokens'
+						 }
+				},
+				{
+					$replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$tokens", 0 ] }, "$$ROOT" ] } }
+				},
+				{
+					$project: {
+							tokens: 0
+						  }
+				}
+			],
+			(err, document) => {
+				if (err) return next(err);
+				res.json(document);
+			}
+		);
+
 	});
 
 

@@ -25,10 +25,11 @@ import { TestnetService } from '../services/testnet.service';
 export class AdminComponent implements OnInit, AfterViewInit {
 
   displayError = false;
+  displaySpin = false;
 
   data = [];
   displayedTabs = ['BACKLOG', 'RESETS', 'OBSERVERS', 'TESTERS', 'REJECTED'];
-  displayedColumns = ['telegram', 'username', 'Total EXRN', 'Total EXRT'];
+  displayedColumns = ['Telegram', 'Username', 'Total EXRN', 'Total EXRT'];
   expandedElement: TestnetRegistrationElement;
   dataSource: MatTableDataSource<TestnetRegistrationElement>[];
 
@@ -75,6 +76,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
   private getAllRegistrations() {
   	this.displayError = false;
+	this.displaySpin = true;
 
 	this.data = [];
 	this.displayedTabs.forEach(tab => {
@@ -88,7 +90,16 @@ export class AdminComponent implements OnInit, AfterViewInit {
 			let action = this.getActionFromStatus(lastStatus);
 
 			if (action !== 'SKIP') {
-				this.data[action].push({ 'telegram': '@'+el.telegram, 'username': el.username, 'access_key': el.hash, 'wallet': el.wallet, 'motivation': el.motivation, 'states': el.states });
+				this.data[action].push({
+					'Telegram': '@'+el.telegram,
+					'Username': el.username,
+					'Total EXRN': Math.max(0, el.EXRN || 0),
+					'Total EXRT': Math.max(0, Math.floor(el.EXRT || 0)),
+					'access_key': el.hash,
+					'wallet': el.wallet,
+					'motivation': el.motivation,
+					'states': el.states
+				});
 			}
 		});
 
@@ -98,6 +109,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
 			this.dataSource[tab].sort = this.sort.toArray()[index];
 			this.applyFilter('', tab);
 		});
+
+		this.displaySpin = false;
 	});
   }
 

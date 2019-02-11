@@ -15,6 +15,7 @@
 					class="btn btn-primary"
 					(click)="getAllRegistrations()">
 						GET REGISTRATIONS
+						<mat-spinner color="info" diameter="25" [style.display]="displaySpin ? 'inline-flex' : 'none'"></mat-spinner>
 				</button>
 
 				<button mat-button mat-raised-button
