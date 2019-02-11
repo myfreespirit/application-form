@@ -1,4 +1,5 @@
 let request = require('request');
+import { BigNumber } from 'bignumber.js';
 
 
 class Etherscan {
@@ -194,7 +195,6 @@ class Etherscan {
 					this.handleResponse(resolve, reject, error, body);
 				});
 			});
-	
 	}
 
 
@@ -207,15 +207,17 @@ class Etherscan {
 						if (numberOfRecords > 0) {
 							console.log("# new " + token + " transfers:", numberOfRecords);
 							this.saveNewTokenTransfers(token, newTransfers).then(response => {
-								if (numberOfRecords === this.maxTokenTransfersApiLimit) {
-									this.getLastSavedTokenTransferBlock(token).then(partialBlock => {
-										this.removeTokenTransfers(token, partialBlock).then(removed => {
-											this.updateTokenTransfers(token);
+								this.updateBalances(newTransfers, token).then(update => {
+									if (numberOfRecords === this.maxTokenTransfersApiLimit) {
+										this.getLastSavedTokenTransferBlock(token).then(partialBlock => {
+											this.removeTokenTransfers(token, partialBlock).then(removed => {
+												this.updateTokenTransfers(token);
+											});
 										});
-									});
-								} else {
-									resolve(numberOfRecords);
-								}
+									} else {
+										resolve(numberOfRecords);
+									}
+								});
 							});
 						} else {
 							resolve(numberOfRecords);
@@ -223,6 +225,59 @@ class Etherscan {
 					});
 				});
 			});
+	}
+
+
+	private updateBalances(newTransfers: any[], token: string): Promise<any> {
+		let decimals = (token === 'EXRN' ? 0 : (token === 'EXRT' ? 8 : 18));
+
+		newTransfers = newTransfers['result'].map(tx => {
+			return {
+				from: tx.from,
+				to: tx.to,
+				value: new BigNumber(tx.value).div(Math.pow(10, decimals)).toNumber()
+			};
+		});
+
+		let totalByWallet = this.groupTokenTransfersByWallet(newTransfers);
+
+		return new Promise<any>((resolve, reject) => {
+				let options = {
+					uri: this.baseUrl + '/balances/update/' + token,
+					body: JSON.stringify({ result: totalByWallet }),
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				};
+
+				request(options, (error, response, body) => {
+					this.handleResponse(resolve, reject, error, body);
+				});
+			});
+	}
+
+
+	private groupTokenTransfersByWallet(xs) {
+		return xs.reduce((rv, x) => {
+			let from = x['from'];
+			let idxFrom = rv.findIndex(r => r && r.wallet === from);
+			if (idxFrom >= 0) {
+				rv[idxFrom]['value'] -= x.value;
+			} else {
+				rv.push({ wallet: from, value: -x.value });
+			}
+
+			let to = x['to'];
+			let idxTo = rv.findIndex(r => r && r.wallet === to);
+			if (idxTo >= 0) {
+				rv[idxTo]['value'] += x.value;
+			} else {
+				rv.push({ wallet: to, value: x.value });
+			}
+
+			return rv;
+		}, []);
 	}
 }
 
