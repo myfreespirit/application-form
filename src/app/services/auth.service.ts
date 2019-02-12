@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AUTH_CONFIG } from '../auth0-variables';
 import { of, timer } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import auth0 from 'auth0-js';
@@ -9,17 +9,14 @@ import auth0 from 'auth0-js';
 @Injectable()
 export class AuthService {
 
-  userProfile: any;
+  auth0: any;
+  auth0_audience: string;
   refreshSubscription: any;
 
-  auth0 = new auth0.WebAuth({
-    clientID: AUTH_CONFIG.clientID,
-    domain: AUTH_CONFIG.domain,
-    responseType: 'token id_token',
-    redirectUri: AUTH_CONFIG.redirectUri
-  });
 
-  constructor(@Inject(Router) public router: Router) {
+  constructor(@Inject(Router) public router: Router,
+		  @Inject(HttpClient) private http: HttpClient)
+  {
   }
 
   public login(): void {
@@ -27,17 +24,27 @@ export class AuthService {
   }
 
   public handleAuthentication(): void {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        window.location.hash = '';
-        this.setSession(authResult);
-        this.router.navigate(['/admin']);
-      } else if (err) {
-        this.router.navigate(['/admin']);
-        console.log(err);
-        alert('Error: ${err.error}. Check the console for further details.');
-      }
-    });
+	this.http.get('/backends/auth0').subscribe((data: any) => {
+		this.auth0_audience = data.audience;
+		this.auth0 = new auth0.WebAuth({
+			clientID: data.clientID,
+			domain: data.domain,
+			responseType: 'token id_token',
+			redirectUri: data.redirectUri
+		});
+
+		this.auth0.parseHash((err, authResult) => {
+			if (authResult && authResult.accessToken && authResult.idToken) {
+				window.location.hash = '';
+				this.setSession(authResult);
+				this.router.navigate(['/admin']);
+			} else if (err) {
+				this.router.navigate(['/admin']);
+				console.log(err);
+				alert('Error: ${err.error}. Check the console for further details.');
+			}
+		});
+	});
   }
 
   private setSession(authResult): void {
@@ -81,7 +88,7 @@ export class AuthService {
 
   public renewToken() {
     this.auth0.checkSession({
-        audience: AUTH_CONFIG.audience
+        audience: this.auth0_audience
       }, (err, result) => {
         if (!err) {
           this.setSession(result);

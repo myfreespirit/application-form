@@ -12,6 +12,7 @@ import * as path from 'path';
 import cron from './cronJobs/Controller';
 
 import api from './routes/api/Controller';
+import backends from './routes/backends/Controller';
 import balances from './routes/balances/Controller';
 import ethers from './routes/ethers/Controller';
 import rounds from './routes/rounds/Controller';
@@ -21,15 +22,17 @@ import transfers from './routes/transfers/Controller';
 
 
 class App {
-
+	jwksJsonUri = (process.env.AUTH0_DOMAIN !== undefined ?
+				'https://' + process.env.AUTH0_DOMAIN + '/.well-known/jwks.json' :
+				'https://delicate-silence-4570.eu.auth0.com/.well-known/jwks.json')
 	jwtCheck = expressJwt({
 	    secret: jwks.expressJwtSecret({
 		cache: true,
 		rateLimit: true,
 		jwksRequestsPerMinute: 1000,
-		jwksUri: "https://delicate-silence-4570.eu.auth0.com/.well-known/jwks.json"
+		jwksUri: this.jwksJsonUri
 	    }),
-	    aud: 'https://testeddefault.herokuapp.com/api',
+	    aud: process.env.AUTH0_AUDIENCE,
 	    algorithms: ['RS256']
 	});
 
@@ -76,6 +79,7 @@ class App {
 		// Serve only the static files from the dist directory
 		this.app.use(express.static(path.resolve('dist')));
 
+		this.app.use('/backends', backends.routes());
 		this.app.use('/balances', balances.routes());
 		this.app.use('/ethers', ethers.routes());
 		this.app.use('/rounds', rounds.routes());
