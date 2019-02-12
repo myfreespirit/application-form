@@ -54,7 +54,7 @@
 			  <input matInput (keyup)="applyFilter($event.target.value, tab)" [(ngModel)]="dataSource[tab].filter" placeholder="Filter">
 			</mat-form-field>
 
-			<button mat-button mat-raised-button (click)="export()"	class="btn btn-primary btn-margin" [disabled]="true">EXPORT</button>
+			<button mat-button mat-raised-button (click)="export(tab)" class="btn btn-primary btn-margin" [disabled]="displaySpin">EXPORT</button>
 
 			<div class="mat-elevation-z8">
 				<table mat-table [dataSource]="dataSource[tab]" matSort multiTemplateDataRows>

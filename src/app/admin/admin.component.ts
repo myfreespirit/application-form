@@ -2,6 +2,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Inject } from '@angular/core';
 import { AfterViewInit, Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { Papa } from 'ngx-papaparse';
 
 import { AuthService } from '../services/auth.service';
 import { TestnetService } from '../services/testnet.service';
@@ -42,7 +43,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
   constructor(@Inject(AuthService) public auth: AuthService,
 	  	@Inject(TestnetService) public testnet: TestnetService,
-		@Inject(MatDialog) private dialog: MatDialog)
+		@Inject(MatDialog) private dialog: MatDialog,
+		@Inject(Papa) private papa: Papa)
   {
 	auth.handleAuthentication();
 
@@ -245,6 +247,33 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 		this.displaySpin = false;
 	});
+  }
+
+
+  private export(tab: string) {
+	let input = this.dataSource[tab].filteredData.map(el => {
+		return {
+			username: el.Username,
+			access_key: el.access_key.trim()
+		};
+	});
+
+	let options = {
+		delimiter: ";",	// auto-detect
+		header: true
+	};
+
+	let data = this.papa.unparse(input, options);
+
+	let blob = new Blob([data], { type: 'text/csv' });
+	let blobURL = window.URL.createObjectURL(blob);
+
+	let anchor = document.createElement("a");
+	let filter = this.dataSource[tab].filter;
+	const name = (filter === '' ? tab : tab + '_' + filter);
+	anchor.download = name + ".csv";
+	anchor.href = blobURL;
+	anchor.click();
   }
 }
 
