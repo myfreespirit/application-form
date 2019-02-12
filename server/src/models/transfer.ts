@@ -19,6 +19,10 @@ const TransferSchema = new mongoose.Schema({
   }
 });
 
+
+TransferSchema.index({ from: 1 });
+TransferSchema.index({ to: 1 });
+
 const TransferEXRN = mongoose.model('TransferEXRN', TransferSchema);
 const TransferEXRT = mongoose.model('TransferEXRT', TransferSchema);
 

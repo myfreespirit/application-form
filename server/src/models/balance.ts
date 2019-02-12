@@ -16,4 +16,8 @@ const BalanceSchema = new mongoose.Schema({
 
 });
 
+
+BalanceSchema.index({ wallet: 1 });
+
+
 export const Balance = mongoose.model('Balance', BalanceSchema);
