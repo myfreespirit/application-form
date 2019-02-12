@@ -17,10 +17,12 @@ import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-
 
 import { AppComponent } from './app.component';
 import { FormComponent } from './form/form.component';
-import { SignupSuccessDialog } from './signup/signup.component';
 import { StaffComponent } from './staff/staff.component';
 import { TestnetComponent } from './testnet/testnet.component';
 import { AdminComponent } from './admin/admin.component';
+
+import { MarkObserversDialog } from './admin/bulk/observer.component';
+import { SignupSuccessDialog } from './signup/signup.component';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
@@ -34,6 +36,7 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     FormComponent,
+    MarkObserversDialog,
     SignupSuccessDialog,
     StaffComponent,
     TestnetComponent,
@@ -58,6 +61,7 @@ export function tokenGetter() {
     })
   ],
   entryComponents: [
+    MarkObserversDialog,
     SignupSuccessDialog
   ],
   providers: [

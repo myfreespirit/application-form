@@ -13,12 +13,14 @@
 			<div *ngIf="auth.isAuthenticated()">
 				<button *ngIf="displayResults" mat-button mat-raised-button
 					class="btn btn-primary"
+     					[disabled]="displaySpin"
 					(click)="markObservers()">
 						MARK OBSERVERS
 				</button>
 
 				<button mat-button mat-raised-button
 					class="btn btn-primary"
+     					[disabled]="displaySpin"
 					(click)="getAllRegistrations()">
 						GET REGISTRATIONS
 						<mat-spinner color="info" diameter="25" [style.display]="displaySpin ? 'inline-flex' : 'none'"></mat-spinner>

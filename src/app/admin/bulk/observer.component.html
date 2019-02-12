@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Specify filters</h2>
+
+<div class="row">
+	<mat-form-field>
+		<input matInput type="number" name="exrn" [(ngModel)]="data['exrn']" placeholder="Minimum EXRN">
+	</mat-form-field>
+
+	<mat-form-field>
+		<input matInput type="number" name="exrt" [(ngModel)]="data['exrt']" placeholder="Minimum EXRT">
+	</mat-form-field>
+</div>
+
+<div class="row" *ngFor="let tab of data['tabs']">
+	<mat-checkbox [(ngModel)]="tab.checked">{{ tab.name }}</mat-checkbox>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>MOVE</button>
+  <button mat-button [mat-dialog-close]="null">CANCEL</button>
+</mat-dialog-actions>
+

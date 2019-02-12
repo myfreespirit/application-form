@@ -207,15 +207,12 @@ export class StaffComponent implements OnInit, AfterViewInit {
 	  let tokenBalanceAtClosedForm = transfers.reduce((balance, tx) => {
 							if (tx.blockNumber <= formClosureBlock && tx.to === wallet) {
 								// sum up all IN transactions before form closure
-								// console.log("+", balance, tx.value);
 								return balance + tx.value;
 							} else if (tx.blockNumber <= snapshotBlock && this._dataService.tokenDistributorAddresses.includes(tx.from)) {
 								// accept all "late" IN transactions from the distributor wallets
-								// console.log("+++", balance, tx.value);
 								return balance + tx.value;
 							} else if (tx.blockNumber <= formClosureBlock && tx.from === wallet) {
 								// subtract all OUT transactions before form closure
-								// console.log("-", balance, tx.value);
 								return balance - tx.value;
 							}
 

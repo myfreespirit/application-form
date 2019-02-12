@@ -1,10 +1,12 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Inject } from '@angular/core';
 import { AfterViewInit, Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 
 import { AuthService } from '../services/auth.service';
 import { TestnetService } from '../services/testnet.service';
+
+import { MarkObserversDialog } from './bulk/observer.component';
 
 
 @Component({
@@ -37,7 +39,11 @@ export class AdminComponent implements OnInit, AfterViewInit {
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();
 
-  constructor(@Inject(AuthService) public auth: AuthService, @Inject(TestnetService) public testnet: TestnetService) {
+
+  constructor(@Inject(AuthService) public auth: AuthService,
+	  	@Inject(TestnetService) public testnet: TestnetService,
+		@Inject(MatDialog) private dialog: MatDialog)
+  {
 	auth.handleAuthentication();
 
 	this.dataSource = [];
@@ -208,7 +214,37 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 
   markObservers() {
-	console.log("lets do it");
+  	this.displaySpin = true;
+
+	const dialogRef = this.dialog.open(MarkObserversDialog, {
+		data: {
+			tabs: this.displayedTabs,
+			exrn: 1,
+			exrt: 1
+		}
+	});
+
+	dialogRef.afterClosed().subscribe(result => {
+		if (result === null || result === undefined) {
+			// Cancelled
+			this.displaySpin = false;
+			return;
+		}
+
+		result['tabs'].forEach(tab => {
+			if (tab.checked) {
+				this.dataSource[tab.name].data.forEach(element => {
+					if (element['Total EXRN'] >= result['exrn']) {
+						if (element['Total EXRT'] >= result['exrt']) {
+							this.moveApplication(tab.name, element, 'OBSERVERS');
+						}
+					}
+				});
+			}
+		});
+
+		this.displaySpin = false;
+	});
   }
 }
 
