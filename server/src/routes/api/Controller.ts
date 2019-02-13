@@ -10,6 +10,7 @@ class Controller {
     this.router = express.Router();
   }
 
+
   public routes() {
   	// retrieve all testnet registrations
 	this.router.get('/testnet/all/', (req, res, next) => {
@@ -24,11 +25,15 @@ class Controller {
 						 }
 				},
 				{
-					$replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$tokens", 0 ] }, "$$ROOT" ] } }
-				},
-				{
 					$project: {
-							tokens: 0
+							wallet: 1,
+							telegram: 1,
+							username: 1,
+							hash: 1,
+							motivation: 1,
+							states: 1,
+							EXRN: "$tokens.EXRN",
+							EXRT: "$tokens.EXRT"
 						  }
 				}
 			],
