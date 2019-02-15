@@ -5,9 +5,13 @@
 </div>
 
 
-<div *ngIf="formSubmitted" class="alert alert-success">
+<div *ngIf="formSubmitted && !showApiError" class="alert alert-success">
 	Thank you, your request has been submitted!
 	You can use the same form to check the status.
+</div>
+
+<div *ngIf="showApiError" class="alert alert-danger">
+	Something went wrong, please contact the team!
 </div>
 
 

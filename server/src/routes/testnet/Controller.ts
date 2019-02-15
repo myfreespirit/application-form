@@ -23,7 +23,7 @@ class Controller {
 
 	// retrieve testnet registrations by username 
 	this.router.get('/username/:username', (req, res, next) => {
-		Testnet.find({ username: req.params['username'] }, 'username', (err, document) => {
+		Testnet.find({ username: req.params['username'] }, 'username states', (err, document) => {
 		    if (err) return next(err);
 		    res.json(document);
 		});

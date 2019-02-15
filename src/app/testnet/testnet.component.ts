@@ -20,6 +20,7 @@ export class TestnetComponent implements OnInit {
 
   isLinear = true;
   formSubmitted: boolean;
+  showApiError: boolean;
   passCopied: boolean;
 
   inpWallet: string;
@@ -33,9 +34,7 @@ export class TestnetComponent implements OnInit {
 
 
   constructor(@Inject(TestnetService) private _testnetService: TestnetService) {
-	this.formSubmitted = false;
-
-  	this.randomPassword(12);
+	this.resetInput();
   }
 
 
@@ -49,7 +48,11 @@ export class TestnetComponent implements OnInit {
 			this.resetInput();
 			this.formSubmitted = true;
 		});
-	});
+	},
+		error => {
+			this.showApiError = true;
+		}
+	);
   }
 
 
@@ -60,6 +63,9 @@ export class TestnetComponent implements OnInit {
 	this.inpSalt = "";
 	this.inpPassword = "";
 	this.inpMotivation = "";
+
+	this.formSubmitted = false;
+	this.showApiError = false;
 
 	this.randomPassword(16);
   }
@@ -111,6 +117,10 @@ export class TestnetComponent implements OnInit {
 		this.formSubmitted = true;
 
 		this.states = result['states'];
-	});
+	},
+		error => {
+			this.showApiError = true;
+		}
+	);
   }
 }

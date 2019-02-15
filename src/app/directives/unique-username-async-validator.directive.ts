@@ -14,7 +14,20 @@ export class UniqueUsernameAsyncValidator implements AsyncValidator {
 
 	validate(ctrl: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
 		return this.testnetService.isUsernameTaken(ctrl.value).pipe(
-			map((isTaken: any[]) => (isTaken.length != 0 ? { uniqueUsername: true } : null)),
+			map((result: any[]) => {
+				if (result.length != 0) {
+					const states = result[0].states;
+					const status = states[states.length - 1].status;
+
+					if (status === 'RESET APPROVED') {
+						return null;
+					} else {
+						return { uniqueUsername: true };
+					}
+				}
+
+				return null;
+			}),
 			catchError(() => { return of({ unknown: true }); })
 		);
 	}
