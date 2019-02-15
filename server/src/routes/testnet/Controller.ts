@@ -17,7 +17,8 @@ class Controller {
 	this.router.get('/docLink', (req, res, next) => {
 		Administration.find({ }, 'exrt.testnet.docLink', (err, document) => {
 			if (err) return next(err);
-			res.json(document[0]['exrt'][0]['testnet'][0]['docLink']);
+			let result = (document.length ? document[0]['exrt'][0]['testnet'][0]['docLink'] : '');
+			res.json(result);
 		});
 	});
 
