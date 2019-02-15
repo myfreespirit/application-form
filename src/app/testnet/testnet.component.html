@@ -44,10 +44,12 @@
 
 				<div *ngIf="!wallet.pending">
 					<div *ngIf="wallet.errors.observerWallet" class="alert alert-success">
-						Congratulations, you've been approved as an OBSERVER.
+						Congratulations, you've been approved as an OBSERVER.<br />
+						For more information visit <a href="{{ docLink }}" target="_blank" rel="noopener noreferrer">{{ docLink }}</a>
 					</div>
 					<div *ngIf="wallet.errors.testerWallet" class="alert alert-success">
-						Congratulations, you've been approved as a TESTER.
+						Congratulations, you've been approved as a TESTER.<br />
+						For more information visit <a href="{{ docLink }}" target="_blank" rel="noopener noreferrer">{{ docLink }}</a>
 					</div>
 					<div *ngIf="wallet.errors.rejectedWallet" class="alert alert-danger">
 						Unfortunately your application was rejected.

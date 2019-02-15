@@ -29,6 +29,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
   displayError = false;
   displaySpin = false;
+  displaySpinDoc = false;
   displayResults = false;
 
   data = [];
@@ -36,6 +37,8 @@ export class AdminComponent implements OnInit, AfterViewInit {
   displayedColumns = ['Telegram', 'Username', 'Total EXRN', 'Total EXRT'];
   expandedElement: TestnetRegistrationElement;
   dataSource: MatTableDataSource<TestnetRegistrationElement>[];
+
+  docLink: string;
 
   @ViewChildren(MatPaginator) paginator = new QueryList<MatPaginator>();
   @ViewChildren(MatSort) sort = new QueryList<MatSort>();
@@ -69,6 +72,10 @@ export class AdminComponent implements OnInit, AfterViewInit {
 	if (localStorage.getItem('isLoggedIn') === 'true') {
 		this.auth.renewToken();
 	}
+
+	this.testnet.getDocLink().subscribe((link: string) => {
+		this.docLink = link;
+	});
   }
 
 
@@ -247,6 +254,22 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 		this.displaySpin = false;
 	});
+  }
+
+
+  updateDocLink() {
+	this.displaySpinDoc = true;
+	this.displayError = false;
+
+	this.testnet.updateDocLink(this.docLink).subscribe((result: any) => {
+			this.displaySpinDoc = false;
+		},
+		error => {
+			console.log("error", error);
+			this.displaySpinDoc = false;
+			this.displayError = true;
+		}
+	);
   }
 
 

@@ -17,6 +17,7 @@ import { TestnetService } from '../services/testnet.service';
 export class TestnetComponent implements OnInit {
 
   title = "EXRT Testnet registration";
+  docLink: string;
 
   isLinear = true;
   formSubmitted: boolean;
@@ -35,6 +36,7 @@ export class TestnetComponent implements OnInit {
 
   constructor(@Inject(TestnetService) private _testnetService: TestnetService) {
 	this.resetInput();
+	this.setDocLink();
   }
 
 
@@ -122,5 +124,12 @@ export class TestnetComponent implements OnInit {
 			this.showApiError = true;
 		}
 	);
+  }
+
+
+  private setDocLink() {
+	this._testnetService.getDocLink().subscribe((link: string) => {
+		this.docLink = link;
+	});
   }
 }

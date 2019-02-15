@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { Administration } from '../../models/administration';
 import { Testnet } from '../../models/testnet';
 import { exec } from 'child_process';
 
@@ -12,6 +13,15 @@ class Controller {
   }
 
   public routes() {
+	// retrieve testnet documentation link
+	this.router.get('/docLink', (req, res, next) => {
+		Administration.find({ }, 'exrt.testnet.docLink', (err, document) => {
+			if (err) return next(err);
+			res.json(document[0]['exrt'][0]['testnet'][0]['docLink']);
+		});
+	});
+
+
 	// retrieve testnet registrations by wallet
 	this.router.get('/wallet/:wallet', (req, res, next) => {
 	Testnet.find({ wallet: req.params['wallet'] }, 'wallet states', (err, document) => {

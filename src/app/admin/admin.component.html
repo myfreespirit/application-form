@@ -1,7 +1,6 @@
-<nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header" class="button-group">
-
+<div class="container-fluid">
+	<nav class="navbar navbar-default">
+		<div class="row navbar-header" class="button-group">
 			<div *ngIf="!auth.isAuthenticated()">
 				<button mat-button mat-raised-button
 					class="btn btn-primary btn-margin"
@@ -13,14 +12,14 @@
 			<div *ngIf="auth.isAuthenticated()">
 				<button *ngIf="displayResults" mat-button mat-raised-button
 					class="btn btn-primary"
-     					[disabled]="displaySpin"
+					[disabled]="displaySpin"
 					(click)="markObservers()">
 						MARK OBSERVERS
 				</button>
 
 				<button mat-button mat-raised-button
 					class="btn btn-primary"
-     					[disabled]="displaySpin"
+					[disabled]="displaySpin"
 					(click)="getAllRegistrations()">
 						GET REGISTRATIONS
 						<mat-spinner color="info" diameter="25" [style.display]="displaySpin ? 'inline-flex' : 'none'"></mat-spinner>
@@ -32,11 +31,23 @@
 						LOGOUT
 				</button>
 			</div>
+		</div>
+	</nav>
 
+	<div class="row" *ngIf="auth.isAuthenticated()">
+		<div class="col-12 docLink">
+			<mat-form-field>
+				<input matInput [(ngModel)]="docLink" placeholder="Testnet docs link">
+			</mat-form-field>
+		</div>
+		<div class="col-12 docLink">
+			<button mat-button mat-raised-button (click)="updateDocLink()" class="btn btn-primary btn-margin" [disabled]="displaySpinDoc">
+				UPDATE
+				<mat-spinner color="info" diameter="25" [style.display]="displaySpinDoc ? 'inline-flex' : 'none'"></mat-spinner>
+			</button>
 		</div>
 	</div>
-</nav>
-
+</div>
 
 <div *ngIf="displayError" class="alert alert-danger">
 	Something went wrong. Please check Developer Tools' Console and report back to developer.

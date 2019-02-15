@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { Administration } from '../../models/administration';
 import { Testnet } from '../../models/testnet';
 
 
@@ -12,6 +13,18 @@ class Controller {
 
 
   public routes() {
+	// update EXRT testnet documentation link
+	this.router.put('/testnet/update/docLink/', (req, res, next) => {
+		Administration.findOneAndUpdate({ },
+					{ 'exrt.testnet.docLink': req.body['docLink'] },
+					{ upsert: true, new: true },
+					(err, document) => {
+						if (err) return next(err);
+						res.json(document);
+		});
+	});
+
+
   	// retrieve all testnet registrations
 	this.router.get('/testnet/all/', (req, res, next) => {
 		Testnet.aggregate(
@@ -47,7 +60,7 @@ class Controller {
 
 
   	// update registration
-	this.router.put('/testnet/update/', (req, res, next) => {
+	this.router.put('/testnet/update/registration', (req, res, next) => {
 		let obj = {
 			status: req.body['status'],
 			telegram: req.body['telegram']

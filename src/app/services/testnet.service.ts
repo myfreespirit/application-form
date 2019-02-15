@@ -21,7 +21,15 @@ export class TestnetService {
 		req['telegram'] = 'EXRNToken';
 		req['status'] = status;
 
-		return this.http.put('/api/testnet/update', req);
+		return this.http.put('/api/testnet/update/registration', req);
+	}
+
+
+	updateDocLink(docLink: string) {
+		const req = {}
+		req['docLink'] = docLink;
+
+		return this.http.put('/api/testnet/update/docLink', req);
 	}
 
 
@@ -67,5 +75,10 @@ export class TestnetService {
 		req['telegram'] = telegram;
 
 		return this.http.put('/testnet/reset/request', req);
+	}
+
+
+	getDocLink() {
+		return this.http.get('/testnet/doclink');
 	}
 }
