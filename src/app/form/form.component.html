@@ -88,7 +88,7 @@
 	  Please verify in "Your previous signups" section that the numbers are correct.
     </div>
     <div *ngIf="showAPIerror" class="col-12 alert alert-danger">
-      Something went wrong: {{ APIerror }}
+      Something went wrong: {{ APIerror | json }}
     </div>
   </div>
 

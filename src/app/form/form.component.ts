@@ -193,10 +193,10 @@ export class FormComponent implements OnInit {
 	// dialogRef.afterClosed().subscribe(result => {
 	//	console.log(`Dialog result: ${result}`);
 	// });
-    }, msg => {
+    }, err => {
 	this.showSpinnerSignups = false;
 	this.showAPIerror = true;
-	this.APIerror = msg.error;
+	this.APIerror = err;
     });
   }
 
@@ -237,6 +237,7 @@ export class FormComponent implements OnInit {
 		  err => {
 		    console.error(err);  // TODO remove
 		    this.showAPIerror = true;
+		    this.APIerror = err;
 		  },
 		  () => {
 		    this.showSpinnerContributions = false;
@@ -249,6 +250,7 @@ export class FormComponent implements OnInit {
         err => {
           console.error(err);  // TODO remove
           this.showAPIerror = true;
+	  this.APIerror = err;
         }
       );
   }
