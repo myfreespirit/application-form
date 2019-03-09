@@ -10,8 +10,7 @@
     "serve-server": "nodemon",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "postinstall": "npm run build"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -73,5 +72,6 @@
     "protractor": "^5.4.1",
     "ts-node": "~4.1.0",
     "tslint": "^5.9.1"
-  }
+  },
+  "heroku-run-build-script": true
 }
