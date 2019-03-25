@@ -69,8 +69,10 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-	if (localStorage.getItem('isLoggedIn') === 'true') {
-		this.auth.renewToken();
+	if (window.frameElement === null) {
+		if (localStorage.getItem('isLoggedIn') === 'true') {
+			this.auth.renewToken();
+		}
 	}
 
 	this.testnet.getDocLink().subscribe((link: string) => {

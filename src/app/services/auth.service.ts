@@ -57,24 +57,33 @@ export class AuthService {
     // set it to nothing
     const scopes = authResult.scope || '';
 
-    localStorage.setItem('access_token', authResult.accessToken);
-    localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', expiresAt);
-    localStorage.setItem('scopes', JSON.stringify(scopes));
-    this.scheduleRenewal();
+    if (window.frameElement === null) {
+	    localStorage.setItem('access_token', authResult.accessToken);
+	    localStorage.setItem('id_token', authResult.idToken);
+	    localStorage.setItem('expires_at', expiresAt);
+	    localStorage.setItem('scopes', JSON.stringify(scopes));
+	    this.scheduleRenewal();
+    }
   }
 
   public logout(): void {
     // Remove tokens and expiry time from localStorage
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('expires_at');
-    localStorage.removeItem('scopes');
+
+    if (window.frameElement === null) {
+	    localStorage.removeItem('access_token');
+	    localStorage.removeItem('id_token');
+	    localStorage.removeItem('expires_at');
+	    localStorage.removeItem('scopes');
+    }
+
     // Go back to the home route
     this.router.navigate(['/admin']);
   }
 
   public isAuthenticated(): boolean {
+    if (window.frameElement)
+        return false;
+
     // Check whether the current time is past the
     // Access Token's expiry time
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
@@ -82,6 +91,9 @@ export class AuthService {
   }
 
   public userHasScopes(scopes: Array<string>): boolean {
+     if (window.frameElement)
+        return false;
+
     const grantedScopes = JSON.parse(localStorage.getItem('scopes')).split(' ');
     return scopes.every(scope => grantedScopes.includes(scope));
   }
@@ -98,6 +110,9 @@ export class AuthService {
   }
 
   public scheduleRenewal() {
+    if (window.frameElement)
+        return;
+
     if (!this.isAuthenticated()) return;
 
     const expiresAt = JSON.parse(window.localStorage.getItem('expires_at'));
