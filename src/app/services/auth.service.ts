@@ -57,7 +57,7 @@ export class AuthService {
     // set it to nothing
     const scopes = authResult.scope || '';
 
-    if (window.frameElement === null) {
+    if (window.self === window.top) {
 	    localStorage.setItem('access_token', authResult.accessToken);
 	    localStorage.setItem('id_token', authResult.idToken);
 	    localStorage.setItem('expires_at', expiresAt);
@@ -69,7 +69,7 @@ export class AuthService {
   public logout(): void {
     // Remove tokens and expiry time from localStorage
 
-    if (window.frameElement === null) {
+    if (window.self === window.top) {
 	    localStorage.removeItem('access_token');
 	    localStorage.removeItem('id_token');
 	    localStorage.removeItem('expires_at');
@@ -81,7 +81,7 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    if (window.frameElement)
+    if (window.self !== window.top)
         return false;
 
     // Check whether the current time is past the
@@ -91,7 +91,7 @@ export class AuthService {
   }
 
   public userHasScopes(scopes: Array<string>): boolean {
-     if (window.frameElement)
+     if (window.self !== window.top)
         return false;
 
     const grantedScopes = JSON.parse(localStorage.getItem('scopes')).split(' ');
@@ -110,7 +110,7 @@ export class AuthService {
   }
 
   public scheduleRenewal() {
-    if (window.frameElement)
+    if (window.self !== window.top)
         return;
 
     if (!this.isAuthenticated()) return;

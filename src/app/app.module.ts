@@ -27,7 +27,7 @@ import { SignupSuccessDialog } from './signup/signup.component';
 import { JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
-	if (window.frameElement) {
+	if (window.self !== window.top) {
 		return "";  // skip iframe
 	}
 

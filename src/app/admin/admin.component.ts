@@ -69,7 +69,7 @@ export class AdminComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-	if (window.frameElement === null) {
+	if (window.self === window.top) {
 		if (localStorage.getItem('isLoggedIn') === 'true') {
 			this.auth.renewToken();
 		}
