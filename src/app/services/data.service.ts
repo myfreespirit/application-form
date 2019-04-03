@@ -40,6 +40,7 @@ export class DataService {
   airdropAmount = Math.pow(10, 7);
   airdropLastBlock = 4532706;
   distributionRates = [
+    { block: 7490115, value: this.airdropAmount / 8 },  // Finish of contribution sale - March 21 - April 2 discount
     { block: 7418624, value: this.airdropAmount / 4 },  // Start of contribution sale - March 21 - April 2 discount
     { block: 6999205, value: this.airdropAmount / 8 },  // Finish of contribution sale - Christmas 2018 discount
     { block: 6937738, value: this.airdropAmount / 4 },  // Start  of contribution sale - Christmas 2018 discount
