@@ -1,6 +1,8 @@
 import { Inject } from '@angular/core';
 import { AfterViewInit, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Papa } from 'ngx-papaparse';
 import { filter } from "rxjs/operators";
 
@@ -23,8 +25,8 @@ export class StaffComponent implements OnInit, AfterViewInit {
 
   dataSourceInternal: MatTableDataSource<SignupsDataInternal>;
 
-  @ViewChild('paginatorInternal') paginatorInternal: MatPaginator;
-  @ViewChild('sortInternal') sortInternal: MatSort;
+  @ViewChild('paginatorInternal', { static: false }) paginatorInternal: MatPaginator;
+  @ViewChild('sortInternal', { static: false }) sortInternal: MatSort;
 
   
   constructor(@Inject(DataService) private _dataService: DataService,

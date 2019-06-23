@@ -43,19 +43,19 @@ mat-form-field {
     font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size:16px;
 }
-/deep/ .countdown {
+::ng-deep .countdown {
     height: 100px;
 }
-/deep/ .measurements {
+::ng-deep .measurements {
     padding: 5px;
 }
-/deep/ .divider {
+::ng-deep .divider {
     font-size: 16px;
 }
 
 
 // Material Design Tabs
-/deep/ .mat-tab-body-content {
+::ng-deep .mat-tab-body-content {
 	overflow-x: hidden !important;
 	overflow-y: hidden !important;
 }
