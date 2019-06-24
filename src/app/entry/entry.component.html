@@ -1,0 +1,36 @@
+<div class="page-ath-wrap">
+    <div class="page-ath-content">
+        <div class="page-ath-header">
+            <a href="" class="page-ath-logo"><img src="assets/images/logo.png" srcset="assets/images/logo2x.png 2x" alt=""></a>
+        </div>
+        <div class="page-ath-form">
+            <h2 class="page-ath-heading">EXRT Distribution #{{ rounds?.length }} <span>There will be only 1,000,000,000 EXRT issued, 500 million of which will be paid to EXRN token holders. </span></h2>
+            <form action="#">
+				<div class="input-item input-with-label">
+					<div class="relative">
+						<span class="input-icon input-icon-right"><em class="ti ti-wallet"></em></span>
+						<input class="input-bordered" type="text" placeholder="Your Wallet Address" name="wallet" [(ngModel)]="userAddress" (ngModelChange)="checkWallet()" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
+					</div>
+				</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><a [routerLink]="['/main']"><button class="btn btn-primary" [disabled]="inputWallet.invalid">Sign In</button></a></div>
+                    <div>
+                        <a href="https://exrnchain.com/exrt/" target="_blank">Learn more about EXRT</a>
+                    </div>
+                </div>
+                <div class="gaps-2x"></div>
+            </form>
+        </div>
+        <div class="page-ath-footer">
+            <ul class="footer-links">
+                <li>&copy; 2019 EXRT Distribution App.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="page-ath-gfx">
+       <div class="w-100 d-flex justify-content-center">
+           <div class="col-md-8 col-xl-5">
+           </div>
+       </div>
+    </div>
+</div>

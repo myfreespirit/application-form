@@ -16,6 +16,7 @@ import { UniqueUsernameAsyncValidatorDirective } from './directives/unique-usern
 import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-async-validator.directive';
 
 import { AppComponent } from './app.component';
+import { EntryComponent } from './entry/entry.component';
 import { FormComponent } from './form/form.component';
 import { StaffComponent } from './staff/staff.component';
 import { TestnetComponent } from './testnet/testnet.component';
@@ -39,6 +40,7 @@ export function tokenGetter() {
   bootstrap: [AppComponent],
   declarations: [
     AppComponent,
+	EntryComponent,
     FormComponent,
     MarkObserversDialog,
     SignupSuccessDialog,
