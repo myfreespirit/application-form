@@ -1,7 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { DataService } from '../services/data.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -15,7 +17,7 @@ export class EntryComponent implements OnInit {
   userAddress: string;
   title = 'EXRT Distribution Application';
 
-  constructor(@Inject(DataService) private _dataService: DataService, @Inject(Router) public router: Router) {
+  constructor(@Inject(DataService) private _dataService: DataService, @Inject(Router) public router: Router, private _toastr: ToastrService) {
   }
 
   ngOnInit() {
@@ -25,8 +27,14 @@ export class EntryComponent implements OnInit {
 	});
   }
   
-  checkWallet() {
+  checkWallet(form: NgForm) {
 	console.log("checkWallet");
-	console.log(this.userAddress);
+	console.log(form.value.wallet, form.valid);
+	
+	if (form.valid) {
+		this.router.navigate(['/main']);
+	} else {
+		this._toastr.warning(form.value.wallet + " is not a valid ETH address");
+	}
   }
 }

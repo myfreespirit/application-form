@@ -7,6 +7,7 @@ import { MaterialModule } from './material.module';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PapaParseModule } from 'ngx-papaparse';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AuthService } from './services/auth.service';
 import { DataService } from './services/data.service';
@@ -59,6 +60,7 @@ export function tokenGetter() {
     MaterialModule,
     NgbModule.forRoot(),
     PapaParseModule,
+    ToastrModule.forRoot(),
     JwtModule.forRoot({
         config: {
             tokenGetter: tokenGetter,

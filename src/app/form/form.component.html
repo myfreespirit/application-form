@@ -1,359 +1,320 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12 timerNotification">
-        <hr />
-        <div *ngIf="showTimer()">
-	  This round closes soon, do not move your EXRN until you receive EXRT!
-	  <hr />
-	</div>
-	<div *ngIf="timerRoundExpired">
-	  This round has closed, do not move your EXRN until you receive EXRT!
-	  <hr />
-	</div>
-    </div>
-
-    <div class="col-12" *ngIf="showTimer()">
-	    <countdown (reached)="roundExpired($event)" [text]="text" units="Month | Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <form #walletForm="ngForm">
-        <div class="row">
-          <div class="col-12 col-md-8 offset-md-1 col-lg-6 offset-lg-3">
-            <input type="text" name="wallet" placeholder="Your wallet address" [(ngModel)]="userAddress" (ngModelChange)="checkWallet()" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
-          </div>
-          <div class="col-12 col-md-8 offset-md-1 col-lg-6 offset-lg-3">
-            <div *ngIf="inputWallet.invalid && inputWallet.dirty" class="alert alert-danger">
-		    Please provide a valid Ethereum wallet address.
-            </div>
-            <div *ngIf="isBlacklisted()" class="alert alert-danger">
-		    This address is blacklisted. Team wallets or Exchange wallets are not allowed to be signed up with.
-            </div>
-            <div *ngIf="showCallToAction && !showContributorEligibility" class="alert alert-danger">
-		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
-            </div>
-            <div *ngIf="!showSignupResult && showContributorEligibility" class="alert alert-success">
-		    {{ this.availableExrnDistributed | number: fractionSize }} EXRN is eligible for 10x EXRT rewards. Don't forget to SIGNUP below!
-            </div>
-            <div *ngIf="!showSignupResult && showNormalEligibility" class="alert alert-success">
-		    {{ this.userTotalTokens - this.availableExrnDistributed | number: fractionSize }} EXRN is eligible for regular EXRT rewards. Don't forget to SIGNUP below!
-            </div>
-            <div *ngIf="showTransferReminder" class="alert alert-info">
-		    Transfer {{ this.totalExrnDistributed - this.availableExrnDistributed | number: fractionSize }} EXRN back to this wallet to receive 10x EXRT rewards on it!
-            </div>
-            <div *ngIf="showCallToAction && showContributorEligibility" class="alert alert-warning">
-		    You need {{ this._dataService.minimumExrnRequired - this.userTotalTokens | number: fractionSize }} more EXRN from an exchange to receive regular EXRT rewards on {{ this._dataService.minimumExrnRequired - this.totalExrnDistributed | number: fractionSize }} EXRN!
-            </div>
-            <div *ngIf="!firstSignupHappened && inputWallet.valid" class="alert alert-warning">
-		    Don't forget to SIGNUP below to receive EXRT rewards this round!
-            </div>
-            <div *ngIf="firstSignupHappened && isSignupOutdated()" class="alert alert-warning">
-		    Your last signup is NOT up to date anymore. Please SIGNUP again!
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
-  <div class="row" *ngIf="displayHistory">
-    <div class="col-6 col-md-4 offset-md-1 col-lg-3 offset-lg-3">
-      EXRN Total
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      EXRN from team
-    </div>
-  </div>
-  <div class="row" *ngIf="displayHistory">
-    <div class="col-12">
-      <form>
-        <div class="row">
-          <div class="col-6 col-md-4 offset-md-1 col-lg-3 offset-lg-3">
-            <input type="text" name="userTotalTokens" [(ngModel)]="userTotalTokens" required pattern="[0-9]{1,11}" [readonly]="isManualEntryDisabled" #inputTotalTokens="ngModel">
-          </div>
-          <div class="col-6 col-md-4 col-lg-3">
-            <input type="text" name="availableExrnDistributed" [(ngModel)]="availableExrnDistributed" required pattern="[0-9]{1,11}" [readonly]="isManualEntryDisabled" #inputTeamTokens="ngModel">
-          </div>
-          <div class="col-12 col-md-1 col-lg-1 text-left">
-            <button class="btn-block" mat-raised-button (click)="signup()" [disabled]="disableCheckWallet || inputWallet.invalid || inputTotalTokens.invalid || inputTeamTokens.invalid || +availableExrnDistributed > +userTotalTokens || timerRoundExpired || isBlacklisted() || showCallToAction && !showContributorEligibility">SIGNUP</button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div *ngIf="showSignupResult" class="col-12 alert alert-success">
-	  Your signup has successfully been recorded, thank you!<br />
-	  Please verify in "Your previous signups" section that the numbers are correct.
-    </div>
-    <div *ngIf="showAPIerror" class="col-12 alert alert-danger">
-      Something went wrong: {{ APIerror | json }}
-    </div>
-  </div>
-
-
-  <mat-accordion>
-  <!-- TODO: paginate large quantities of results -->
-    <mat-expansion-panel *ngIf="signups">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerSignups ? 'block' : 'none'"></mat-spinner>
-        </mat-panel-title>
-        <mat-panel-description>
-		Your previous signups ({{ signups[rounds.length - 1].length }})
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div class="row">
-	      <div class="col-12">
-		      <em>
-			      Signed up too many times? Don't worry!<br />
-			      Only your last submission (at the bottom) will be taken into account.<br />
-		      </em>
-		      <br />
-	      </div>
-      </div>
-
-      <mat-tab-group mat-stretch-tabs selectedIndex="{{ rounds.length - 1 }}" class="example-stretched-tabs mat-elevation-z4">
-	  <span *ngFor="let round of rounds">
-		<mat-tab label="Round #{{ round.round }}">
-			<hr />
-			<div class="row" *ngIf="round.round < 3">
-				<div class="col-12">
-					The signups data of first two rounds cannot be visualized as it is not compatible with this app unfortunately.
-				</div>
+<div class="topbar-wrap">
+	<div class="topbar is-sticky">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center">
+				<ul class="topbar-nav d-lg-none">
+					<li class="topbar-nav-item relative">
+						<a class="toggle-nav" href="#">
+							<div class="toggle-icon">
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+							</div>
+						</a>
+					</li><!-- .topbar-nav-item -->
+				</ul><!-- .topbar-nav -->
+				<a class="topbar-logo" href="">
+				   <img src="assets/images/logo-light2x.png" srcset="assets/images/logo-light2x.png 2x" alt="logo">
+				</a>
+				<ul class="topbar-nav">
+					<li class="topbar-nav-item relative">
+						<span class="user-welcome d-none d-lg-inline-block">0xA18***388</span>
+						<a class="toggle-tigger user-thumb" href="#"><em class="ti ti-user"></em></a>
+						<div class="toggle-class dropdown-content dropdown-content-right dropdown-arrow-right user-dropdown">
+							<div class="user-status">
+								<h6 class="user-status-title">EXRT balance</h6>
+								<div class="user-status-balance">10,000 <small>EXRT</small></div>
+							</div>
+							<ul class="user-links bg-light">
+								<li><a href="#"><i class="ti ti-power-off"></i>Logout</a></li>
+							</ul>
+						</div>
+					</li><!-- .topbar-nav-item -->
+				</ul><!-- .topbar-nav -->
 			</div>
-			<div class="row" *ngIf="round.round >= 3">
-				<div class="d-none d-md-block col-md-4">Date</div>
-				<div class="col-6 col-md-4">EXRN Total</div>
-				<div class="col-6 col-md-4">EXRN from team</div>
-			</div>
-			<hr />
-			<div class="row" *ngFor="let signup of signups[round.id]">
-				<div class="d-none d-md-block col-md-4">{{ signup['date'] | date:'MMM d, y, h:mm a' }}</div>
-				<div class="col-6 col-md-4">{{ signup['totalEXRN'] | number: fractionSize }}</div>
-				<div class="col-6 col-md-4">{{ signup['teamEXRN'] | number: fractionSize }}</div>
-			</div>
-		</mat-tab>
-	  </span>
-      </mat-tab-group>
+		</div><!-- .container -->
+	</div><!-- .topbar -->
+	
+	<div class="navbar">
+		<div class="container">
+			<div class="navbar-innr">
+				<ul class="navbar-menu">
+					<li><a href="index.html"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
+					<li><a href="token-distribution.html"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>
+					<li><a href="rewards.html"><em class="ikon ikon-coins"></em> Rewards</a></li>
+						<li><a href="admin-list.html"><em class="ikon ikon-exchange"></em> Management</a></li>
+					<li class="has-dropdown page-links-all"><a class="drop-toggle" href="#"><em class="ikon ikon-settings"></em> Admin</a>
+						<ul class="navbar-dropdown">
+							<li><a href="#">Rounds</a></li>
+							<li><a href="#">EXRN Distribution Rate</a></li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="navbar-btns">
+					<li><a href="apply.html" class="btn btn-sm btn-outline btn-light"><em class="text-primary ti ti-wallet"></em><span>0xA18***388</span></a></li>
+					<li class="d-none"><span class="badge badge-outline badge-success badge-lg"><em class="text-success ti ti-wallet mgr-1x"></em><span class="text-success">KYC Approved</span></span></li>
+				</ul>
+			</div><!-- .navbar-innr -->
+		</div><!-- .container -->
+	</div><!-- .navbar -->
+</div><!-- .topbar-wrap -->
 
-    </mat-expansion-panel>
-
-
-    <mat-expansion-panel *ngIf="displayHistory">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerContributions ? 'block' : 'none'"></mat-spinner>
-        </mat-panel-title>
-        <mat-panel-description>
-          Your contributions ({{ correlations.length + contributions.length }})
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <div class="row">
-        <div class="col-6">
-          ETH sent
-          <hr />
-          <div class="row">
-            <div class="d-none d-md-block col-md-8 col-lg-5">Date</div>
-            <div class="d-none d-lg-block col-lg-2">Block</div>
-            <div class="d-none d-lg-block col-lg-2">Hash</div>
-            <div class="col-md-4 col-lg-3">Amount</div>
-          </div>
-        </div>
-        <div class="col-6">
-          EXRN received
-          <hr />
-          <div class="row">
-            <div class="d-none d-md-block col-md-6 col-lg-4">Date</div>
-            <div class="d-none d-lg-block col-lg-2">Block</div>
-            <div class="d-none d-lg-block col-lg-2">Hash</div>
-            <div class="col-md-6 col-lg-4">Amount</div>
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngFor="let corr of correlations">
-        <div class="col-6">
-          <hr />
-          <div class="row" *ngFor="let contr of corr[0]">
-            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'MMM d, y, h:mm a' }}</div>
-            <div class="d-none d-lg-block col-lg-2">{{ contr['block'] }}</div>
-            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}" target="_blank" rel="noopener noreferrer">{{ contr['hash'].substring(0, 8) }}...</a></div>
-            <div class="col-md-4 col-lg-3">{{ contr['value'] }}</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <hr />
-          <div class="row" *ngFor="let distr of corr[1]">
-            <div *ngIf="distr.date" class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
-            <div *ngIf="!distr.date" class="d-none d-md-block col-md-6 col-lg-4">AWAITING</div>
-            <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
-	    <div *ngIf="!distr.hash" class="d-none d-lg-block col-lg-2">{{ distr.hash }}</div>
-            <div *ngIf="distr.hash" class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}" target="_blank" rel="noopener noreferrer">{{ distr['hash'].substring(0, 8) }}...</a></div>
-
-            <div class="col-md-6 col-lg-4">{{ distr['value'] | number: fractionSize }}</div>
-          </div>
-        </div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="col-6">
-          <div class="row">
-            <div class="col-md-8 col-lg-2 offset-lg-7">Total</div>
-            <div class="col-md-4 col-lg-3">{{ totalEthContributed }}</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="row">
-            <div class="col-md-6 col-lg-2 offset-lg-6">Total</div>
-            <div class="col-md-6 col-lg-4">{{ totalExrnDistributed | number: fractionSize }}</div>
-          </div>
-        </div>
-      </div>
-    </mat-expansion-panel>
-
-
-    <mat-expansion-panel *ngIf="displayHistory">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerOtherRewards ? 'block' : 'none'"></mat-spinner>
-        </mat-panel-title>
-        <mat-panel-description>
-          Your other rewards ({{ distributions.length }})
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div class="row">
-	      <div class="col-12">
-		      <em>
-			      Here you might find original airdrop from October 2017 or rewards from (logo) contests.<br />
-			      If something looks out of the ordinary, please report it below to secure your submission.<br />
-		      </em>
-		      <br />
-	      </div>
-      </div>
-      <div class="row">
-        <div class="col-6 col-md-3">Date</div>
-        <div class="d-none d-md-block col-md-3">Block</div>
-        <div class="d-none d-md-block col-md-3">Hash</div>
-        <div class="col-6 col-md-3">Amount</div>
-      </div>
-      <hr />
-      <div class="row" *ngFor="let distr of distributions">
-        <div class="col-6 col-md-3">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
-        <div class="d-none d-md-block col-md-3">{{ distr['block'] }}</div>
-        <div class="d-none d-md-block col-md-3"><a href="https://etherscan.io/tx/{{ distr['hash'] }}" target="_blank" rel="noopener noreferrer">{{ distr['hash'].substring(0, 12) }}...</a></div>
-        <div class="col-6 col-md-3">{{ distr['value'] | number: fractionSize }}</div>
-      </div>
-      <hr />
-      <div class="row">
-        <div class="col-6 col-md-3 offset-md-6">Total</div>
-        <div class="col-6 col-md-3">{{ totalRewards | number: fractionSize }}</div>
-      </div>
-    </mat-expansion-panel>
-
-
-    <mat-expansion-panel *ngIf="showRefunds()">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <mat-spinner color="warn" diameter="25" [style.display]="showSpinnerContributions ? 'block' : 'none'"></mat-spinner>
-        </mat-panel-title>
-        <mat-panel-description>
-          Your refunds ({{ refunds.length }})
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-
-      <div class="row">
-        <div class="col-6">
-          ETH sent
-          <hr />
-          <div class="row">
-            <div class="d-none d-md-block col-md-8 col-lg-5">Date</div>
-            <div class="d-none d-lg-block col-lg-2">Block</div>
-            <div class="d-none d-lg-block col-lg-2">Hash</div>
-            <div class="col-md-4 col-lg-3">Amount</div>
-          </div>
-        </div>
-        <div class="col-6">
-          ETH refunded
-          <hr />
-          <div class="row">
-            <div class="d-none d-md-block col-md-6 col-lg-4">Date</div>
-            <div class="d-none d-lg-block col-lg-2">Block</div>
-            <div class="d-none d-lg-block col-lg-2">Hash</div>
-            <div class="col-md-6 col-lg-4">Amount</div>
-          </div>
-        </div>
-      </div>
-      <div class="row" *ngFor="let match of refunds">
-        <div class="col-6">
-          <hr />
-          <div class="row" *ngFor="let contr of match[0]">
-            <div class="d-none d-md-block col-md-8 col-lg-5">{{ contr['date'] | date:'MMM d, y, h:mm a' }}</div>
-            <div class="d-none d-lg-block col-lg-2">{{ contr['block'] }}</div>
-            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ contr['hash'] }}" target="_blank" rel="noopener noreferrer">{{ contr['hash'].substring(0, 8) }}...</a></div>
-            <div class="col-md-4 col-lg-3">{{ contr['value'] }}</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <hr />
-          <div class="row" *ngFor="let distr of match[1]">
-            <div class="d-none d-md-block col-md-6 col-lg-4">{{ distr['date'] | date:'MMM d, y, h:mm a' }}</div>
-            <div class="d-none d-lg-block col-lg-2">{{ distr['block'] }}</div>
-            <div class="d-none d-lg-block col-lg-2"><a href="https://etherscan.io/tx/{{ distr['hash'] }}" target="_blank" rel="noopener noreferrer">{{ distr['hash'].substring(0, 8) }}...</a></div>
-            <div class="col-md-6 col-lg-4">{{ distr['value'] }}</div>
-          </div>
-        </div>
-      </div>
-    </mat-expansion-panel>
-
-  </mat-accordion>
-
-
-	<div class="row" *ngIf="!showReport && displayHistory">
-		<div class="col-12">
-			<hr />
-		</div>
-
-		<div class="col-12" id="footer">
-			Found a mistake? <a href="#report" (click)="showReportForm()">Report it here.</a>
-		</div>
-	</div>
-
-	<br />
-
-	<div class="row" *ngIf="showReport && showReportResult">
-		<div class="col-12 alert alert-success">
-			Your report has been sent and will be investigated, thank you {{ username }}!
-		</div>
-	</div>
-
-	<div id="report" class="row" *ngIf="showReport">
-		<div class="col-12">
-			<form>
-				<div class="row">
-					<div class="col-12 txt-left">
-						<mat-form-field>
-							<input matInput type="text" name="username" [(ngModel)]="username" placeholder="&nbsp; Your Telegram username" #usernameTG="ngModel" required>
-							<mat-error *ngIf="usernameTG.invalid">TG username is mandatory</mat-error>
-							<span matPrefix>@&nbsp;</span>
-						</mat-form-field>
+<div class="page-content">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="token-statistics card card-token height-auto">
+					<div class="card-innr">
+						<div class="token-balance token-balance-with-icon">
+							<div class="token-balance-icon">
+								<img src="assets/images/logo-light-sm.png" alt="">
+							</div>
+							<div class="token-balance-text">
+								<h6 class="card-sub-title">EXRN Balance</h6>
+								<span class="lead">120,000,000 <span>EXRN</span></span>
+							</div>
+						</div>
+						<div class="token-balance token-balance-s2">
+							<h6 class="card-sub-title">Your Contribution</h6>
+							<ul class="token-balance-list">
+								<li class="token-balance-sub">
+									<span class="lead">100,000</span>
+									<span class="sub"> From Exchange</span>
+								</li>
+								<li class="token-balance-sub">
+									<span class="lead">20,000</span>
+									<span class="sub"> From Team</span>
+								</li>
+								<li class="token-balance-sub">
+									<span class="lead">Mar 6, 2019</span>
+									<span class="sub">Latest Application</span>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
-
-				<div class="row">
-					<div class="col-12">
-						<mat-form-field>
-							<textarea matInput type="text" name="reportComment" rows="5" maxlength="2000" [(ngModel)]="reportComment" placeholder="Your message"></textarea>
-							<mat-hint align="start"><strong>Your wallet address is automatically sent to us.</strong> </mat-hint>
-							<mat-hint align="end">{{ reportComment.length }} / 2000</mat-hint>
-						</mat-form-field>
+			</div><!-- .col -->
+			<div class="col-lg-8">
+				<div class="token-information card card-full-height">
+					<div class="row no-gutters height-100">
+						<div class="col-md-6 text-center">
+							<div class="token-info">
+								<img class="token-info-icon" src="assets/images/logo-sm.png" alt="logo-sm">
+								<div class="gaps-2x"></div>
+								<h1 class="token-info-head text-light">10,000 EXRT</h1>
+								<h6 class="token-info-sub">1 EXRT = 2.05 USD</h6>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="token-info bdr-tl">
+								<div>
+									<ul class="token-info-list">
+										<li><span>Your Wallet Address:</span> 0xA18***388</li>
+										<li><span>Ticket Symbol:</span>EXRT</li>
+									</ul>
+										<div><a href="#" class="btn btn-success swal-success">Apply for EXRT</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div><!-- .card -->
+			</div><!-- .col -->
+			<div class="col-xl-8 col-lg-7">
+				<div class="token-transaction card card-full-height">
+					<div class="card-innr">
+						<div class="card-head has-aside">
+							<h4 class="card-title">Latest Rewards</h4>
+							<div class="card-opt">
+								<a href="rewards.html" class="link ucap">View ALL <em class="fas fa-angle-right ml-2"></em></a>
+							</div>
+						</div>
+						<table class="table tnx-table">
+							<thead>
+								<tr>
+									<th>EXRT Received</th>
+									<th>Value</th>
+									<th class="d-none d-sm-table-cell tnx-date">Date</th>
+									<th class="tnx-type"><div class="tnx-type-text"></div></th>
+								</tr><!-- tr -->
+							</thead><!-- thead -->
+							<tbody>
+								<tr>
+									<td>
+										<div class="d-flex align-items-center">
+											<span class="lead">20,000</span>
+										</div>
+									</td>
+									<td>
+										<span>
+											<span class="lead">3.543</span>
+											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
+										</span>
+									</td>
+									<td class="d-none d-sm-table-cell tnx-date">
+										<span class="sub sub-s2">2019-08-24 10:20 PM</span>
+									</td>
+									<td class="tnx-type">
+										<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
+										<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">P</span>
+									</td>
+								</tr><!-- tr -->
+								<tr>
+									<td>
+										<div class="d-flex align-items-center">
+											<span class="lead">18,000</span>
+										</div>
+									</td>
+									<td>
+										<span>
+											<span class="lead">3.165</span>
+											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
+										</span>
+									</td>
+									<td class="d-none d-sm-table-cell tnx-date">
+										<span class="sub sub-s2">2019-05-24 10:20 PM</span>
+									</td>
+									<td class="tnx-type">
+										<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
+										<span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
+									</td>
+								</tr><!-- tr -->
+								<tr>
+									<td>
+										<div class="d-flex align-items-center">
+											<span class="lead">14,500</span>
+										</div>
+									</td>
+									<td>
+										<span>
+											<span class="lead">2.141</span>
+											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
+										</span>
+									</td>
+									<td class="d-none d-sm-table-cell tnx-date">
+										<span class="sub sub-s2">2019-03-24 10:20 PM</span>
+									</td>
+									<td class="tnx-type">
+										<span class="tnx-type-md badge badge-outline badge-warning badge-md">Bonus</span>
+										<span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
+									</td>
+								</tr><!-- tr -->
+							</tbody><!-- tbody -->
+						</table><!-- .table -->
 					</div>
 				</div>
-				
-				<button class="btn-block" mat-raised-button (click)="report()" [disabled]="usernameTG.invalid">SEND FEEDBACK</button>
-			</form>
-		</div>
-	</div>
+			</div>
+			<div class="col-xl-4 col-lg-5">
+				<div class="token-calculator card card-full-height">
+					<div class="card-innr">
+						<div class="card-head">
+							<h4 class="card-title">EXRN Calculation</h4>
+							<p class="card-title-text">Enter amount to calculate EXRN token.</p>
+						</div>
+						<div class="token-calc">
+							<div class="token-pay-amount">
+								<input id="token-base-amount" class="input-bordered input-with-hint" type="text" value="1">
+								<div class="token-pay-currency">
+									<a href="#" class="link ucap link-light toggle-tigger toggle-caret">ETH</a>
+									<div class="toggle-class dropdown-content">
+										<ul class="dropdown-list">
+											<li><a href="#">BTC</a></li>
+											<li><a href="#">LTC</a></li>
+											<li><a href="#">USD</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="token-received">
+								<div class="token-eq-sign">=</div>
+								<div class="token-received-amount">
+									<h5 class="token-amount">123,500.84</h5>
+									<div class="token-symbol">EXRN</div>
+								</div>
+							</div>
+						</div>
+						<div class="token-calc-note note note-plane">
+							<em class="fas fa-info-circle text-light"></em>
+							<span class="note-text text-light">Amount calculated based current tokens price</span>
+						</div>
+						<div class="token-buy">
+							<a href="buy-token.html" class="btn btn-primary">Buy EXRN</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- .row -->
+		<div class="row">
+			<div class="col-xl-8 col-lg-7">
+				<div class="token-sale-graph card card-full-height">
+					<div class="card-innr">
+						<div class="card-head has-aside">
+							<h4 class="card-title">EXRT Distribution Graph</h4>
+							<div class="card-opt">
+								<a href="#" class="link ucap link-light toggle-tigger toggle-caret">3 Months</a>
+								<div class="toggle-class dropdown-content">
+									<ul class="dropdown-list">
+										<li><a href="#">6 Months</a></li>
+										<li><a href="#">9 Months</a></li>
+										<li><a href="#">1 Year</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="chart-tokensale">
+							<canvas id="tknSale"></canvas>
+						</div>
+					</div>
+				</div><!-- .card -->
+			</div><!-- .col -->
+			<div class="col-xl-4 col-lg-5">
+				<div class="token-sales card card-full-height">
+					<div class="card-innr">
+						<div class="card-head">
+							<h4 class="card-title">EXRT Distribution Progress</h4>
+						</div>
+						<ul class="progress-info">
+							<li><span>Distributed</span> 2,758 EXRT</li>
+							<li class="text-right"><span>TOTAL</span> 1,500,000 EXRT</li>
+						</ul>
+						<div class="progress-bar">
+							<div class="progress-percent" data-percent="28" style="width: 28%;"></div>
+						</div>
 
-</div>
+						<span class="card-sub-title mgb-0-5x">Distributions END IN</span>
+						<div class="countdown-clock" data-date="2019/02/05"><div><span class="countdown-time countdown-time-first">78</span><span class="countdown-text">Day</span></div><div><span class="countdown-time">08</span><span class="countdown-text">Hour</span></div><div><span class="countdown-time">30</span><span class="countdown-text">Min</span></div><div><span class="countdown-time countdown-time-last">38</span><span class="countdown-text">Sec</span></div></div>
+					</div>
+				</div>
+			</div>
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- .page-content -->
+
+<div class="footer-bar">
+	<div class="container">
+		<div class="row align-items-center justify-content-center">
+			<div class="col-md-8">
+				<ul class="footer-links">
+					<li><a href="">FAQs</a></li>
+					<li><a href="">Privacy Policy</a></li>
+					<li><a href="">Terms of Condition</a></li>
+				</ul>
+			</div><!-- .col -->
+			<div class="col-md-4 mt-2 mt-sm-0">
+				<div class="d-flex justify-content-between justify-content-md-end align-items-center guttar-25px pdt-0-5x pdb-0-5x">
+					<div class="copyright-text">&copy; 2019 EXRT Distribution App.</div>
+					<div class="lang-switch relative">
+						<a href="#" class="lang-switch-btn toggle-tigger">En <em class="ti ti-angle-up"></em></a>
+						<div class="toggle-class dropdown-content dropdown-content-up">
+							<ul class="lang-list">
+								<li><a href="#">Fr</a></li>
+								<li><a href="#">Bn</a></li>
+								<li><a href="#">Lt</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div><!-- .col -->
+		</div><!-- .row -->
+	</div><!-- .container -->
+</div><!-- .footer-bar -->

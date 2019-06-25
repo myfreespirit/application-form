@@ -5,15 +5,15 @@
         </div>
         <div class="page-ath-form">
             <h2 class="page-ath-heading">EXRT Distribution #{{ rounds?.length }} <span>There will be only 1,000,000,000 EXRT issued, 500 million of which will be paid to EXRN token holders. </span></h2>
-            <form action="#">
+            <form #form="ngForm">
 				<div class="input-item input-with-label">
 					<div class="relative">
 						<span class="input-icon input-icon-right"><em class="ti ti-wallet"></em></span>
-						<input class="input-bordered" type="text" placeholder="Your Wallet Address" name="wallet" [(ngModel)]="userAddress" (ngModelChange)="checkWallet()" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
+						<input class="input-bordered" type="text" placeholder="Your Wallet Address" name="wallet" [(ngModel)]="userAddress" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
 					</div>
 				</div>
                 <div class="d-flex justify-content-between align-items-center">
-                    <div><a [routerLink]="['/main']"><button class="btn btn-primary" [disabled]="inputWallet.invalid">Sign In</button></a></div>
+                    <div><button class="btn btn-primary" (click)="checkWallet(form)">Sign In</button></div>
                     <div>
                         <a href="https://exrnchain.com/exrt/" target="_blank">Learn more about EXRT</a>
                     </div>
