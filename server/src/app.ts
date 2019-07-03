@@ -15,6 +15,7 @@ import api from './routes/api/Controller';
 import backends from './routes/backends/Controller';
 import balances from './routes/balances/Controller';
 import ethers from './routes/ethers/Controller';
+import prices from './routes/prices/Controller';
 import rounds from './routes/rounds/Controller';
 import signups from './routes/signups/Controller';
 import testnet from './routes/testnet/Controller';
@@ -82,6 +83,7 @@ class App {
 		this.app.use('/backends', backends.routes());
 		this.app.use('/balances', balances.routes());
 		this.app.use('/ethers', ethers.routes());
+        this.app.use('/prices', prices.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
 		this.app.use('/testnet', testnet.routes());

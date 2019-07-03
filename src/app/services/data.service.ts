@@ -106,6 +106,11 @@ export class DataService {
 
     return this.http.get(url);
   }
+  
+  
+  getTotalTokensEXRT(wallet) {
+    return this.http.get('/balances/total/exrt/' + wallet);
+  }
 
 
   getTransactionsByWallet(wallet) {
@@ -221,19 +226,19 @@ export class DataService {
     let correlations = [];
 
     refunds.forEach(refund => {
-	const contribution = contributions.filter(contr => {
-		return contr.value === refund.value && contr.block < refund.block;
-	}).pop();
+        const contribution = contributions.filter(contr => {
+            return contr.value === refund.value && contr.block < refund.block;
+        }).pop();
 
-	if (contribution) {
-		correlations.push([[contribution], [refund]]);
-		const index = contributions.indexOf(contribution);
-		if (index !== -1) {
-			contributions.splice(index, 1);
-		} else {
-			console.error("ERROR: wrong index when removing refund from contributions.")
-		}
-	}
+        if (contribution) {
+            correlations.push([[contribution], [refund]]);
+            const index = contributions.indexOf(contribution);
+            if (index !== -1) {
+                contributions.splice(index, 1);
+            } else {
+                console.error("ERROR: wrong index when removing refund from contributions.")
+            }
+        }
     });
 
     return [correlations, contributions];
@@ -401,4 +406,16 @@ export class DataService {
 	  return this.http.get('/rounds/');
   }
 
+
+  getTokenValue(base, quote) {
+        const url = 'https://api.coingecko.com/api/v3/coins/markets?' +
+                'vs_currency=' + quote +
+                '&ids=' + base;
+        
+        return this.http.get(url);
+  }
+  
+  getPriceRatesUSD() {
+        return this.http.get('/prices/all');
+  }
 }

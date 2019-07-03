@@ -4,7 +4,9 @@ import { BigNumber } from 'bignumber.js';
 
 class Etherscan {
 	baseUrl = process.env.BASE_URL || 'http://localhost:8080';
-	apiKey = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
+	apiKeyEtherscan = process.env.ETHERSCAN_API_KEY || 'YourapiKeyEtherscanToken';
+    apiKeyCoinmarketcap = process.env.COINMARKETCAP_API_KEY || 'cf57589a-0b20-4f8a-8711-ff1d9dbcfb5f';
+    
 	maxEtherTransfersApiLimit = 10000;
 	maxTokenTransfersApiLimit = 10000;
 
@@ -23,6 +25,66 @@ class Etherscan {
 	}
 
 
+	/************************************************************************************************
+	 *												*
+	 *					PRICE UPDATE		            		*
+	 *												*
+	 ***********************************************************************************************/
+	private getCMCPrice(id, convert): Promise<any> {
+		return new Promise<any>((resolve, reject) => {
+                let url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest';
+				let options = {
+					method: 'GET',
+                    uri: url,
+                    qs: {
+                        'id': id,
+                        'convert': convert,
+                    },
+                    headers: {
+                        'X-CMC_PRO_API_KEY': this.apiKeyCoinmarketcap
+                    },
+                    json: false,
+                    gzip: true
+				};
+
+				request(options, (error, response, body) => {
+					this.handleResponse(resolve, reject, error, body);
+				});
+			});
+	}
+    
+    
+    private saveCMCprice(base, price): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            let options = {
+                uri: this.baseUrl + '/prices/save',
+                body: JSON.stringify({
+                    'base': base,
+                    'price': price
+                }),
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            request(options, (error, response, body) => {
+                this.handleResponse(resolve, reject, error, body);
+            });
+        });
+    }
+    
+    
+    updateCMCprice(base, id, convert): Promise<any> {
+        return new Promise<number>((resolve, reject) => {
+            this.getCMCPrice(id, convert).then(data => {
+                console.log("1 ", base, " = ", data['data'][id]['quote'][convert]['price'], convert);
+                this.saveCMCprice(base, data['data'][id]['quote'][convert]['price']);
+            });
+		});
+	}
+    
+    
 	/************************************************************************************************
 	 *												*
 	 *					ETHER TRANSFERS UPDATE					*
@@ -44,7 +106,7 @@ class Etherscan {
 			    `&address=${ this.EXRNchainTokenSaleAddress }` +
 			    `&startblock=${ startBlock }` +
 			    `&endblock=latest` +
-			    `&apikey=${ this.apiKey }`;
+			    `&apiKeyEtherscan=${ this.apiKeyEtherscan }`;
 
 
 		return new Promise<any>((resolve, reject) => {
@@ -147,7 +209,7 @@ class Etherscan {
 			    `&startBlock=${ startBlock }` +
 			    `&endBlock=latest` +
 			    `&sort=asc` +
-			    `&apikey=${ this.apiKey }`;
+			    `&apiKeyEtherscan=${ this.apiKeyEtherscan }`;
 
 		return new Promise<any>((resolve, reject) => {
 				request(urlTransfers, (error, response, body) => {

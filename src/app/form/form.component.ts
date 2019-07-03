@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { DataService } from '../services/data.service';
+import { StateService } from "../services/state.service";
 import { SignupSuccessDialog } from '../signup/signup.component';
 import { BigNumber } from 'bignumber.js';
 
@@ -37,18 +38,34 @@ export class FormComponent implements OnInit {
 
   userAddress = '';
   userTotalTokens: number;
+  userTotalTokensEXRT: number;
   totalEthContributed: BigNumber;
   totalExrnDistributed: number;
   availableExrnDistributed: number;
+  lastSignupDate: Date;
   totalRewards: number;
   username: string;
   reportComment: string;
 
+  // TODO: automate progress bar
+  totalSupplyEXRT: number;
+  distributableEXRT: number;
+  distributedPercentageEXRT: number;
+  circulatingSupplyEXRT: number;
+  
+  tokenValue_EXRT_USD: number;
+  tokenValue_ETH_USD: number;
+  tokenValue_EXRN_USD: number;
+  tokenValue_ETH_EXRN: number;
+  
   signups: any;
   contributions = [];
   refunds = [];
   distributions = [];
   correlations = [];
+  
+  pricesUSD = [];
+  calculatedAmountEXRN: number;
 
   rounds: any;
   roundExpiration: Date;
@@ -56,15 +73,21 @@ export class FormComponent implements OnInit {
   thresholdDaysLeftInRound = 20;
   timerRoundExpired: boolean;
   text:any = {
-    Month: 'Months',
-    Days: "Days",
-    Hours: "Hours",
-    Minutes: "Minutes",
-    Seconds: "Seconds"
+    Days: "DAY",
+    Hours: "HOUR",
+    Minutes: "MIN",
+    Seconds: "SEC"
   };
 
 
-  constructor(@Inject(DataService) private _dataService: DataService, @Inject(MatDialog) private dialog: MatDialog) { }
+  constructor(
+	@Inject(DataService) private _dataService: DataService,
+	@Inject(StateService) private _stateService: StateService,
+	@Inject(MatDialog) private dialog: MatDialog)
+  {
+        this.totalSupplyEXRT = Math.pow(10, 9);
+        this.distributableEXRT = this.totalSupplyEXRT / 2;
+  }
 
   ngOnInit() {
     this.resetState();
@@ -76,10 +99,27 @@ export class FormComponent implements OnInit {
     this.timerRoundExpired = false;
 
     this._dataService.getAllRounds().subscribe(result => {
-	this.rounds = result;
-	this.roundExpiration = this.rounds[this.rounds.length - 1].end;
-	this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
+		this.rounds = result;
+		this.roundExpiration = this.rounds[this.rounds.length - 1].end;
+		this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
+        
+        this.circulatingSupplyEXRT = this.distributableEXRT / 8 * (this.rounds.length - 1);
+        this.distributedPercentageEXRT = this.circulatingSupplyEXRT / this.distributableEXRT * 100;
     });
+    
+    this._dataService.getTokenValue("exrt-network", "usd").subscribe(result => {
+        this.tokenValue_EXRT_USD = result[0].current_price;
+    });
+    
+    this._dataService.getPriceRatesUSD().subscribe((result: any[]) => {
+        result.forEach(entry => {
+            this.pricesUSD[entry.base] = entry.price_usd;
+        });
+    });
+    
+	this._stateService.userWallet.subscribe(wallet => this.userAddress = wallet);
+    
+	this.checkWallet();
   }
 
 
@@ -104,6 +144,7 @@ export class FormComponent implements OnInit {
 
     this.userAddress = this.userAddress.toLowerCase();
     this.userTotalTokens = 0;
+    this.userTotalTokensEXRT = 0;
     this.totalEthContributed = new BigNumber(0);
     this.totalExrnDistributed = 0;
     this.availableExrnDistributed = 0;
@@ -116,6 +157,9 @@ export class FormComponent implements OnInit {
     this.refunds = [];
     this.distributions = [];
     this.correlations = [];
+    
+    this.pricesUSD = [];
+    this.calculatedAmountEXRN = 0;
   }
 
 
@@ -163,10 +207,11 @@ export class FormComponent implements OnInit {
       let previousRoundEnd = 0;
 
       this.rounds.forEach(round => {
-	  this.signups[round.id] = data.filter(signup => {
-		return signup.date > previousRoundEnd && signup.date <= round.end;
-	  });
-	  previousRoundEnd = round.end;
+		this.signups[round.id] = data.filter(signup => {
+				this.lastSignupDate = signup.date;
+				return signup.date > previousRoundEnd && signup.date <= round.end;
+    	});
+		previousRoundEnd = round.end;
       });
 
       this.firstSignupHappened = this.signups[this.rounds.length - 1].length > 0;
@@ -209,7 +254,7 @@ export class FormComponent implements OnInit {
 
   checkWallet() {
     if (!this.isValidEthAddress()) {
-	return;
+        return;
     }
 
     this.resetState();
@@ -220,32 +265,34 @@ export class FormComponent implements OnInit {
       this.divideSignupsPerRound(data);
 
       this.showSpinnerSignups = false;
+      console.log(this.signups);
     });
 
     this._dataService.getTotalTokens(this.userAddress)
         .subscribe(data => {
             this.userTotalTokens = parseInt(data['result'], 10);
 
-	      this._dataService.getTransactionsByWallet(this.userAddress)
-		.subscribe((data: any[]) => {
-		    this.contributions = data[0];
-		    this.refunds = data[1],
-		    this.distributions = data[2];
+            this._dataService.getTransactionsByWallet(this.userAddress)
+            .subscribe((data: any[]) => {
+                this.contributions = data[0];
+                this.refunds = data[1],
+                this.distributions = data[2];
 
-		    this.correlateTransactions();
-		  },
-		  err => {
-		    console.error(err);  // TODO remove
-		    this.showAPIerror = true;
-		    this.APIerror = err;
-		  },
-		  () => {
-		    this.showSpinnerContributions = false;
-		    this.showSpinnerOtherRewards = false;
+                this.correlateTransactions();
+                console.log(this.correlations);
+              },
+              err => {
+                console.error(err);  // TODO remove
+                this.showAPIerror = true;
+                this.APIerror = err;
+              },
+              () => {
+                this.showSpinnerContributions = false;
+                this.showSpinnerOtherRewards = false;
 
-		    this.disableCheckWallet = false;
-		  }
-		);
+                this.disableCheckWallet = false;
+              }
+            );
         },
         err => {
           console.error(err);  // TODO remove
@@ -253,6 +300,10 @@ export class FormComponent implements OnInit {
 	  this.APIerror = err;
         }
       );
+      
+    this._dataService.getTotalTokensEXRT(this.userAddress).subscribe(result => {
+        this.userTotalTokensEXRT = result[0].EXRT;
+    });
   }
 
 
@@ -303,5 +354,10 @@ export class FormComponent implements OnInit {
 	}
 
 	return false;
+  }
+  
+  
+  calculateEXRN(event: any) {
+    this.calculatedAmountEXRN = event.target.value * this.pricesUSD['ETH'] / this.pricesUSD['EXRN'];
   }
 }

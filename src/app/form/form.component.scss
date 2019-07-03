@@ -1,0 +1,30 @@
+::ng-deep .countdown {
+    width: 100%;
+
+    .measurements {
+        border-radius: 4px;
+        border: 1px solid #e6effb;
+        margin: 0 auto;
+        flex-grow: 1;
+        text-align: center;
+        padding: 10px 0;
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: 0.1em;
+    }
+    
+    .measurements-number {
+        font-size: 24px;
+        color: #495463;
+    }
+    
+    .measurements-text {
+        display: block;
+        font-size: 11px;
+        color: #758698;
+    }
+
+    .divider {
+
+    }
+}

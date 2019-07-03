@@ -48,6 +48,14 @@ class Controller {
 			res.json("OK balances bulk");
 		});
 	});
+    
+    // retrieve total EXRT balance
+	this.router.get('/total/exrt/:wallet', (req, res, next) => {
+        Balance.find({ wallet: req.params['wallet'] }, { EXRT: 1 }, (err, document) => {
+            if (err) return next(err);
+            res.json(document);
+        });
+	});
 
 
 	return this.router;

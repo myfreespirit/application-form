@@ -1057,7 +1057,7 @@ select.select-sm { height: 37px; }
 .card-info { background: #1babfe; }
 .card-danger { background: #ff6868; }
 
-@media (min-width: 410px) { .card-token .token-balance-list li { min-width: 25%; } }
+@media (min-width: 410px) { .card-token .token-balance-list li { min-width: 50%; } }
 @media (min-width: 576px) { .card { margin-bottom: 30px; }
   .card-title { font-size: 1.4em; }
   .card-title-sm { font-size: 1.1em; padding-top: 2px; }
@@ -1065,8 +1065,8 @@ select.select-sm { height: 37px; }
   .card-innr-fix { padding-bottom: 30px; }
   .card-innr-fix2 { padding-bottom: 10px; }
   .card-full-height { height: calc(100% - 30px); } }
-@media (min-width: 992px) and (max-width: 1200px) { .card-token .token-balance-list li { min-width: 84px; } }
-@media (min-width: 1200px) { .card-token .token-balance-list li { min-width: 33.33%; } }
+//@media (min-width: 992px) and (max-width: 1200px) { .card-token .token-balance-list li { min-width: 84px; } }
+@media (min-width: 1200px) { .card-token .token-balance-list li { min-width: 50%; } }
 .tile { padding: 18px 20px 18px; position: relative; height: calc(100% - 30px); }
 .tile-nav { position: absolute; z-index: 2; top: 20px; right: 20px; }
 .tile-nav li { padding: 0 3px; }
@@ -1336,7 +1336,7 @@ select.select-sm { height: 37px; }
 .token-balance-icon { flex-shrink: 0; height: 50px; width: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: inline-flex; align-items: center; justify-content: center; margin-right: 15px; }
 .token-balance-icon img { width: 24px; line-height: 50px; }
 .token-balance-list { display: flex; }
-.token-balance-list li { min-width: 84px; }
+//.token-balance-list li { min-width: 84px; }
 .token-balance .lead { color: #fff; font-weight: 500; font-size: 1.5em; line-height: 1; letter-spacing: -0.02em; }
 .token-balance .lead span { font-weight: 500; font-size: .6em; letter-spacing: 0.04em; }
 .token-balance-s2 .lead { font-size: 1.2em; }

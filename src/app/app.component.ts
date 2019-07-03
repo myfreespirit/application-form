@@ -1,7 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
-import { DataService } from './services/data.service';
+import { Component, OnInit } from '@angular/core';
 
 
 @Component({
@@ -11,16 +8,10 @@ import { DataService } from './services/data.service';
 })
 
 export class AppComponent implements OnInit {
-  rounds: any;
-  title = 'EXRT Distribution Application';
 
-  constructor(@Inject(DataService) private _dataService: DataService, @Inject(Router) public router: Router) {
+  constructor() {
   }
 
   ngOnInit() {
-	this._dataService.getAllRounds().subscribe(result => {
-		this.rounds = result;
-		this.title = 'EXRT Distribution #' + this.rounds.length + ' Application';
-	});
   }
 }

@@ -11,6 +11,7 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { AuthService } from './services/auth.service';
 import { DataService } from './services/data.service';
+import { StateService } from './services/state.service';
 import { TestnetService } from './services/testnet.service';
 
 import { UniqueUsernameAsyncValidatorDirective } from './directives/unique-username-async-validator.directive';
@@ -75,6 +76,7 @@ export function tokenGetter() {
   providers: [
     AuthService,
     DataService,
+	StateService,
     TestnetService
   ]
 })

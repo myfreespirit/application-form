@@ -19,12 +19,12 @@
 				</a>
 				<ul class="topbar-nav">
 					<li class="topbar-nav-item relative">
-						<span class="user-welcome d-none d-lg-inline-block">0xA18***388</span>
+						<span class="user-welcome d-none d-lg-inline-block">{{ userAddress }}</span>
 						<a class="toggle-tigger user-thumb" href="#"><em class="ti ti-user"></em></a>
 						<div class="toggle-class dropdown-content dropdown-content-right dropdown-arrow-right user-dropdown">
 							<div class="user-status">
 								<h6 class="user-status-title">EXRT balance</h6>
-								<div class="user-status-balance">10,000 <small>EXRT</small></div>
+								<div class="user-status-balance">{{ userTotalTokensEXRT | number:'1.0-3' }} <small>EXRT</small></div>
 							</div>
 							<ul class="user-links bg-light">
 								<li><a href="#"><i class="ti ti-power-off"></i>Logout</a></li>
@@ -51,10 +51,6 @@
 						</ul>
 					</li>
 				</ul>
-				<ul class="navbar-btns">
-					<li><a href="apply.html" class="btn btn-sm btn-outline btn-light"><em class="text-primary ti ti-wallet"></em><span>0xA18***388</span></a></li>
-					<li class="d-none"><span class="badge badge-outline badge-success badge-lg"><em class="text-success ti ti-wallet mgr-1x"></em><span class="text-success">KYC Approved</span></span></li>
-				</ul>
 			</div><!-- .navbar-innr -->
 		</div><!-- .container -->
 	</div><!-- .navbar -->
@@ -72,23 +68,19 @@
 							</div>
 							<div class="token-balance-text">
 								<h6 class="card-sub-title">EXRN Balance</h6>
-								<span class="lead">120,000,000 <span>EXRN</span></span>
+								<span class="lead">{{ userTotalTokens | number }} <span>EXRN</span></span>
 							</div>
 						</div>
 						<div class="token-balance token-balance-s2">
 							<h6 class="card-sub-title">Your Contribution</h6>
 							<ul class="token-balance-list">
 								<li class="token-balance-sub">
-									<span class="lead">100,000</span>
+									<span class="lead">{{ userTotalTokens - availableExrnDistributed | number }}</span>
 									<span class="sub"> From Exchange</span>
 								</li>
 								<li class="token-balance-sub">
-									<span class="lead">20,000</span>
+									<span class="lead">{{ availableExrnDistributed | number }}</span>
 									<span class="sub"> From Team</span>
-								</li>
-								<li class="token-balance-sub">
-									<span class="lead">Mar 6, 2019</span>
-									<span class="sub">Latest Application</span>
 								</li>
 							</ul>
 						</div>
@@ -102,18 +94,19 @@
 							<div class="token-info">
 								<img class="token-info-icon" src="assets/images/logo-sm.png" alt="logo-sm">
 								<div class="gaps-2x"></div>
-								<h1 class="token-info-head text-light">10,000 EXRT</h1>
-								<h6 class="token-info-sub">1 EXRT = 2.05 USD</h6>
+								<h1 class="token-info-head text-light">{{ userTotalTokensEXRT | number:'1.0-3' }} EXRT</h1>
+                                <h6 class="token-info-sub">1 EXRT = {{ tokenValue_EXRT_USD | number:'1.0-4' }} USD</h6>
 							</div>
 						</div>
 						<div class="col-md-6">
 							<div class="token-info bdr-tl">
 								<div>
 									<ul class="token-info-list">
-										<li><span>Your Wallet Address:</span> 0xA18***388</li>
+										<li><span>Your Wallet Address:</span> {{ userAddress | slice:0:5 }}***{{ userAddress | slice:-3 }}</li>
 										<li><span>Ticket Symbol:</span>EXRT</li>
+                                        <li><span>Latest Application:</span> {{ lastSignupDate | date: 'mediumDate' }}</li>
 									</ul>
-										<div><a href="#" class="btn btn-success swal-success">Apply for EXRT</a></div>
+									<div><a href="#" class="btn btn-success swal-success">Apply for EXRT ???</a></div>
 								</div>
 							</div>
 						</div>
@@ -124,80 +117,84 @@
 				<div class="token-transaction card card-full-height">
 					<div class="card-innr">
 						<div class="card-head has-aside">
-							<h4 class="card-title">Latest Rewards</h4>
-							<div class="card-opt">
-								<a href="rewards.html" class="link ucap">View ALL <em class="fas fa-angle-right ml-2"></em></a>
-							</div>
+							<h4 class="card-title">Team contributions</h4>
 						</div>
 						<table class="table tnx-table">
 							<thead>
 								<tr>
-									<th>EXRT Received</th>
-									<th>Value</th>
+									<th>EXRN Received</th>
+									<th>ETH Contributed</th>
 									<th class="d-none d-sm-table-cell tnx-date">Date</th>
 									<th class="tnx-type"><div class="tnx-type-text"></div></th>
 								</tr><!-- tr -->
 							</thead><!-- thead -->
 							<tbody>
-								<tr>
+								<tr *ngFor="let correlation of correlations">
 									<td>
-										<div class="d-flex align-items-center">
-											<span class="lead">20,000</span>
-										</div>
+										<tr *ngFor="let distribution of correlation[1]">
+											<td>
+												<div class="d-flex align-items-center">
+													<span class="lead">{{ distribution.value | number }}</span>
+												</div>
+											</td>
+										</tr>
 									</td>
 									<td>
-										<span>
-											<span class="lead">3.543</span>
-											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
-										</span>
+										<tr *ngFor="let contribution of correlation[0]">
+											<td>
+												<span>
+													<span class="lead">{{ contribution.value | number }}</span>
+													<span class="sub"> ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
+												</span>
+											</td>
+										</tr>
 									</td>
-									<td class="d-none d-sm-table-cell tnx-date">
-										<span class="sub sub-s2">2019-08-24 10:20 PM</span>
+									<td>
+										<tr *ngFor="let distribution of correlation[1]">
+											<td class="d-none d-sm-table-cell tnx-date">
+												<span class="sub sub-s2">{{ distribution.date | date }}</span>
+											</td>
+										</tr>
 									</td>
-									<td class="tnx-type">
-										<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
-										<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">P</span>
+									<td>
+										<tr *ngFor="let distribution of correlation[1]">
+											<td class="tnx-type">
+												<div *ngIf="distribution.date > 0">
+													<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
+													<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">P</span>
+												</div>
+												<div *ngIf="distribution.block === 'AWAITING'">
+													<span class="tnx-type-md badge badge-outline badge-info badge-md">Waiting</span>
+													<span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">I</span>
+												</div>
+												<div *ngIf="distribution.block === 'N/A'">
+													<span class="tnx-type-md badge badge-outline badge-danger badge-md">Contact Admin</span>
+													<span class="tnx-type-sm badge badge-sq badge-outline badge-danger badge-md">E</span>
+												</div>
+											</td>
+										</tr>
 									</td>
 								</tr><!-- tr -->
-								<tr>
-									<td>
-										<div class="d-flex align-items-center">
-											<span class="lead">18,000</span>
-										</div>
-									</td>
-									<td>
-										<span>
-											<span class="lead">3.165</span>
-											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
-										</span>
-									</td>
-									<td class="d-none d-sm-table-cell tnx-date">
-										<span class="sub sub-s2">2019-05-24 10:20 PM</span>
-									</td>
-									<td class="tnx-type">
-										<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
-										<span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
-									</td>
-								</tr><!-- tr -->
-								<tr>
-									<td>
-										<div class="d-flex align-items-center">
-											<span class="lead">14,500</span>
-										</div>
-									</td>
-									<td>
-										<span>
-											<span class="lead">2.141</span>
-											<span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = 590.54 USD"></em></span>
-										</span>
-									</td>
-									<td class="d-none d-sm-table-cell tnx-date">
-										<span class="sub sub-s2">2019-03-24 10:20 PM</span>
-									</td>
-									<td class="tnx-type">
-										<span class="tnx-type-md badge badge-outline badge-warning badge-md">Bonus</span>
-										<span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
-									</td>
+                                
+                                <tr *ngFor="let distribution of distributions">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="lead">{{ distribution.value | number }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span>
+                                            <span class="lead">0</span>
+                                            <span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
+                                        </span>
+                                    </td>
+                                    <td class="d-none d-sm-table-cell tnx-date">
+                                        <span class="sub sub-s2">{{ distribution.date | date }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="tnx-type-md badge badge-outline badge-warning badge-md">Reward</span>
+                                        <span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
+                                    </td>
 								</tr><!-- tr -->
 							</tbody><!-- tbody -->
 						</table><!-- .table -->
@@ -209,13 +206,13 @@
 					<div class="card-innr">
 						<div class="card-head">
 							<h4 class="card-title">EXRN Calculation</h4>
-							<p class="card-title-text">Enter amount to calculate EXRN token.</p>
+							<p class="card-title-text">Enter amount to calculate EXRN tokens.</p>
 						</div>
 						<div class="token-calc">
 							<div class="token-pay-amount">
-								<input id="token-base-amount" class="input-bordered input-with-hint" type="text" value="1">
+								<input id="token-base-amount" class="input-bordered input-with-hint" type="text" value="0" (keyup)="calculateEXRN($event)">
 								<div class="token-pay-currency">
-									<a href="#" class="link ucap link-light toggle-tigger toggle-caret">ETH</a>
+									<a class="link ucap link-light <!--toggle-tigger toggle-caret-->">ETH</a>
 									<div class="toggle-class dropdown-content">
 										<ul class="dropdown-list">
 											<li><a href="#">BTC</a></li>
@@ -228,18 +225,20 @@
 							<div class="token-received">
 								<div class="token-eq-sign">=</div>
 								<div class="token-received-amount">
-									<h5 class="token-amount">123,500.84</h5>
+									<h5 class="token-amount">{{ calculatedAmountEXRN | number:'1.0-3' }}</h5>
 									<div class="token-symbol">EXRN</div>
 								</div>
 							</div>
 						</div>
 						<div class="token-calc-note note note-plane">
 							<em class="fas fa-info-circle text-light"></em>
-							<span class="note-text text-light">Amount calculated based current tokens price</span>
+							<span class="note-text text-light">Amount calculated based on exchange prices</span>
 						</div>
+                        <!--
 						<div class="token-buy">
 							<a href="buy-token.html" class="btn btn-primary">Buy EXRN</a>
 						</div>
+                        -->
 					</div>
 				</div>
 			</div>
@@ -274,15 +273,15 @@
 							<h4 class="card-title">EXRT Distribution Progress</h4>
 						</div>
 						<ul class="progress-info">
-							<li><span>Distributed</span> 2,758 EXRT</li>
-							<li class="text-right"><span>TOTAL</span> 1,500,000 EXRT</li>
+							<li><span>Distributed</span> {{ circulatingSupplyEXRT | number }} EXRT</li>
+							<li class="text-right"><span>TOTAL FOR EXRN HOLDERS</span> {{ distributableEXRT | number }} EXRT</li>
 						</ul>
 						<div class="progress-bar">
-							<div class="progress-percent" data-percent="28" style="width: 28%;"></div>
+							<div class="progress-percent" (data-percent)="distributedPercentageEXRT" style="width: 62.5%;"></div>
 						</div>
 
-						<span class="card-sub-title mgb-0-5x">Distributions END IN</span>
-						<div class="countdown-clock" data-date="2019/02/05"><div><span class="countdown-time countdown-time-first">78</span><span class="countdown-text">Day</span></div><div><span class="countdown-time">08</span><span class="countdown-text">Hour</span></div><div><span class="countdown-time">30</span><span class="countdown-text">Min</span></div><div><span class="countdown-time countdown-time-last">38</span><span class="countdown-text">Sec</span></div></div>
+						<span class="card-sub-title mgb-0-5x">Application #{{ rounds?.length }} CLOSES IN</span>
+                        <countdown class="countdown" (reached)="roundExpired($event)" [text]="text" units="Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
 					</div>
 				</div>
 			</div>
@@ -294,25 +293,10 @@
 	<div class="container">
 		<div class="row align-items-center justify-content-center">
 			<div class="col-md-8">
-				<ul class="footer-links">
-					<li><a href="">FAQs</a></li>
-					<li><a href="">Privacy Policy</a></li>
-					<li><a href="">Terms of Condition</a></li>
-				</ul>
 			</div><!-- .col -->
 			<div class="col-md-4 mt-2 mt-sm-0">
 				<div class="d-flex justify-content-between justify-content-md-end align-items-center guttar-25px pdt-0-5x pdb-0-5x">
 					<div class="copyright-text">&copy; 2019 EXRT Distribution App.</div>
-					<div class="lang-switch relative">
-						<a href="#" class="lang-switch-btn toggle-tigger">En <em class="ti ti-angle-up"></em></a>
-						<div class="toggle-class dropdown-content dropdown-content-up">
-							<ul class="lang-list">
-								<li><a href="#">Fr</a></li>
-								<li><a href="#">Bn</a></li>
-								<li><a href="#">Lt</a></li>
-							</ul>
-						</div>
-					</div>
 				</div>
 			</div><!-- .col -->
 		</div><!-- .row -->

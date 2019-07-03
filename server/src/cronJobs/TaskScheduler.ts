@@ -28,6 +28,20 @@ class TaskScheduler {
       fn();
     });
   }
+  
+  
+  public everyTwentyMinutes(fn) {
+    cron.schedule('0 */20 * * * *', function() {
+      fn();
+    });
+  }
+  
+  
+  public everyThirtyMinutes(fn) {
+    cron.schedule('0 */30 * * * *', function() {
+      fn();
+    });
+  }
 
 
   public everyHour(fn) {

@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { DataService } from '../services/data.service';
+import { StateService } from "../services/state.service";
 import { ToastrService } from 'ngx-toastr';
 
 
@@ -17,7 +18,12 @@ export class EntryComponent implements OnInit {
   userAddress: string;
   title = 'EXRT Distribution Application';
 
-  constructor(@Inject(DataService) private _dataService: DataService, @Inject(Router) public router: Router, private _toastr: ToastrService) {
+  constructor(
+	@Inject(DataService) private _dataService: DataService,
+	@Inject(StateService) private _stateService: StateService,
+	@Inject(Router) public router: Router,
+	private _toastr: ToastrService)
+  {
   }
 
   ngOnInit() {
@@ -25,13 +31,13 @@ export class EntryComponent implements OnInit {
 		this.rounds = result;
 		this.title = 'EXRT Distribution #' + this.rounds.length + ' Application';
 	});
+	
+	this._stateService.userWallet.subscribe(wallet => this.userAddress = wallet);
   }
   
-  checkWallet(form: NgForm) {
-	console.log("checkWallet");
-	console.log(form.value.wallet, form.valid);
-	
+  checkWallet(form: NgForm) {	
 	if (form.valid) {
+		this._stateService.changeUserWallet(this.userAddress);
 		this.router.navigate(['/main']);
 	} else {
 		this._toastr.warning(form.value.wallet + " is not a valid ETH address");
