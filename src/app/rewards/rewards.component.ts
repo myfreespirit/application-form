@@ -24,8 +24,21 @@ export class RewardsComponent implements OnInit {
       
         this._dataService.getAllRounds().subscribe((rounds: any[]) => {
             this._dataService.getExrtRewards(this.userAddress).subscribe((rewards: any[]) => {
-                rounds.slice().reverse().forEach(round => {
-                    this.exrtRewards.push(rewards.find(reward => +new Date(reward.timeStamp) > round.end));
+                rewards = rewards.map(r => {
+                        return {
+                            'from': r.from,
+                            'timeStamp': r.timeStamp * 1000,
+                            'value': r.value / Math.pow(10, 8)
+                        }
+                });
+                
+                rounds.reverse().forEach(round => {
+                    let reward = rewards.find(reward => reward.timeStamp > Date.parse(round.end));
+                    if (reward) {
+                        rewards.splice(rewards.indexOf(reward), 1);
+                    }
+                    
+                    this.exrtRewards.push(reward);
                 });
                 
                 console.log(this.exrtRewards);

@@ -10,17 +10,17 @@
                         <tr class="data-item data-head">
                             <th class="data-col dt-tnxno">From</th>
                             <th class="data-col dt-amount">Round</th>
-                            <th class="data-col dt-token">Total</th>
+                            <th class="data-col dt-token">Received</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="data-item" *ngFor="let distribution of exrtRewards; let i = index">
+                        <tr class="data-item" *ngFor="let reward of exrtRewards; let i = index">
                             <td class="data-col dt-tnxno">
                                 <div class="d-flex align-items-center">
                                     <div class="fake-class">
-                                        <span class="lead tnx-id">{{ userAddress }}</span>
-                                        <span class="sub sub-date" >{{ distribution.timeStamp | date:'MMM d, y, h:mm a' }}</span>
-                                        <span class="sub sub-date" *ngIf="!round.length">missing application</span>
+                                        <span class="lead tnx-id" *ngIf="reward">{{ reward.from }}</span>
+                                        <span class="sub sub-date" *ngIf="reward">{{ reward.timeStamp | date:'MMM d, y, h:mm a' }}</span>
+                                        <span class="sub sub-date" *ngIf="!reward">no reward</span>
                                     </div>
                                 </div>
                             </td>
@@ -28,7 +28,7 @@
                                 <span class="lead amount-pay">#{{ exrtRewards.length - i }}</span>
                             </td>
                             <td class="data-col dt-token">
-                                <span class="lead token-amount">{{ distribution.value || 0 | number }}</span>
+                                <span class="lead token-amount">{{ reward?.value || 0 | number }}</span>
                                 <span class="sub sub-symbol">EXRT</span>
                             </td>
                         </tr>

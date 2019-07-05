@@ -4,7 +4,7 @@
 			<div class="d-flex justify-content-between align-items-center">
 				<ul class="topbar-nav d-lg-none">
 					<li class="topbar-nav-item relative">
-						<a class="toggle-nav" href="#">
+						<a class="toggle-nav">
 							<div class="toggle-icon">
 								<span class="toggle-line"></span>
 								<span class="toggle-line"></span>
@@ -40,14 +40,15 @@
 		<div class="container">
 			<div class="navbar-innr">
 				<ul class="navbar-menu">
-					<li><a href="index.html"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
+					<li><a [routerLink]="['/main']"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
 					<li><a [routerLink]="['/distributions']"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>
 					<li><a [routerLink]="['/rewards']"><em class="ikon ikon-coins"></em> Rewards</a></li>
 					<li><a [routerLink]="['/signups-history']"><em class="ikon ikon-exchange"></em> Previous Signups</a></li>
-					<li class="has-dropdown page-links-all"><a class="drop-toggle" href="#"><em class="ikon ikon-settings"></em> Admin</a>
+					<li class="has-dropdown page-links-all"><a class="drop-toggle"><em class="ikon ikon-settings"></em> Admin</a>
 						<ul class="navbar-dropdown">
-							<li><a href="#">Rounds</a></li>
-							<li><a href="#">EXRN Distribution Rate</a></li>
+							<li><a>Rounds</a></li>
+                            <li><a>Applications</a></li>
+							<li><a>EXRN Contribution Rate</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -277,7 +278,7 @@
 							<li class="text-right"><span>TOTAL FOR EXRN HOLDERS</span> {{ distributableEXRT | number }} EXRT</li>
 						</ul>
 						<div class="progress-bar">
-							<div class="progress-percent" (data-percent)="distributedPercentageEXRT" style="width: 62.5%;"></div>
+							<div class="progress-percent" (data-percent)="distributedPercentageEXRT" style="width: 75%;"></div>
 						</div>
 
 						<span class="card-sub-title mgb-0-5x">Application #{{ rounds?.length }} CLOSES IN</span>
