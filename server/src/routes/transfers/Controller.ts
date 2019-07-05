@@ -90,6 +90,14 @@ class Controller {
 			.then(result => res.json(result))
 			.catch(err => next(err));
 	});
+    
+    
+    // retrieve all EXRT distribution transfers to a specific wallet
+	this.router.get('/distributions/exrt/:to/:from', (req, res, next) => {
+		TransferEXRT.find({ 'to': req.params['to'], 'from': { $in: req.params['from'].split(',') } })
+			.then(result => res.json(result))
+			.catch(err => next(err));
+	});
 
 
 	// retrieve all distributions made to provided wallet

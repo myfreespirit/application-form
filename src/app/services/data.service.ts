@@ -17,6 +17,9 @@ export class DataService {
     '0x88178587ed0fa9c2a8fa73786a4cf2589e20a2cd',
     '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
   ];
+  tokenDistributorAddressesEXRT: string[] = [
+    '0x7ab1b286309720de8e6de26aa4712372cac5d4c3'
+  ];
   blacklistedAddresses: string[] = [
 	// TEAM WALLETS
     '0x9df04392eef34f213ce55226f40979c906cc04eb',
@@ -415,7 +418,13 @@ export class DataService {
         return this.http.get(url);
   }
   
+  
   getPriceRatesUSD() {
         return this.http.get('/prices/all');
+  }
+  
+  
+  getExrtRewards(wallet) {
+        return this.http.get('/transfers/distributions/exrt/' + wallet + '/' + this.tokenDistributorAddressesEXRT);
   }
 }

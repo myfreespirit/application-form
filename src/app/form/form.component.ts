@@ -265,7 +265,7 @@ export class FormComponent implements OnInit {
       this.divideSignupsPerRound(data);
 
       this.showSpinnerSignups = false;
-      console.log(this.signups);
+      this._stateService.changeSignups(this.signups);
     });
 
     this._dataService.getTotalTokens(this.userAddress)
@@ -279,7 +279,6 @@ export class FormComponent implements OnInit {
                 this.distributions = data[2];
 
                 this.correlateTransactions();
-                console.log(this.correlations);
               },
               err => {
                 console.error(err);  // TODO remove

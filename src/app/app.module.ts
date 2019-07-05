@@ -17,12 +17,14 @@ import { TestnetService } from './services/testnet.service';
 import { UniqueUsernameAsyncValidatorDirective } from './directives/unique-username-async-validator.directive';
 import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-async-validator.directive';
 
+import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { EntryComponent } from './entry/entry.component';
 import { FormComponent } from './form/form.component';
+import { RewardsComponent } from './rewards/rewards.component';
+import { SignupsHistoryComponent } from './signups-history/signups-history.component';
 import { StaffComponent } from './staff/staff.component';
 import { TestnetComponent } from './testnet/testnet.component';
-import { AdminComponent } from './admin/admin.component';
 
 import { MarkObserversDialog } from './admin/bulk/observer.component';
 import { SignupSuccessDialog } from './signup/signup.component';
@@ -41,14 +43,16 @@ export function tokenGetter() {
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [
+    AdminComponent,
     AppComponent,
 	EntryComponent,
     FormComponent,
     MarkObserversDialog,
+    RewardsComponent,
+    SignupsHistoryComponent,
     SignupSuccessDialog,
     StaffComponent,
     TestnetComponent,
-    AdminComponent,
     UniqueUsernameAsyncValidatorDirective,
     UniqueWalletAsyncValidatorDirective
   ],

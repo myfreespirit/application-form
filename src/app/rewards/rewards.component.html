@@ -1,0 +1,40 @@
+<div class="page-content">
+    <div class="container">
+        <div class="content-area card">
+            <div class="card-innr">
+                <div class="card-head">
+                    <h4 class="card-title">Distributed EXRT per round</h4>
+                </div>
+                <table class="data-table dt-filter-init admin-tnx">
+                    <thead>
+                        <tr class="data-item data-head">
+                            <th class="data-col dt-tnxno">From</th>
+                            <th class="data-col dt-amount">Round</th>
+                            <th class="data-col dt-token">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="data-item" *ngFor="let distribution of exrtRewards; let i = index">
+                            <td class="data-col dt-tnxno">
+                                <div class="d-flex align-items-center">
+                                    <div class="fake-class">
+                                        <span class="lead tnx-id">{{ userAddress }}</span>
+                                        <span class="sub sub-date" >{{ distribution.timeStamp | date:'MMM d, y, h:mm a' }}</span>
+                                        <span class="sub sub-date" *ngIf="!round.length">missing application</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="data-col dt-amount">
+                                <span class="lead amount-pay">#{{ exrtRewards.length - i }}</span>
+                            </td>
+                            <td class="data-col dt-token">
+                                <span class="lead token-amount">{{ distribution.value || 0 | number }}</span>
+                                <span class="sub sub-symbol">EXRT</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -24,7 +24,7 @@
 						<div class="toggle-class dropdown-content dropdown-content-right dropdown-arrow-right user-dropdown">
 							<div class="user-status">
 								<h6 class="user-status-title">EXRT balance</h6>
-								<div class="user-status-balance">{{ userTotalTokensEXRT | number:'1.0-3' }} <small>EXRT</small></div>
+								<div class="user-status-balance">{{ userTotalTokensEXRT | number:'1.0-1' }} <small>EXRT</small></div>
 							</div>
 							<ul class="user-links bg-light">
 								<li><a href="#"><i class="ti ti-power-off"></i>Logout</a></li>
@@ -41,9 +41,9 @@
 			<div class="navbar-innr">
 				<ul class="navbar-menu">
 					<li><a href="index.html"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
-					<li><a href="token-distribution.html"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>
-					<li><a href="rewards.html"><em class="ikon ikon-coins"></em> Rewards</a></li>
-						<li><a href="admin-list.html"><em class="ikon ikon-exchange"></em> Management</a></li>
+					<li><a [routerLink]="['/distributions']"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>
+					<li><a [routerLink]="['/rewards']"><em class="ikon ikon-coins"></em> Rewards</a></li>
+					<li><a [routerLink]="['/signups-history']"><em class="ikon ikon-exchange"></em> Previous Signups</a></li>
 					<li class="has-dropdown page-links-all"><a class="drop-toggle" href="#"><em class="ikon ikon-settings"></em> Admin</a>
 						<ul class="navbar-dropdown">
 							<li><a href="#">Rounds</a></li>
@@ -94,7 +94,7 @@
 							<div class="token-info">
 								<img class="token-info-icon" src="assets/images/logo-sm.png" alt="logo-sm">
 								<div class="gaps-2x"></div>
-								<h1 class="token-info-head text-light">{{ userTotalTokensEXRT | number:'1.0-3' }} EXRT</h1>
+								<h1 class="token-info-head text-light">{{ userTotalTokensEXRT | number:'1.0-1' }} EXRT</h1>
                                 <h6 class="token-info-sub">1 EXRT = {{ tokenValue_EXRT_USD | number:'1.0-4' }} USD</h6>
 							</div>
 						</div>
@@ -185,7 +185,7 @@
                                     <td>
                                         <span>
                                             <span class="lead">0</span>
-                                            <span class="sub">ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
+                                            <span class="sub"> ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
                                         </span>
                                     </td>
                                     <td class="d-none d-sm-table-cell tnx-date">
@@ -225,7 +225,7 @@
 							<div class="token-received">
 								<div class="token-eq-sign">=</div>
 								<div class="token-received-amount">
-									<h5 class="token-amount">{{ calculatedAmountEXRN | number:'1.0-3' }}</h5>
+									<h5 class="token-amount">{{ calculatedAmountEXRN | number:'1.0-1' }}</h5>
 									<div class="token-symbol">EXRN</div>
 								</div>
 							</div>
