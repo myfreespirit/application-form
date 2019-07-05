@@ -40,7 +40,7 @@ export class EntryComponent implements OnInit {
 		this._stateService.changeUserWallet(this.userAddress);
 		this.router.navigate(['/main']);
 	} else {
-		this._toastr.warning(form.value.wallet + " is not a valid ETH address");
+		this._toastr.error(form.value.wallet + " is not a valid ETH address");
 	}
   }
 }

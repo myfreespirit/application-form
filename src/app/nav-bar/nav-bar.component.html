@@ -1,0 +1,54 @@
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side"></mat-sidenav>
+    <mat-sidenav-content></mat-sidenav-content>
+</mat-sidenav-container>
+
+<div class="topbar-wrap">	
+	<div class="topbar is-sticky">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center">
+				<ul class="topbar-nav d-lg-none">
+					<li class="topbar-nav-item relative">
+						<a href="javascript:void(0)" class="toggle-nav" (click)="sidenav.toggle()">
+							<div class="toggle-icon">
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+								<span class="toggle-line"></span>
+							</div>
+						</a>
+					</li><!-- .topbar-nav-item -->
+				</ul><!-- .topbar-nav -->
+				<a [routerLink]="['/main']" class="topbar-logo">
+				   <img src="assets/images/logo-light2x.png" srcset="assets/images/logo-light2x.png 2x" alt="logo">
+				</a>
+				<ul class="topbar-nav">
+					<li class="topbar-nav-item relative">
+						<span class="user-welcome d-none d-lg-inline-block">{{ userAddress }}</span>
+						<a class="toggle-tigger user-thumb" href="#"><em class="ti ti-power-off"></em></a>
+					</li><!-- .topbar-nav-item -->
+				</ul><!-- .topbar-nav -->
+			</div>
+		</div><!-- .container -->
+	</div><!-- .topbar -->
+
+	<div [ngClass]="sidenav.opened ? 'navbar active navbar-mobile' : 'navbar'">
+		<div class="container">
+			<div class="navbar-innr">
+				<ul class="navbar-menu">
+					<li><a [routerLink]="['/main']"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
+					<!--<li><a [routerLink]="['/distributions']"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>-->
+					<li><a [routerLink]="['/rewards']"><em class="ikon ikon-coins"></em> Rewards</a></li>
+					<li><a [routerLink]="['/signups-history']"><em class="ikon ikon-exchange"></em> Previous Signups</a></li>
+					<li class="has-dropdown page-links-all"><a class="drop-toggle"><em class="ikon ikon-settings"></em> Admin</a>
+						<ul class="navbar-dropdown">
+							<li><a>Rounds</a></li>
+                            <li><a>Applications</a></li>
+							<li><a>EXRN Contribution Rate</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div><!-- .navbar-innr -->
+		</div><!-- .container -->
+	</div><!-- .navbar -->
+</div><!-- .topbar-wrap -->

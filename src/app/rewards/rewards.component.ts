@@ -40,8 +40,6 @@ export class RewardsComponent implements OnInit {
                     
                     this.exrtRewards.push(reward);
                 });
-                
-                console.log(this.exrtRewards);
             });
         });
     }

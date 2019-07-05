@@ -4,6 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { DataService } from '../services/data.service';
 import { StateService } from "../services/state.service";
+import { ToastrService } from 'ngx-toastr';
+
 import { SignupSuccessDialog } from '../signup/signup.component';
 import { BigNumber } from 'bignumber.js';
 
@@ -66,6 +68,7 @@ export class FormComponent implements OnInit {
   
   pricesUSD = [];
   calculatedAmountEXRN: number;
+  calculatedAmountTeamEXRN: number;
 
   rounds: any;
   roundExpiration: Date;
@@ -83,7 +86,8 @@ export class FormComponent implements OnInit {
   constructor(
 	@Inject(DataService) private _dataService: DataService,
 	@Inject(StateService) private _stateService: StateService,
-	@Inject(MatDialog) private dialog: MatDialog)
+	@Inject(MatDialog) private dialog: MatDialog,
+    private _toastr: ToastrService)
   {
         this.totalSupplyEXRT = Math.pow(10, 9);
         this.distributableEXRT = this.totalSupplyEXRT / 2;
@@ -160,6 +164,7 @@ export class FormComponent implements OnInit {
     
     this.pricesUSD = [];
     this.calculatedAmountEXRN = 0;
+    this.calculatedAmountTeamEXRN = 0;
   }
 
 
@@ -219,30 +224,44 @@ export class FormComponent implements OnInit {
 
 
   signup() {
-    this.showSpinnerSignups = true;
-    this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe((data: any[]) => {
-	data = data['signups'];
-	this.divideSignupsPerRound(data);
+    if (this.disableCheckWallet) {
+        this._toastr.warning("Wow, you're faster than the system! Please try again once your EXRN amounts are synchronized.");
+    } else if (this.timerRoundExpired) {
+        this._toastr.error("This round is already closed, no signups are allowed at the moment.");
+    } else if (this.isBlacklisted()) {
+        this._toastr.error("This address is blacklisted and cannot be used to signup with.");
+    } else if (this.showCallToAction && !this.showContributorEligibility) {
+        this._toastr.error("Unfortunately you do not meet the requirements to be able to signup.");
+    } else if (!this.isSignupOutdated()) {
+        this._toastr.info("Don't worry, your last application is still valid.");
+    } else {
+        this.showSpinnerSignups = true;
+        this._dataService.setSignups(this.userAddress, this.userTotalTokens, this.availableExrnDistributed).subscribe((data: any[]) => {
+            data = data['signups'];
+            this.divideSignupsPerRound(data);
 
-	this.showSpinnerSignups = false;
-	this.showSignupResult = true;
+            this.showSpinnerSignups = false;
+            this.showSignupResult = true;
 
-	let dialogRef = this.dialog.open(SignupSuccessDialog);
-	dialogRef.componentInstance['data'] = {
-		round: this.rounds.length,
-		time: Date.now(),
-		total: this.userTotalTokens,
-		team: this.availableExrnDistributed,
-		wallet: this.userAddress
-	};
-	// dialogRef.afterClosed().subscribe(result => {
-	//	console.log(`Dialog result: ${result}`);
-	// });
-    }, err => {
-	this.showSpinnerSignups = false;
-	this.showAPIerror = true;
-	this.APIerror = err;
-    });
+            let dialogRef = this.dialog.open(SignupSuccessDialog);
+            dialogRef.componentInstance['data'] = {
+                round: this.rounds.length,
+                time: Date.now(),
+                total: this.userTotalTokens,
+                team: this.availableExrnDistributed,
+                wallet: this.userAddress
+            };
+            this._toastr.success("Thank you for signing up!");
+            this._stateService.changeSignups(this.signups);
+            // dialogRef.afterClosed().subscribe(result => {
+            //	console.log(`Dialog result: ${result}`);
+            // });
+        }, err => {
+            this.showSpinnerSignups = false;
+            this.showAPIerror = true;
+            this.APIerror = err;
+        });
+    }
   }
 
 
@@ -341,7 +360,11 @@ export class FormComponent implements OnInit {
   isSignupOutdated() {
 	if (this.signups != undefined) {
 		let nrOfOwnSignups = this.signups[this.rounds.length - 1].length;
-		let lastOwnSignup = this.signups[this.rounds.length - 1][nrOfOwnSignups -1];
+        if (nrOfOwnSignups === 0) {
+            return true;
+        }
+        
+		let lastOwnSignup = this.signups[this.rounds.length - 1][nrOfOwnSignups - 1];
 
 		if (lastOwnSignup.totalEXRN != this.userTotalTokens) {
 			return true;
@@ -357,6 +380,9 @@ export class FormComponent implements OnInit {
   
   
   calculateEXRN(event: any) {
-    this.calculatedAmountEXRN = event.target.value * this.pricesUSD['ETH'] / this.pricesUSD['EXRN'];
+        this.calculatedAmountEXRN = event.target.value * this.pricesUSD['ETH'] / this.pricesUSD['EXRN'];
+
+        const teamRate = this._dataService.distributionRates[0].value;
+        this.calculatedAmountTeamEXRN = event.target.value * teamRate;
   }
 }

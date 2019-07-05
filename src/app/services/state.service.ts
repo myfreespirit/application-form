@@ -20,5 +20,4 @@ export class StateService {
   changeSignups(signups: any[]) {
     this.messageSrcSignups.next(signups);
   }
-
 }

@@ -1,61 +1,4 @@
-<div class="topbar-wrap">
-	<div class="topbar is-sticky">
-		<div class="container">
-			<div class="d-flex justify-content-between align-items-center">
-				<ul class="topbar-nav d-lg-none">
-					<li class="topbar-nav-item relative">
-						<a class="toggle-nav">
-							<div class="toggle-icon">
-								<span class="toggle-line"></span>
-								<span class="toggle-line"></span>
-								<span class="toggle-line"></span>
-								<span class="toggle-line"></span>
-							</div>
-						</a>
-					</li><!-- .topbar-nav-item -->
-				</ul><!-- .topbar-nav -->
-				<a class="topbar-logo" href="">
-				   <img src="assets/images/logo-light2x.png" srcset="assets/images/logo-light2x.png 2x" alt="logo">
-				</a>
-				<ul class="topbar-nav">
-					<li class="topbar-nav-item relative">
-						<span class="user-welcome d-none d-lg-inline-block">{{ userAddress }}</span>
-						<a class="toggle-tigger user-thumb" href="#"><em class="ti ti-user"></em></a>
-						<div class="toggle-class dropdown-content dropdown-content-right dropdown-arrow-right user-dropdown">
-							<div class="user-status">
-								<h6 class="user-status-title">EXRT balance</h6>
-								<div class="user-status-balance">{{ userTotalTokensEXRT | number:'1.0-1' }} <small>EXRT</small></div>
-							</div>
-							<ul class="user-links bg-light">
-								<li><a href="#"><i class="ti ti-power-off"></i>Logout</a></li>
-							</ul>
-						</div>
-					</li><!-- .topbar-nav-item -->
-				</ul><!-- .topbar-nav -->
-			</div>
-		</div><!-- .container -->
-	</div><!-- .topbar -->
-	
-	<div class="navbar">
-		<div class="container">
-			<div class="navbar-innr">
-				<ul class="navbar-menu">
-					<li><a [routerLink]="['/main']"><em class="ikon ikon-dashboard"></em> Dashboard</a></li>
-					<li><a [routerLink]="['/distributions']"><em class="ikon ikon-distribution"></em> Token Distribution</a></li>
-					<li><a [routerLink]="['/rewards']"><em class="ikon ikon-coins"></em> Rewards</a></li>
-					<li><a [routerLink]="['/signups-history']"><em class="ikon ikon-exchange"></em> Previous Signups</a></li>
-					<li class="has-dropdown page-links-all"><a class="drop-toggle"><em class="ikon ikon-settings"></em> Admin</a>
-						<ul class="navbar-dropdown">
-							<li><a>Rounds</a></li>
-                            <li><a>Applications</a></li>
-							<li><a>EXRN Contribution Rate</a></li>
-						</ul>
-					</li>
-				</ul>
-			</div><!-- .navbar-innr -->
-		</div><!-- .container -->
-	</div><!-- .navbar -->
-</div><!-- .topbar-wrap -->
+<app-nav-bar></app-nav-bar>
 
 <div class="page-content">
 	<div class="container">
@@ -107,7 +50,7 @@
 										<li><span>Ticket Symbol:</span>EXRT</li>
                                         <li><span>Latest Application:</span> {{ lastSignupDate | date: 'mediumDate' }}</li>
 									</ul>
-									<div><a href="#" class="btn btn-success swal-success">Apply for EXRT ???</a></div>
+									<div><a href="javascript:void(0)" class="btn btn-success" (click)="signup()">Apply for EXRT</a></div>
 								</div>
 							</div>
 						</div>
@@ -145,7 +88,7 @@
 											<td>
 												<span>
 													<span class="lead">{{ contribution.value | number }}</span>
-													<span class="sub"> ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
+													<span class="sub"> ETH</span>
 												</span>
 											</td>
 										</tr>
@@ -186,7 +129,7 @@
                                     <td>
                                         <span>
                                             <span class="lead">0</span>
-                                            <span class="sub"> ETH <em class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" data-original-title="1 ETH = ??? USD"></em></span>
+                                            <span class="sub"> ETH</span>
                                         </span>
                                     </td>
                                     <td class="d-none d-sm-table-cell tnx-date">
@@ -209,6 +152,7 @@
 							<h4 class="card-title">EXRN Calculation</h4>
 							<p class="card-title-text">Enter amount to calculate EXRN tokens.</p>
 						</div>
+                        
 						<div class="token-calc">
 							<div class="token-pay-amount">
 								<input id="token-base-amount" class="input-bordered input-with-hint" type="text" value="0" (keyup)="calculateEXRN($event)">
@@ -223,23 +167,25 @@
 									</div>
 								</div>
 							</div>
-							<div class="token-received">
-								<div class="token-eq-sign">=</div>
-								<div class="token-received-amount">
-									<h5 class="token-amount">{{ calculatedAmountEXRN | number:'1.0-1' }}</h5>
-									<div class="token-symbol">EXRN</div>
-								</div>
-							</div>
-						</div>
-						<div class="token-calc-note note note-plane">
-							<em class="fas fa-info-circle text-light"></em>
-							<span class="note-text text-light">Amount calculated based on exchange prices</span>
-						</div>
-                        <!--
+                        </div>
+                        <div class="token-received">
+                            <div class="token-eq-sign">=</div>
+                            <div class="token-received-amount">
+                                <h5 class="token-amount">{{ calculatedAmountEXRN | number:'1.0-0' }}</h5>
+                                <div class="token-symbol">EXRN from exchange</div>
+                            </div>
+                        </div>
+                        <div class="token-received">
+                            <div class="token-eq-sign">=</div>
+                            <div class="token-received-amount">
+                                <h5 class="token-amount">{{ calculatedAmountTeamEXRN | number:'1.0-0' }}</h5>
+                                <div class="token-symbol">EXRN from team</div>
+                            </div>
+                        </div>
+
 						<div class="token-buy">
-							<a href="buy-token.html" class="btn btn-primary">Buy EXRN</a>
+							<a href="https://exrnchain.com/contribute/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">CONTRIBUTE</a>
 						</div>
-                        -->
 					</div>
 				</div>
 			</div>
@@ -290,16 +236,4 @@
 	</div><!-- .container -->
 </div><!-- .page-content -->
 
-<div class="footer-bar">
-	<div class="container">
-		<div class="row align-items-center justify-content-center">
-			<div class="col-md-8">
-			</div><!-- .col -->
-			<div class="col-md-4 mt-2 mt-sm-0">
-				<div class="d-flex justify-content-between justify-content-md-end align-items-center guttar-25px pdt-0-5x pdb-0-5x">
-					<div class="copyright-text">&copy; 2019 EXRT Distribution App.</div>
-				</div>
-			</div><!-- .col -->
-		</div><!-- .row -->
-	</div><!-- .container -->
-</div><!-- .footer-bar -->
+<app-footer></app-footer>

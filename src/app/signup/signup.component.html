@@ -1,16 +1,19 @@
-<h2 mat-dialog-title>Successful Registration</h2>
+<h2 mat-dialog-title>Successful Application</h2>
 <mat-dialog-content class="mat-typography">
-  <p>Congratulations, you've successfully registered for this round! In case your EXRN balance changes, you will need to SIGNUP again before the end of this round. Feel free to take a screenshot of this window as an additional proof of your submission.</p>
+  <p>Congratulations, you've successfully registered for this round!</p>
+  <p>In case your EXRN balance changes, you will need to apply again before the end of this round.</p>
  
   <p>Round #{{ data.round }}</p>
 
-  <p>Total: {{ data.total }} EXRN</p>
+  <p>Total: {{ data.total | number }} EXRN</p>
 
-  <p>Team: {{ data.team }} EXRN</p>
+  <p>Team: {{ data.team | number }} EXRN</p>
 
   <p>Time: {{ data.time | date:'medium':'UTC' }} UTC</p>
 
   <p>Your wallet: {{ data.wallet }}</p>
+  
+  <p>Feel free to take a screenshot of this window as an additional proof of your submission.</p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

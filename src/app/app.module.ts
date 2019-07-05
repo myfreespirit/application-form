@@ -20,7 +20,9 @@ import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { EntryComponent } from './entry/entry.component';
+import { FooterComponent } from './footer/footer.component';
 import { FormComponent } from './form/form.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { RewardsComponent } from './rewards/rewards.component';
 import { SignupsHistoryComponent } from './signups-history/signups-history.component';
 import { StaffComponent } from './staff/staff.component';
@@ -30,6 +32,8 @@ import { MarkObserversDialog } from './admin/bulk/observer.component';
 import { SignupSuccessDialog } from './signup/signup.component';
 
 import { JwtModule } from '@auth0/angular-jwt';
+
+
 
 export function tokenGetter() {
 	if (window.self !== window.top) {
@@ -46,8 +50,10 @@ export function tokenGetter() {
     AdminComponent,
     AppComponent,
 	EntryComponent,
+    FooterComponent,
     FormComponent,
     MarkObserversDialog,
+    NavBarComponent,
     RewardsComponent,
     SignupsHistoryComponent,
     SignupSuccessDialog,

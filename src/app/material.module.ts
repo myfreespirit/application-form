@@ -10,11 +10,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatStepperModule } from '@angular/material/stepper';
 
 
 @NgModule({
@@ -29,11 +30,12 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
     MatSortModule,
+    MatStepperModule,
     MatTableModule,
     MatTabsModule,
     MatTooltipModule,
-    MatStepperModule,
     ReactiveFormsModule
   ],
   exports: [
@@ -47,11 +49,12 @@ import { MatStepperModule } from '@angular/material/stepper';
     MatListModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatSidenavModule,
     MatSortModule,
+    MatStepperModule,
     MatTableModule,
     MatTabsModule,
     MatTooltipModule,
-    MatStepperModule,
     ReactiveFormsModule
   ],
 })
