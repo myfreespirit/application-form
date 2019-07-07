@@ -1,6 +1,7 @@
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ChartsModule } from 'ng2-charts';
 import { CountdownModule } from "ng2-countdown-timer";
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
@@ -20,6 +21,7 @@ import { UniqueWalletAsyncValidatorDirective } from './directives/unique-wallet-
 import { AdminComponent } from './admin/admin.component';
 import { AppComponent } from './app.component';
 import { EntryComponent } from './entry/entry.component';
+import { ExrtDistroGraphComponent } from './exrt-distro-graph/exrt-distro-graph.component';
 import { FooterComponent } from './footer/footer.component';
 import { FormComponent } from './form/form.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
@@ -50,6 +52,7 @@ export function tokenGetter() {
     AdminComponent,
     AppComponent,
 	EntryComponent,
+    ExrtDistroGraphComponent,
     FooterComponent,
     FormComponent,
     MarkObserversDialog,
@@ -66,6 +69,7 @@ export function tokenGetter() {
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
+    ChartsModule,
     CountdownModule,
     HttpClientModule,
     MaterialModule,
