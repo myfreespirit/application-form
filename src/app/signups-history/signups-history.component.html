@@ -10,25 +10,24 @@
                 <table class="data-table dt-filter-init admin-tnx">
                     <thead>
                         <tr class="data-item data-head">
-                            <th class="data-col dt-tnxno">User Wallet Address</th>
                             <th class="data-col dt-amount">Round</th>
+                            <th class="data-col dt-tnxno">Date</th>
                             <th class="data-col dt-token">Total</th>
                             <th class="data-col dt-token">Team</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="data-item" *ngFor="let round of signups.slice().reverse(); let i = index">
+                            <td class="data-col dt-amount">
+                                <span class="lead amount-pay">#{{ signups.length - i }}</span>
+                            </td>
                             <td class="data-col dt-tnxno">
                                 <div class="d-flex align-items-center">
                                     <div class="fake-class">
-                                        <span class="lead tnx-id">{{ userAddress }}</span>
                                         <span class="sub sub-date" *ngIf="round.length">{{ round[round.length - 1].date | date:'MMM d, y, h:mm a' }}</span>
                                         <span class="sub sub-date" *ngIf="!round.length">missing application</span>
                                     </div>
                                 </div>
-                            </td>
-                            <td class="data-col dt-amount">
-                                <span class="lead amount-pay">#{{ signups.length - i }}</span>
                             </td>
                             <td class="data-col dt-token">
                                 <span class="lead token-amount">{{ round[round.length - 1]?.totalEXRN || 0 | number }}</span>
