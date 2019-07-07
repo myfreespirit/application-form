@@ -63,6 +63,7 @@
 						<div class="card-head has-aside">
 							<h4 class="card-title">Team contributions</h4>
 						</div>
+                        
 						<table class="table tnx-table">
 							<thead>
 								<tr>
@@ -105,11 +106,11 @@
 											<td class="tnx-type">
 												<div *ngIf="distribution.date > 0">
 													<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
-													<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">P</span>
+													<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">R</span>
 												</div>
 												<div *ngIf="distribution.block === 'AWAITING'">
 													<span class="tnx-type-md badge badge-outline badge-info badge-md">Waiting</span>
-													<span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">I</span>
+													<span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">W</span>
 												</div>
 												<div *ngIf="distribution.block === 'N/A'">
 													<span class="tnx-type-md badge badge-outline badge-danger badge-md">Contact Admin</span>
@@ -122,26 +123,63 @@
                                 
                                 <tr *ngFor="let distribution of distributions">
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <span class="lead">{{ distribution.value | number }}</span>
-                                        </div>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="lead">{{ distribution.value | number }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>                                                        
                                     </td>
                                     <td>
-                                        <span>
-                                            <span class="lead">0</span>
-                                            <span class="sub"> ETH</span>
-                                        </span>
-                                    </td>
-                                    <td class="d-none d-sm-table-cell tnx-date">
-                                        <span class="sub sub-s2">{{ distribution.date | date }}</span>
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    <span class="lead">0</span>
+                                                    <span class="sub"> ETH</span>
+                                                </span>
+                                            </td>
+                                        </tr>                                                        
                                     </td>
                                     <td>
-                                        <span class="tnx-type-md badge badge-outline badge-warning badge-md">Reward</span>
-                                        <span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
+                                        <tr>
+                                            <td class="d-none d-sm-table-cell tnx-date">
+                                                <span class="sub sub-s2">{{ distribution.date | date }}</span>
+                                            </td>
+                                        </tr>                                                        
                                     </td>
-								</tr><!-- tr -->
+                                    <td>
+                                        <tr>
+                                            <td class="tnx-type">
+                                                <div>
+                                                    <span class="tnx-type-md badge badge-outline badge-warning badge-md">Reward</span>
+                                                    <span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
+                                                </div>
+                                            </td>
+                                        </tr>                                                        
+                                    </td>
+                                </tr><!-- tr -->
 							</tbody><!-- tbody -->
 						</table><!-- .table -->
+                        
+                        <div class="tnx-type-sm">
+                            <hr>
+                            <div class="card-head has-aside">
+                                <h4 class="card-title">Legend</h4>
+                            </div>
+                            <p>
+                                <span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">R</span> = Received
+                            </p>
+                            <p>
+                                <span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span> = Bonus / Reward
+                            </p>
+                            <p>
+                                <span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">W</span> = Waiting distribution
+                            </p>
+                            <p>
+                                <span class="tnx-type-sm badge badge-sq badge-outline badge-danger badge-md">E</span> = Error (please contact an admin)
+                            </p>
+                        </div>
 					</div>
 				</div>
 			</div>
