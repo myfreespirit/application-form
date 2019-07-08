@@ -50,7 +50,14 @@
 										<li><span>Ticket Symbol:</span>EXRT</li>
                                         <li><span>Latest Application:</span> {{ lastSignupDate | date: 'mediumDate' }}</li>
 									</ul>
-									<div><a href="javascript:void(0)" class="btn btn-success" (click)="signup()">Apply for EXRT</a></div>
+									<div *ngIf="isSignupOutdated()">
+                                        <a href="javascript:void(0)" class="btn btn-success" (click)="signup()">Apply for EXRT</a>
+                                    </div>
+                                    <div *ngIf="!isSignupOutdated()">
+                                        <h5 class="token-amount">
+                                            <i class="far fa-check-circle text-success"></i> Applied
+                                        </h5>
+                                    </div>
 								</div>
 							</div>
 						</div>

@@ -75,7 +75,10 @@ export function tokenGetter() {
     MaterialModule,
     NgbModule.forRoot(),
     PapaParseModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({
+        positionClass: 'toast-bottom-full-width',
+        progressBar: true
+    }),
     JwtModule.forRoot({
         config: {
             tokenGetter: tokenGetter,

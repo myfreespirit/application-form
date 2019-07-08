@@ -3,17 +3,21 @@
   <p>Congratulations, you've successfully registered for this round!</p>
   <p>In case your EXRN balance changes, you will need to apply again before the end of this round.</p>
  
-  <p>Round #{{ data.round }}</p>
+  <hr>
+ 
+  <p><strong>Round</strong> #{{ data.round }}</p>
 
-  <p>Total: {{ data.total | number }} EXRN</p>
+  <p><strong>Total:</strong> {{ data.total | number }} EXRN</p>
 
-  <p>Team: {{ data.team | number }} EXRN</p>
+  <p><strong>Team:</strong> {{ data.team | number }} EXRN</p>
 
-  <p>Time: {{ data.time | date:'medium':'UTC' }} UTC</p>
+  <p><strong>Time:</strong> {{ data.time | date:'medium':'UTC' }} UTC</p>
 
-  <p>Your wallet: {{ data.wallet }}</p>
+  <p><strong>Your wallet:</strong> {{ data.wallet }}</p>
   
-  <p>Feel free to take a screenshot of this window as an additional proof of your submission.</p>
+  <hr>
+  
+  <p><em>Feel free to take a screenshot of this window as an additional proof of your submission.</em></p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

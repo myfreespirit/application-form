@@ -6,6 +6,7 @@ Updated	 :	02.25.2019
 */
 /*!
  * Table of Contents
+ * 00.0 - Custom
  * 01.0 - Fonts
  * 02.0 - Reset
  * 03.0 - Plugins
@@ -25,6 +26,11 @@ Updated	 :	02.25.2019
  * 05.0 - Utility
  * 06.0 - Layout
  */
+ 
+/** 00.0 - CUSTOM */
+input:focus {
+    font-weight: 450;
+}
 /** 01.0 - FONTS */
 @font-face { font-family: 'Roboto'; src: url("../fonts/Roboto-Light.eot"); src: local("Roboto Light"), local("Roboto-Light"), url("../fonts/Roboto-Light.eot?#iefix") format("embedded-opentype"), url("../fonts/Roboto-Light.woff2") format("woff2"), url("../fonts/Roboto-Light.woff") format("woff"), url("../fonts/Roboto-Light.ttf") format("truetype"); font-weight: 300; font-style: normal; }
 @font-face { font-family: 'Roboto'; src: url("../fonts/Roboto-Regular.eot"); src: local("Roboto"), local("Roboto-Regular"), url("../fonts/Roboto-Regular.eot?#iefix") format("embedded-opentype"), url("../fonts/Roboto-Regular.woff2") format("woff2"), url("../fonts/Roboto-Regular.woff") format("woff"), url("../fonts/Roboto-Regular.ttf") format("truetype"); font-weight: normal; font-style: normal; }
@@ -1344,7 +1350,7 @@ select.select-sm { height: 37px; }
 .token-pay-amount { position: relative; align-self: center; width: 140px; }
 .token-pay-currency { position: absolute; right: 0; top: 9px; transform: translate(0); z-index: 1; padding: 0 10px; border-left: 1px solid #d2dde9; }
 .token-pay-currency .input-hint { position: static; border: 0; padding: 2px; font-size: .8em; }
-.token-received { display: inline-flex; align-items: center; }
+.token-received { display: inline-flex; align-items: center; margin-top: 12px; }
 .token-eq-sign { color: #758698; padding: 0 10px; font-size: 20px; }
 .token-amount { font-size: 16px; margin-bottom: 0; font-weight: bold; }
 .token-symbol { font-size: 12px; }
