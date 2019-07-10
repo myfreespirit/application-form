@@ -37,7 +37,7 @@ export class EntryComponent implements OnInit {
   
   checkWallet(form: NgForm) {	
 	if (form.valid) {
-		this._stateService.changeUserWallet(this.userAddress);
+		this._stateService.changeUserWallet(this.userAddress.toLocaleLowerCase());
 		this.router.navigate(['/main']);
 	} else {
 		this._toastr.error(form.value.wallet + " is not a valid ETH address");
