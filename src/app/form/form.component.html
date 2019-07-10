@@ -12,18 +12,21 @@
 							</div>
 							<div class="token-balance-text">
 								<h6 class="card-sub-title">EXRN Balance</h6>
-								<span class="lead">{{ userTotalTokens | number }} <span>EXRN</span></span>
+                                <mat-spinner *ngIf="showSpinnerContributions" color="primary" diameter="25"></mat-spinner>
+                                <span *ngIf="!showSpinnerContributions" class="lead">{{ userTotalTokens | number }} <span>EXRN</span></span>
 							</div>
 						</div>
 						<div class="token-balance token-balance-s2">
 							<h6 class="card-sub-title">Your Contribution</h6>
 							<ul class="token-balance-list">
 								<li class="token-balance-sub">
-									<span class="lead">{{ userTotalTokens - availableExrnDistributed | number }}</span>
+                                    <mat-spinner *ngIf="showSpinnerContributions" color="primary" diameter="25"></mat-spinner>
+                                    <span *ngIf="!showSpinnerContributions" class="lead">{{ userTotalTokens - availableExrnDistributed | number }}</span>
 									<span class="sub"> From Exchange</span>
 								</li>
 								<li class="token-balance-sub">
-									<span class="lead">{{ availableExrnDistributed | number }}</span>
+                                    <mat-spinner *ngIf="showSpinnerContributions" color="primary" diameter="25"></mat-spinner>
+                                    <span *ngIf="!showSpinnerContributions" class="lead">{{ availableExrnDistributed | number }}</span>
 									<span class="sub"> From Team</span>
 								</li>
 							</ul>
@@ -37,8 +40,9 @@
 						<div class="col-md-6 text-center">
 							<div class="token-info">
 								<img class="token-info-icon" src="assets/images/logo-sm.png" alt="logo-sm">
-								<div class="gaps-2x"></div>
-								<h1 class="token-info-head text-light">{{ userTotalTokensEXRT | number:'1.0-1' }} EXRT</h1>
+								<div class="gaps-1x"></div>
+								<h6 class="token-info-sub text-light">Your current balance</h6>
+                                <h1 class="token-info-head text-light">{{ userTotalTokensEXRT | number:'1.0-0' }} EXRT</h1>
                                 <h6 class="token-info-sub">1 EXRT = {{ tokenValue_EXRT_USD | number:'1.0-4' }} USD</h6>
 							</div>
 						</div>
@@ -50,10 +54,11 @@
 										<li><span>Ticket Symbol:</span>EXRT</li>
                                         <li><span>Latest Application:</span> {{ lastSignupDate | date: 'mediumDate' }}</li>
 									</ul>
-									<div *ngIf="isSignupOutdated()">
-                                        <a href="javascript:void(0)" class="btn btn-success" (click)="signup()">Apply for EXRT</a>
+                                    <mat-spinner *ngIf="showSpinnerContributions" color="primary" diameter="25"></mat-spinner>
+									<div *ngIf="!showSpinnerContributions && isSignupOutdated()">
+                                        <a href="javascript:void(0)" class="btn btn-success btn-block" (click)="signup()">Apply for EXRT</a>
                                     </div>
-                                    <div *ngIf="!isSignupOutdated()">
+                                    <div *ngIf="!showSpinnerContributions && !isSignupOutdated()">
                                         <h5 class="token-amount">
                                             <i class="far fa-check-circle text-success"></i> Applied
                                         </h5>
@@ -69,6 +74,10 @@
 					<div class="card-innr">
 						<div class="card-head has-aside">
 							<h4 class="card-title">Team contributions</h4>
+                            <div class="card-opt">
+                                <a *ngIf="this.limitDisplayNumberOfContributions < this.correlations.length" href="javascript:void(0)" (click)="toggleContributionsView()" class="link ucap">Show ALL <em class="fas fa-angle-down ml-2"></em></a>
+                                <a *ngIf="this.limitDisplayNumberOfContributions >= this.correlations.length && this.correlations.length > 3" href="javascript:void(0)" (click)="toggleContributionsView()" class="link ucap">Show LESS <em class="fas fa-angle-up ml-2"></em></a>
+                            </div>
 						</div>
                         
 						<table class="table tnx-table">
@@ -80,92 +89,58 @@
 									<th class="tnx-type"><div class="tnx-type-text"></div></th>
 								</tr><!-- tr -->
 							</thead><!-- thead -->
+                            <mat-spinner *ngIf="showSpinnerContributions" color="primary" diameter="25"></mat-spinner>
 							<tbody>
-								<tr *ngFor="let correlation of correlations">
-									<td>
-										<tr *ngFor="let distribution of correlation[1]">
-											<td>
-												<div class="d-flex align-items-center">
-													<span class="lead">{{ distribution.value | number }}</span>
-												</div>
-											</td>
-										</tr>
-									</td>
-									<td>
-										<tr *ngFor="let contribution of correlation[0]">
-											<td>
-												<span>
-													<span class="lead">{{ contribution.value | number }}</span>
-													<span class="sub"> ETH</span>
-												</span>
-											</td>
-										</tr>
-									</td>
-									<td>
-										<tr *ngFor="let distribution of correlation[1]">
-											<td class="d-none d-sm-table-cell tnx-date">
-												<span class="sub sub-s2">{{ distribution.date | date }}</span>
-											</td>
-										</tr>
-									</td>
-									<td>
-										<tr *ngFor="let distribution of correlation[1]">
-											<td class="tnx-type">
-												<div *ngIf="distribution.date > 0">
-													<span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
-													<span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">R</span>
-												</div>
-												<div *ngIf="distribution.block === 'AWAITING'">
-													<span class="tnx-type-md badge badge-outline badge-info badge-md">Waiting</span>
-													<span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">W</span>
-												</div>
-												<div *ngIf="distribution.block === 'N/A'">
-													<span class="tnx-type-md badge badge-outline badge-danger badge-md">Contact Admin</span>
-													<span class="tnx-type-sm badge badge-sq badge-outline badge-danger badge-md">E</span>
-												</div>
-											</td>
-										</tr>
-									</td>
-								</tr><!-- tr -->
-                                
-                                <tr *ngFor="let distribution of distributions">
+								<tr *ngFor="let correlation of retrieveTransfersLimitBy(); let i = index;">
                                     <td>
-                                        <tr>
+                                        <tr *ngFor="let distribution of correlation[1]">
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <span class="lead">{{ distribution.value | number }}</span>
                                                 </div>
                                             </td>
-                                        </tr>                                                        
+                                        </tr>
                                     </td>
                                     <td>
-                                        <tr>
+                                        <tr *ngFor="let contribution of correlation[0]">
                                             <td>
                                                 <span>
-                                                    <span class="lead">0</span>
+                                                    <span class="lead">{{ contribution.value | number }}</span>
                                                     <span class="sub"> ETH</span>
                                                 </span>
                                             </td>
-                                        </tr>                                                        
+                                        </tr>
                                     </td>
                                     <td>
-                                        <tr>
+                                        <tr *ngFor="let distribution of correlation[1]">
                                             <td class="d-none d-sm-table-cell tnx-date">
                                                 <span class="sub sub-s2">{{ distribution.date | date }}</span>
                                             </td>
-                                        </tr>                                                        
+                                        </tr>
                                     </td>
                                     <td>
-                                        <tr>
+                                        <tr *ngFor="let distribution of correlation[1]">
                                             <td class="tnx-type">
-                                                <div>
+                                                <div *ngIf="distribution.block === 'REWARD'">
                                                     <span class="tnx-type-md badge badge-outline badge-warning badge-md">Reward</span>
                                                     <span class="tnx-type-sm badge badge-sq badge-outline badge-warning badge-md">B</span>
                                                 </div>
+                                                <div *ngIf="distribution.date > 0 && distribution.block !== 'REWARD'">
+                                                    <span class="tnx-type-md badge badge-outline badge-success badge-md">Received</span>
+                                                    <span class="tnx-type-sm badge badge-sq badge-outline badge-success badge-md">R</span>
+                                                </div>
+                                                <div *ngIf="distribution.block === 'AWAITING'">
+                                                    <span class="tnx-type-md badge badge-outline badge-info badge-md">Waiting</span>
+                                                    <span class="tnx-type-sm badge badge-sq badge-outline badge-info badge-md">W</span>
+                                                </div>
+                                                <div *ngIf="distribution.block === 'N/A'">
+                                                    <span class="tnx-type-md badge badge-outline badge-danger badge-md">Contact Admin</span>
+                                                    <span class="tnx-type-sm badge badge-sq badge-outline badge-danger badge-md">E</span>
+                                                </div>
                                             </td>
-                                        </tr>                                                        
+                                        </tr>
                                     </td>
-                                </tr><!-- tr -->
+								</tr><!-- tr -->
 							</tbody><!-- tbody -->
 						</table><!-- .table -->
                         

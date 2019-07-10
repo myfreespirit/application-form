@@ -69,7 +69,8 @@ export class FormComponent implements OnInit {
   pricesUSD = [];
   calculatedAmountEXRN: number;
   calculatedAmountTeamEXRN: number;
-
+  limitDisplayNumberOfContributions: number;
+  
   rounds: any;
   roundExpiration: Date;
   daysLeftInRound = 21;
@@ -165,6 +166,8 @@ export class FormComponent implements OnInit {
     this.pricesUSD = [];
     this.calculatedAmountEXRN = 0;
     this.calculatedAmountTeamEXRN = 0;
+    
+    this.limitDisplayNumberOfContributions = 3;
   }
 
 
@@ -186,7 +189,7 @@ export class FormComponent implements OnInit {
 	    this.availableExrnDistributed = this.userTotalTokens;
 	    this.showTransferReminder = true;
     } else {
-	this.availableExrnDistributed = this.totalExrnDistributed;
+        this.availableExrnDistributed = this.totalExrnDistributed;
     }
 
 
@@ -198,10 +201,10 @@ export class FormComponent implements OnInit {
 
     // Determine which extra notifications a user need to see
     if (this.userTotalTokens >= this._dataService.minimumExrnRequired && this.userTotalTokens > this.totalExrnDistributed) {
-	this.showNormalEligibility = true;
+        this.showNormalEligibility = true;
     }
     if (this.availableExrnDistributed) {
-	this.showContributorEligibility = true;
+        this.showContributorEligibility = true;
     }
     this.showCallToAction = this.userTotalTokens < this._dataService.minimumExrnRequired && !this.showTransferReminder;
   }
@@ -298,6 +301,7 @@ export class FormComponent implements OnInit {
                 this.distributions = data[2];
 
                 this.correlateTransactions();
+                this.mergeCorrelationsWithRewards();
               },
               err => {
                 console.error(err);  // TODO remove
@@ -325,6 +329,25 @@ export class FormComponent implements OnInit {
   }
 
 
+  private mergeCorrelationsWithRewards() {
+        this.distributions.forEach((reward, idxReward, arrReward) => {
+            let itemFound = this.correlations.find(corr => {
+                const lastDistributionIndex = corr[1].length - 1;
+                return corr[1][lastDistributionIndex].date >= reward.date;
+            });
+            
+            arrReward[idxReward].block = 'REWARD';
+            
+            if (itemFound !== undefined) {
+                let indexFound = this.correlations.indexOf(itemFound);
+                this.correlations.splice(indexFound, 0, [[], [reward]]);    
+            } else {
+                this.correlations.push([[], [reward]]);
+            }
+        });
+  }
+  
+  
   public showRefunds(): boolean {
 	return this.refunds.length > 0;
   }
@@ -384,5 +407,15 @@ export class FormComponent implements OnInit {
 
         const teamRate = this._dataService.distributionRates[0].value;
         this.calculatedAmountTeamEXRN = event.target.value * teamRate;
+  }
+
+  
+  toggleContributionsView() {
+      this.limitDisplayNumberOfContributions = this.limitDisplayNumberOfContributions === 3 ? 999 : 3;
+  }
+  
+  
+  retrieveTransfersLimitBy() {
+        return this.correlations.filter((item, idx) => idx < this.limitDisplayNumberOfContributions);
   }
 }

@@ -12,9 +12,11 @@
 						<input class="input-bordered" type="text" placeholder="Your Wallet Address" name="wallet" [(ngModel)]="userAddress" required pattern="0x[a-fA-F0-9]{40}" #inputWallet="ngModel">
 					</div>
 				</div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <div><button class="btn btn-primary" (click)="checkWallet(form)">Sign In</button></div>
-                    <div>
+                <div class="row d-flex align-items-center">
+                    <div class="col-12 col-md-6 mb-3">
+                        <button class="btn btn-primary btn-block" (click)="checkWallet(form)">Sign In</button>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
                         <a href="https://exrnchain.com/exrt/" target="_blank">Learn more about EXRT</a>
                     </div>
                 </div>
