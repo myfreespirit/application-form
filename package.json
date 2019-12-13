@@ -55,7 +55,7 @@
     "ngx-papaparse": "^3.0.0-beta.0",
     "ngx-toastr": "^10.0.4",
     "node-cron": "^2.0.3",
-    "npm": "^6.10.0",
+    "npm": "^6.13.4",
     "papaparse": "^5.0.0",
     "path": "^0.12.7",
     "popper.js": "^1.15.0",
