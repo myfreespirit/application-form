@@ -12,12 +12,12 @@ import * as pluginAnnotations from 'chartjs-plugin-annotation';
 export class ExrtDistroGraphComponent implements OnInit {
     
   public lineChartData: ChartDataSets[] = [
-    { data: [1838, 1883, 1454, 1174, 1175, 1215, 955], label: 'Holders' },
-    { data: [9160, 5900, 6408, 8309, 6910, 5761, 7480], label: 'EXRT rate (per 10M regular EXRN)', yAxisID: 'y-axis-1' },
-    { data: [35.8, 40.86, 38.3, 35.57, 40.1, 49, 40.6], label: 'Total EXRN (in Billions)' }
+    { data: [1838, 1883, 1454, 1174, 1175, 1215, 955, 860], label: 'Holders' },
+    { data: [9160, 5900, 6408, 8309, 6910, 5761, 7480, 7903], label: 'EXRT rate (per 10M regular EXRN)', yAxisID: 'y-axis-1' },
+    { data: [35.8, 40.86, 38.3, 35.57, 40.1, 49, 40.6, 38.4], label: 'Total EXRN (in Billions)' }
   ];
   
-  public lineChartLabels: Label[] = ['March 2018', 'June 2018', 'October 2018', 'January 2019', 'April 2019', 'July 2019', 'October 2019'];
+  public lineChartLabels: Label[] = ['March 2018', 'June 2018', 'October 2018', 'January 2019', 'April 2019', 'July 2019', 'October 2019', 'January 2020'];
   
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
     responsive: true,

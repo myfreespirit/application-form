@@ -108,8 +108,8 @@ export class FormComponent implements OnInit {
 		this.roundExpiration = this.rounds[this.rounds.length - 1].end;
 		this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
         
-        this.circulatingSupplyEXRT = this.distributableEXRT / 8 * (this.rounds.length - 1);
-        this.distributedPercentageEXRT = this.circulatingSupplyEXRT / this.distributableEXRT * 100;
+        this.circulatingSupplyEXRT = this.distributableEXRT;
+        this.distributedPercentageEXRT = 100.0;
     });
     
     this._dataService.getTokenValue("exrt-network", "usd").subscribe(result => {
