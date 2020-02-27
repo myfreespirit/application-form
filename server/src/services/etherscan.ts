@@ -167,6 +167,7 @@ class Etherscan {
 
 						if (numberOfRecords > 0) {
 							console.log("# new ether transfers:", numberOfRecords);
+							console.log(newTransfers);
 							this.saveNewEtherTransfers(newTransfers).then(response => {
 								if (numberOfRecords === this.maxEtherTransfersApiLimit) {
 									this.getLastSavedEtherTransferBlock().then(partialBlock => {
