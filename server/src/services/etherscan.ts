@@ -106,7 +106,7 @@ class Etherscan {
 			    `&address=${ this.EXRNchainTokenSaleAddress }` +
 			    `&startblock=${ startBlock }` +
 			    `&endblock=latest` +
-			    `&apiKeyEtherscan=${ this.apiKeyEtherscan }`;
+			    `&apikey=${ this.apiKeyEtherscan }`;
 
 
 		return new Promise<any>((resolve, reject) => {
@@ -167,7 +167,6 @@ class Etherscan {
 
 						if (numberOfRecords > 0) {
 							console.log("# new ether transfers:", numberOfRecords);
-							console.log(newTransfers);
 							this.saveNewEtherTransfers(newTransfers).then(response => {
 								if (numberOfRecords === this.maxEtherTransfersApiLimit) {
 									this.getLastSavedEtherTransferBlock().then(partialBlock => {
@@ -203,7 +202,6 @@ class Etherscan {
 
 	
 	private getNewTokenTransfers(token: string, startBlock: number): Promise<any> {
-		console.log("Token: " + token + " @ ", startBlock);
 		const urlTransfers = `https://api.etherscan.io/api` +
 			    `?module=account` +
 			    `&action=tokentx` +
@@ -211,7 +209,7 @@ class Etherscan {
 			    `&startBlock=${ startBlock }` +
 			    `&endBlock=latest` +
 			    `&sort=asc` +
-			    `&apiKeyEtherscan=${ this.apiKeyEtherscan }`;
+			    `&apikey=${ this.apiKeyEtherscan }`;
 
 		return new Promise<any>((resolve, reject) => {
 				request(urlTransfers, (error, response, body) => {
