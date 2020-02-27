@@ -202,6 +202,7 @@ class Etherscan {
 
 	
 	private getNewTokenTransfers(token: string, startBlock: number): Promise<any> {
+		console.log("Token: " + token + " @ ", startBlock);
 		const urlTransfers = `https://api.etherscan.io/api` +
 			    `?module=account` +
 			    `&action=tokentx` +
