@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 
 class Etherscan {
 	baseUrl = process.env.BASE_URL || 'http://localhost:8080';
-	apiKeyEtherscan = process.env.ETHERSCAN_API_KEY || 'YourapiKeyEtherscanToken';
+	apiKeyEtherscan = process.env.ETHERSCAN_API_KEY || 'YBI2DJTZ2DSJZYQERT8YRTGJR6VIU1PPNG';
     apiKeyCoinmarketcap = process.env.COINMARKETCAP_API_KEY || 'cf57589a-0b20-4f8a-8711-ff1d9dbcfb5f';
     
 	maxEtherTransfersApiLimit = 10000;
