@@ -19,7 +19,7 @@ export class DB {
 
   public connect(): Promise<mongoose.Connection> {
     return new Promise((resolve, reject) => {
-      mongoose.connect(this.connectionString, { useNewUrlParser: true, useCreateIndex: true }, (error: MongoError) => {
+      mongoose.connect(this.connectionString, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error: MongoError) => {
         if (error) {
           console.log('Error while connecting to mongodb');
           console.log(' -> ' + error.message);
