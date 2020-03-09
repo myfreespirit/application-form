@@ -79,11 +79,12 @@ class Etherscan {
         return new Promise<number>((resolve, reject) => {
             this.getCMCPrice(id, convert).then(data => {
                 console.log("1 ", base, " = ", data['data'][id]['quote'][convert]['price'], convert);
-                this.saveCMCprice(base, data['data'][id]['quote'][convert]['price']);
-		resolve(0);
-            });
+                this.saveCMCprice(base, data['data'][id]['quote'][convert]['price']).then(response => {
+			resolve(0);
 		});
-	}
+            });
+	});
+    }
     
     
 	/************************************************************************************************
