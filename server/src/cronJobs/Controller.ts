@@ -38,7 +38,6 @@ class Controller {
         let convert = "USD";
         Object.entries(Controller.data_id).forEach(([base, id]) => {
             etherscanService.updateCMCprice(base, id, convert).then(data => {
-                console.log(data);
                 console.log("cron job: CMC price updates completed.");
             });
         });

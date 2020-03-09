@@ -80,6 +80,7 @@ class Etherscan {
             this.getCMCPrice(id, convert).then(data => {
                 console.log("1 ", base, " = ", data['data'][id]['quote'][convert]['price'], convert);
                 this.saveCMCprice(base, data['data'][id]['quote'][convert]['price']);
+		resolve(0);
             });
 		});
 	}
