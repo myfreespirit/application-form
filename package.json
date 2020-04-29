@@ -2,9 +2,16 @@
   "name": "exrt-application-form",
   "version": "7.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
+    "prepare": "npm run gcp-build && npm run build",
+    "pretest": "npm run gcp-build",
+    "gcp-build": "tsc -p .",
+    "deploy": "gcloud app deploy",
     "ng": "ng",
-    "start": "tsc && node ./dist/server/src/index.js",
+    "start": "node ./dist/server/src/index.js",
     "build": "ng build --build-optimizer --vendor-chunk --aot --prod --named-chunks false --output-hashing all",
     "serve-client": "ng serve --aot --proxy-config proxy.conf.json",
     "serve-server": "nodemon",
@@ -38,6 +45,7 @@
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",
     "core-js": "^3.6.4",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-jwt-authz": "^2.3.1",
@@ -63,7 +71,6 @@
     "rxjs": "^6.5.4",
     "ts-md5": "^1.2.7",
     "tslib": "^1.11.1",
-    "typescript": "3.4.5",
     "webpack": "^4.42.0",
     "zone.js": "~0.9.1"
   },
@@ -75,7 +82,8 @@
     "codelyzer": "^5.2.1",
     "protractor": "^5.4.3",
     "ts-node": "~8.3.0",
-    "tslint": "^5.20.1"
+    "tslint": "^5.20.1",
+    "typescript": "^3.4.5"
   },
   "heroku-run-build-script": true
 }

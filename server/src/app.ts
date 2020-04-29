@@ -21,6 +21,8 @@ import signups from './routes/signups/Controller';
 import testnet from './routes/testnet/Controller';
 import transfers from './routes/transfers/Controller';
 
+import * as dotenv from "dotenv";
+dotenv.config({path:'.env'});
 
 class App {
 	jwksJsonUri = (process.env.AUTH0_DOMAIN !== undefined ?
