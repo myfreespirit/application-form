@@ -9,11 +9,11 @@ import * as jwks from 'jwks-rsa';
 import * as logger from 'morgan';
 import * as mongoose from 'mongoose';
 import * as path from 'path';
-import cron from './cronJobs/Controller';
 
 import api from './routes/api/Controller';
 import backends from './routes/backends/Controller';
 import balances from './routes/balances/Controller';
+import cron from './routes/cron/Controller';
 import ethers from './routes/ethers/Controller';
 import prices from './routes/prices/Controller';
 import rounds from './routes/rounds/Controller';
@@ -44,7 +44,6 @@ class App {
 
 		this.config();
 		this.routes();
-		cron.init();
 	}
 
 	public app: express.Application;
@@ -84,14 +83,15 @@ class App {
 
 		this.app.use('/backends', backends.routes());
 		this.app.use('/balances', balances.routes());
+		this.app.use('/cron', cron.routes());
 		this.app.use('/ethers', ethers.routes());
-        this.app.use('/prices', prices.routes());
+		this.app.use('/prices', prices.routes());
 		this.app.use('/rounds', rounds.routes());
 		this.app.use('/signups', signups.routes());
 		this.app.use('/testnet', testnet.routes());
 		this.app.use('/transfers', transfers.routes());
-
 		this.app.use('/api', this.jwtCheck, api.routes());
+
 
 		this.app.use(function(err, req, res, next) {
 		    if(!err) return next();

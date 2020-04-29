@@ -1,0 +1,13 @@
+cron:
+- description: "update ETH contributions"
+  url: /cron/update/ether
+  schedule: every 1 mins
+- description: "update EXRN transfers"
+  url: /cron/update/exrn
+  schedule: every 5 mins
+- description: "update EXRT transfers"
+  url: /cron/update/exrt
+  schedule: every 15 mins
+- description: "update CMC price"
+  url: /cron/update/price
+  schedule: every 20 mins

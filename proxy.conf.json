@@ -14,6 +14,11 @@
 	"secure": false
     },
 
+    "/cron": {
+	"target": "http://localhost:8080",
+	"secure": false
+    },
+
     "/ethers": {
 	"target": "http://localhost:8080",
 	"secure": false

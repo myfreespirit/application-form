@@ -6,7 +6,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "prepare": "npm run gcp-build && npm run build",
+    "prepare": "npm run build && npm run gcp-build",
     "pretest": "npm run gcp-build",
     "gcp-build": "tsc -p .",
     "deploy": "gcloud app deploy",
@@ -62,7 +62,6 @@
     "ng2-countdown-timer": "^1.2.2",
     "ngx-papaparse": "^3.0.4",
     "ngx-toastr": "^10.2.0",
-    "node-cron": "^2.0.3",
     "npm": "^6.14.2",
     "papaparse": "^5.1.1",
     "path": "^0.12.7",

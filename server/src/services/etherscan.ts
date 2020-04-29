@@ -174,6 +174,7 @@ class Etherscan {
 									this.getLastSavedEtherTransferBlock().then(partialBlock => {
 										this.removeEtherTransfers(partialBlock).then(removed => {
 											this.updateEtherTransfers();
+											resolve(numberOfRecords);
 										});
 									});
 								} else {
@@ -276,6 +277,7 @@ class Etherscan {
 										this.getLastSavedTokenTransferBlock(token).then(partialBlock => {
 											this.removeTokenTransfers(token, partialBlock).then(removed => {
 												this.updateTokenTransfers(token);
+												resolve(numberOfRecords);
 											});
 										});
 									} else {
