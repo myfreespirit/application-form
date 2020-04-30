@@ -6,15 +6,16 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "prepare": "npm run build && npm run gcp-build",
-    "pretest": "npm run gcp-build",
-    "gcp-build": "tsc -p .",
-    "deploy": "gcloud app deploy",
-    "ng": "ng",
+    "prepare": "npm run build",
+    "pretest": "npm run build",
+    "ts-compilation": "tsc -p .",
     "start": "node ./dist/server/src/index.js",
-    "build": "ng build --build-optimizer --vendor-chunk --aot --prod --named-chunks false --output-hashing all",
+    "prod-build": "ng build --build-optimizer --vendor-chunk --aot --prod --named-chunks false --output-hashing all",
+    "build": "npm run prod-build && npm run ts-compilation",
+    "deploy": "gcloud app deploy",
     "serve-client": "ng serve --aot --proxy-config proxy.conf.json",
     "serve-server": "nodemon",
+    "ng": "ng",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
