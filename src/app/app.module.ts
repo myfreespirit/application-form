@@ -35,7 +35,6 @@ import { SignupSuccessDialog } from './signup/signup.component';
 
 import { JwtModule } from '@auth0/angular-jwt';
 
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 
 
 export function tokenGetter() {
@@ -95,14 +94,7 @@ export function tokenGetter() {
     AuthService,
     DataService,
 	StateService,
-    TestnetService,
-    {
-            provide: 'externalUrlRedirectResolver',
-            useValue: (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) =>
-            {
-                window.location.href = (route.data as any).externalUrl;
-            }
-    }
+    TestnetService
   ]
 })
 export class AppModule { }
