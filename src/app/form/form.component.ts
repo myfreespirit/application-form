@@ -77,6 +77,8 @@ export class FormComponent implements OnInit {
   thresholdDaysLeftInRound = 20;
   timerRoundExpired: boolean;
   text:any = {
+    Year: "YEAR",
+    Month: "MONTH",
     Days: "DAY",
     Hours: "HOUR",
     Minutes: "MIN",
@@ -91,7 +93,7 @@ export class FormComponent implements OnInit {
     private _toastr: ToastrService)
   {
         this.totalSupplyEXRT = Math.pow(10, 9);
-        this.distributableEXRT = this.totalSupplyEXRT / 2;
+        this.distributableEXRT = this.totalSupplyEXRT * 0.7;
   }
 
   ngOnInit() {
@@ -108,8 +110,8 @@ export class FormComponent implements OnInit {
 		this.roundExpiration = this.rounds[this.rounds.length - 1].end;
 		this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
         
-        this.circulatingSupplyEXRT = this.distributableEXRT;
-        this.distributedPercentageEXRT = 100.0;
+        this.circulatingSupplyEXRT = this.totalSupplyEXRT / 2;
+        this.distributedPercentageEXRT = this.circulatingSupplyEXRT / this.distributableEXRT * 100.0;  // 500M out of 700M are already distributed
     });
     
     this._dataService.getTokenValue("exrt-network", "usd").subscribe(result => {

@@ -232,11 +232,11 @@
 							<li class="text-right"><span>TOTAL FOR EXRN HOLDERS</span> {{ distributableEXRT | number }} EXRT</li>
 						</ul>
 						<div class="progress-bar">
-							<div class="progress-percent" (data-percent)="distributedPercentageEXRT" style="width: 100%;"></div>
+							<div class="progress-percent" (data-percent)="distributedPercentageEXRT" style="width: 71%;"></div>
 						</div>
 
 						<span class="card-sub-title mgb-0-5x">Application #{{ rounds?.length }} CLOSES IN</span>
-                        <countdown class="countdown" (reached)="roundExpired($event)" [text]="text" units="Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
+                        <countdown class="countdown" (reached)="roundExpired($event)" [text]="text" units="Year | Month | Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
 					</div>
 				</div>
 			</div>
