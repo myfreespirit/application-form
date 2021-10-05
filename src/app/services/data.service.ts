@@ -33,6 +33,7 @@ export class DataService {
     '0x8d12a197cb00d4747a1fe03395095ce2a5cc6819',  // EtherDelta / ForkDelta
     '0x274f3c32c90517975e29dfc209a23f315c1e5fc7',  // Hotbit
     '0xe03c23519e18d64f144d2800e30e81b0065c48b5',  // Mercatox
+    '0x966dd46d9f09986bb79e6f6d7d4ba4a3eec22052',  // Uniswap v2
     	// MISCELLANEOUS
     '0xe469c4473af82217b30cf17b10bcdb6c8c796e75'
   ];
