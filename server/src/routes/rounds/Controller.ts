@@ -16,7 +16,7 @@ class Controller {
 	  Round.find({ }, (err, document) => {
 	    if (err) return next(err);
 	    res.json(document);
-	  });
+	  }).sort({ round: 1});
 	});
 
 
