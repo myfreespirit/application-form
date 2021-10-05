@@ -77,7 +77,7 @@ export class FormComponent implements OnInit {
   thresholdDaysLeftInRound = 20;
   timerRoundExpired: boolean;
   text:any = {
-    Year: "YEAR",
+    Weeks: "WEEK",
     Month: "MONTH",
     Days: "DAY",
     Hours: "HOUR",
@@ -107,7 +107,7 @@ export class FormComponent implements OnInit {
 
     this._dataService.getAllRounds().subscribe(result => {
 		this.rounds = result;
-		this.roundExpiration = this.rounds[this.rounds.length - 1].end;
+    this.roundExpiration = this.rounds[this.rounds.length - 1].end;
 		this.daysLeftInRound = (+new Date(this.roundExpiration) - +new Date()) / 1000 / 60 / 60 / 24;
         
         this.circulatingSupplyEXRT = this.totalSupplyEXRT / 2;

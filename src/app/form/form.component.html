@@ -236,7 +236,7 @@
 						</div>
 
 						<span class="card-sub-title mgb-0-5x">Application #{{ rounds?.length }} CLOSES IN</span>
-                        <countdown class="countdown" (reached)="roundExpired($event)" [text]="text" units="Year | Month | Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
+                        <countdown class="countdown" (reached)="roundExpired($event)" [text]="text" units="Weeks | Days | Hours | Minutes | Seconds" end="{{ this.roundExpiration }}"></countdown>
 					</div>
 				</div>
 			</div>
